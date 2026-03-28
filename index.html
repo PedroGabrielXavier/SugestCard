@@ -1486,7 +1486,7 @@ REGRAS DA RECOMENDAÇÃO FINAL:
   • 1 pessoa → prefira pratos com tag [executivo-individual]
   • 2 pessoas → executivo ou pratos médios (R$69–R$155)
   • 3+ pessoas → pratos grandes [grande/pra-compartilhar] ou múltiplos
-- "dishes" pode ter 1 item (individual) ou 2-3 (pra compartilhar)
+- "dishes" NUNCA repita o mesmo prato — cada item deve ser ÚNICO. Para 2+ pessoas pedindo o mesmo prato, coloque-o UMA vez apenas e mencione a quantidade na mensagem
 - "starter" é opcional — omita se não for sugerir
 - "drinks" deve ter 1 ou 2 itens, SEMPRE do cardápio
 - "category": informe qual categoria principal recomendou: "bode", "carne", "peixe" ou "frango"
@@ -1697,7 +1697,8 @@ function handleRecommendation(data) {
   document.getElementById('result-context-line').textContent =
     state.temp !== null ? L.resultContextWeather(state.temp) : L.resultContextDefault;
 
-  const dishItems = (data.dishes || []).map(n => { const item = findItem(n); console.log('[handleRecommendation] dish', JSON.stringify(n), '->', item ? item.name : 'NAO ENCONTRADO'); return item; }).filter(Boolean);
+  const uniqueDishes = [...new Set(data.dishes || [])];
+  const dishItems = uniqueDishes.map(n => { const item = findItem(n); console.log('[handleRecommendation] dish', JSON.stringify(n), '->', item ? item.name : 'NAO ENCONTRADO'); return item; }).filter(Boolean);
   console.log('[handleRecommendation] pratos resolvidos:', dishItems.length, 'de', (data.dishes||[]).length);
   s('label-main-dish', L.labelMainDish);
   document.getElementById('result-main-dishes').innerHTML = dishItems.map(d => renderItem(d, true)).join('');
