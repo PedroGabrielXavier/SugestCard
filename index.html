@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>BodinhaSugere 🐐</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --marrom:  #5C2A0E; --laranja: #C95C1E; --amarelo: #E8A83E;
+      --creme:   #FDF3E3; --off:     #F5E9D5; --verde:   #3B7A4A;
+      --text:    #2D1A0A; --muted:   #8B6240; --radius:  18px;
+      --shadow:  0 8px 32px rgba(92,42,14,.18);
+    }
+    html, body { height: 100%; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--marrom); color: var(--text); overflow-x: hidden; }
+    #app { min-height: 100dvh; display: flex; flex-direction: column; background: linear-gradient(160deg, #7a3b12 0%, #3d1606 100%); }
+
+    /* Lang bar */
+    #lang-bar { position: fixed; top: 12px; right: 14px; z-index: 999; display: flex; gap: 6px; background: rgba(0,0,0,.35); border-radius: 999px; padding: 5px 8px; backdrop-filter: blur(8px); }
+    .lang-btn { cursor: pointer; border: none; background: transparent; opacity: .45; transition: opacity .2s, transform .15s; padding: 2px; border-radius: 4px; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; }
+    .lang-btn img { width: 28px; height: 20px; border-radius: 3px; display: block; object-fit: cover; }
+    .lang-btn.active { opacity: 1; transform: scale(1.15); }
+    .lang-btn:active { transform: scale(.95); }
+
+    /* Screens */
+    .screen { display: none; flex-direction: column; align-items: center; justify-content: flex-start; padding: 24px 20px 36px; min-height: 100dvh; animation: fadeUp .4s ease both; }
+    .screen.active { display: flex; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Logo */
+    .logo-wrap { text-align: center; margin-bottom: 20px; margin-top: 16px; }
+    .logo-icon { font-size: 56px; line-height: 1; }
+    .logo-name { font-size: 28px; font-weight: 900; letter-spacing: -.5px; color: var(--amarelo); text-shadow: 0 2px 8px rgba(0,0,0,.4); }
+    .logo-name span { color: #fff; }
+    .logo-sub { font-size: 13px; color: rgba(255,255,255,.65); margin-top: 4px; font-style: italic; }
+    .logo-sm { margin-bottom: 12px; }
+    .logo-sm .logo-icon { font-size: 36px; }
+    .logo-sm .logo-name { font-size: 20px; }
+
+    /* Card */
+    .card { background: var(--creme); border-radius: var(--radius); padding: 24px 20px; width: 100%; max-width: 420px; box-shadow: var(--shadow); margin-bottom: 16px; }
+
+    /* Context pills */
+    .context-bar { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; width: 100%; max-width: 420px; }
+    .ctx-pill { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 999px; padding: 6px 14px; font-size: 13px; color: #fff; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(6px); }
+
+    /* Section titles */
+    .section-title { font-size: 17px; font-weight: 800; color: var(--marrom); margin-bottom: 5px; line-height: 1.3; }
+    .section-hint  { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+
+    /* Option grid */
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .options-grid.cols-1 { grid-template-columns: 1fr; }
+    .opt-btn { background: var(--off); border: 2px solid transparent; border-radius: 14px; padding: 16px 12px; cursor: pointer; text-align: center; transition: all .2s ease; -webkit-tap-highlight-color: transparent; user-select: none; }
+    .opt-btn:active { transform: scale(.96); }
+    .opt-btn.selected { border-color: var(--laranja); background: #fde8d3; }
+    .opt-btn .opt-icon  { font-size: 32px; display: block; margin-bottom: 6px; }
+    .opt-btn .opt-label { font-size: 14px; font-weight: 700; color: var(--text); }
+    .opt-btn .opt-desc  { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+    /* Pax 3-option grid */
+    .triple-choice { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+    .pax-btn { background: var(--off); border: 2px solid transparent; border-radius: 14px; padding: 18px 8px 14px; cursor: pointer; text-align: center; transition: all .2s; -webkit-tap-highlight-color: transparent; }
+    .pax-btn:active { transform: scale(.95); }
+    .pax-btn.selected { border-color: var(--laranja); background: #fde8d3; }
+    .pax-btn .pax-icon  { font-size: 26px; display: block; margin-bottom: 6px; line-height: 1.2; }
+    .pax-btn .pax-label { font-size: 13px; font-weight: 800; color: var(--text); }
+    .pax-btn .pax-desc  { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.3; }
+
+    /* Big 2-option buttons (alcohol question) */
+    .big-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 4px; }
+    .big-opt { background: var(--off); border: 2px solid transparent; border-radius: 16px; padding: 22px 12px 18px; cursor: pointer; text-align: center; transition: all .2s; -webkit-tap-highlight-color: transparent; }
+    .big-opt:active { transform: scale(.96); }
+    .big-opt.selected { border-color: var(--laranja); background: #fde8d3; }
+    .big-opt .big-icon  { font-size: 40px; display: block; margin-bottom: 8px; }
+    .big-opt .big-label { font-size: 15px; font-weight: 800; color: var(--text); }
+    .big-opt .big-desc  { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* Drink types (revealed after alcohol choice) */
+    #drink-types { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e8d9c4; }
+    #drink-types .section-title { font-size: 14px; margin-bottom: 12px; }
+
+    /* Buttons */
+    .btn-primary { background: linear-gradient(135deg, var(--laranja), #a84010); color: #fff; border: none; border-radius: 999px; padding: 16px 32px; font-size: 16px; font-weight: 800; cursor: pointer; width: 100%; max-width: 420px; box-shadow: 0 4px 16px rgba(201,92,30,.45); transition: transform .15s, box-shadow .15s; -webkit-tap-highlight-color: transparent; }
+    .btn-primary:active   { transform: scale(.97); box-shadow: none; }
+    .btn-primary:disabled { opacity: .5; pointer-events: none; }
+    .btn-secondary { background: transparent; color: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 10px 24px; font-size: 14px; cursor: pointer; width: 100%; max-width: 420px; margin-top: 8px; transition: background .2s; -webkit-tap-highlight-color: transparent; }
+    .btn-secondary:active { background: rgba(255,255,255,.1); }
+
+    /* Welcome */
+    .welcome-msg { font-size: 20px; font-weight: 900; color: #fff; text-align: center; margin-bottom: 8px; line-height: 1.3; }
+    .welcome-sub { font-size: 14px; color: rgba(255,255,255,.7); text-align: center; margin-bottom: 28px; max-width: 320px; }
+
+    /* Result */
+    .suggest-header { text-align: center; margin-bottom: 16px; }
+    .suggest-header .big-emoji { font-size: 48px; }
+    .suggest-header h2 { font-size: 20px; font-weight: 900; color: var(--amarelo); margin-top: 6px; }
+    .suggest-header p  { font-size: 13px; color: rgba(255,255,255,.7); margin-top: 4px; }
+    .suggest-section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--laranja); margin: 0 0 10px; }
+    .suggest-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-bottom: 1px solid #e8d9c4; }
+    .suggest-item:last-child { border-bottom: none; }
+    .suggest-item-icon  { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+    .suggest-item-body  { flex: 1; }
+    .suggest-item-name  { font-size: 15px; font-weight: 800; color: var(--marrom); line-height: 1.2; }
+    .suggest-item-desc  { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+    .suggest-item-price { font-size: 16px; font-weight: 900; color: var(--verde); flex-shrink: 0; margin-top: 2px; }
+    .badge-champion { display: inline-block; background: var(--amarelo); color: var(--marrom); font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .8px; padding: 2px 7px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
+    .badge-new      { display: inline-block; background: var(--verde); color: #fff; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .8px; padding: 2px 7px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
+
+    /* Wine badge */
+    .badge-wine { display: inline-block; background: #7b2d8b; color: #fff; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .8px; padding: 2px 7px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
+
+    /* Reasoning */
+    .reasoning-box { background: linear-gradient(135deg, #fff8ee, #fdf3e3); border-left: 4px solid var(--amarelo); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; font-size: 13px; color: var(--muted); line-height: 1.6; font-style: italic; width: 100%; max-width: 420px; }
+    .reasoning-box strong { color: var(--laranja); font-style: normal; }
+
+    /* Story card */
+    .story-card { background: linear-gradient(135deg, #fef6e4, #fdf0d5); border: 1px solid #dfc58a; border-radius: 10px; padding: 10px 12px 10px 36px; margin-top: 10px; font-size: 12px; color: #7a5020; line-height: 1.55; font-style: italic; position: relative; }
+    .story-card::before { content: '📖'; font-style: normal; font-size: 16px; position: absolute; left: 10px; top: 10px; }
+    .story-card strong { font-style: normal; color: var(--marrom); }
+
+    /* Steps */
+    .steps { display: flex; gap: 8px; margin-bottom: 20px; }
+    .step-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.25); transition: background .3s, width .3s; }
+    .step-dot.active { background: var(--amarelo); width: 24px; border-radius: 4px; }
+    .step-dot.done   { background: rgba(255,255,255,.5); }
+
+    .footer-note { font-size: 11px; color: rgba(255,255,255,.35); text-align: center; margin-top: 16px; }
+
+    /* Wine CTA on welcome */
+    .wine-divider { text-align:center; color:rgba(255,255,255,.35); font-size:12px; letter-spacing:2px; margin:14px 0 10px; }
+    .wine-cta-card { display:flex; align-items:center; gap:14px; background:rgba(123,45,139,.18); border:1.5px solid rgba(180,100,210,.4); border-radius:16px; padding:14px 18px; width:100%; max-width:380px; cursor:pointer; text-align:left; transition:all .2s; -webkit-tap-highlight-color:transparent; }
+    .wine-cta-card:active { transform:scale(.97); border-color:rgba(180,100,210,.8); }
+    .wine-cta-icon { font-size:30px; flex-shrink:0; }
+    .wine-cta-body { flex:1; }
+    .wine-cta-title { font-size:14px; font-weight:800; color:#fff; }
+    .wine-cta-desc  { font-size:11px; color:rgba(255,255,255,.55); margin-top:3px; }
+    .wine-cta-arrow { font-size:20px; color:rgba(255,255,255,.4); flex-shrink:0; }
+
+    /* Wine type grid */
+    .wine-type-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+    .wine-type-btn  { background:var(--off); border:2px solid transparent; border-radius:14px; padding:16px 8px 14px; cursor:pointer; text-align:center; transition:all .2s; -webkit-tap-highlight-color:transparent; }
+    .wine-type-btn:active { transform:scale(.95); }
+    .wine-type-btn.selected { border-color:#7b2d8b; background:#f5e8f9; }
+    .wine-type-btn .wt-icon  { font-size:30px; display:block; margin-bottom:6px; }
+    .wine-type-btn .wt-label { font-size:13px; font-weight:800; color:var(--marrom); display:block; }
+    .wine-type-btn .wt-desc  { font-size:10px; color:var(--muted); margin-top:3px; display:block; line-height:1.3; }
+
+    /* Country grid */
+    .country-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+    .country-btn  { background:var(--off); border:2px solid transparent; border-radius:12px; padding:12px 6px 10px; cursor:pointer; text-align:center; transition:all .2s; -webkit-tap-highlight-color:transparent; }
+    .country-btn:active { transform:scale(.95); }
+    .country-btn.selected { border-color:var(--laranja); background:#fde8d3; }
+    .country-btn .cc-flag { width:30px; height:auto; border-radius:3px; display:block; margin:0 auto 5px; }
+    .country-btn .cc-flag-emoji { font-size:24px; display:block; margin-bottom:5px; }
+    .country-btn .cc-label { font-size:10px; font-weight:700; color:var(--marrom); line-height:1.3; display:block; }
+
+    /* Petisco toggle in wine result */
+    .petisco-toggle { background:linear-gradient(135deg,#fef6e4,#fdf0d5); border:1.5px solid #dfc58a; border-radius:14px; padding:14px 16px; margin-top:4px; }
+    .petisco-question { font-size:13px; font-weight:800; color:var(--marrom); margin-bottom:10px; text-align:center; }
+    .petisco-btns { display:flex; gap:10px; }
+    .petisco-btn { flex:1; padding:10px 6px; border-radius:12px; border:2px solid #e0ccaa; background:#fff; cursor:pointer; font-size:12px; font-weight:700; color:var(--marrom); transition:all .2s; -webkit-tap-highlight-color:transparent; line-height:1.3; }
+    .petisco-btn:active { transform:scale(.95); }
+    .petisco-btn.selected { border-color:var(--laranja); background:#fde8d3; }
+    .petisco-result { margin-top:12px; }
+
+    /* ── Chat screen ───────────────────────────── */
+    #screen-chat { padding:80px 16px 32px; }
+    .chat-log { width:100%; max-width:480px; display:flex; flex-direction:column; gap:14px; margin-bottom:16px; }
+    .chat-bubble { max-width:84%; padding:12px 16px; border-radius:18px; font-size:14px; line-height:1.6; word-break:break-word; animation:fadeUp .3s ease both; }
+    .chat-bubble.bot { align-self:flex-start; background:var(--creme); color:var(--text); border-bottom-left-radius:5px; box-shadow:0 2px 8px rgba(92,42,14,.15); }
+    .chat-bubble.user { align-self:flex-end; background:var(--laranja); color:#fff; border-bottom-right-radius:5px; font-weight:700; }
+    .chat-avatar { font-size:16px; margin-bottom:4px; display:block; }
+    .chat-opts { display:flex; flex-wrap:wrap; gap:8px; width:100%; max-width:480px; margin-bottom:8px; }
+    .chat-opt-btn { background:rgba(255,255,255,.13); border:1.5px solid rgba(255,255,255,.35); color:#fff; border-radius:999px; padding:10px 18px; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; -webkit-tap-highlight-color:transparent; line-height:1.3; }
+    .chat-opt-btn:active { transform:scale(.95); background:rgba(255,255,255,.22); }
+    .chat-opt-btn:disabled { opacity:.4; pointer-events:none; }
+    .chat-opt-btn.chosen { background:var(--laranja); border-color:var(--laranja); }
+    .chat-typing { align-self:flex-start; background:var(--creme); border-radius:18px; border-bottom-left-radius:5px; padding:14px 20px; display:flex; gap:6px; align-items:center; box-shadow:0 2px 8px rgba(92,42,14,.15); }
+    .chat-typing span { width:7px; height:7px; background:var(--muted); border-radius:50%; display:inline-block; animation:typingDot 1.2s infinite ease-in-out; }
+    .chat-typing span:nth-child(2) { animation-delay:.2s; }
+    .chat-typing span:nth-child(3) { animation-delay:.4s; }
+    @keyframes typingDot { 0%,80%,100%{transform:scale(.55);opacity:.35} 40%{transform:scale(1);opacity:1} }
+    .chat-error { align-self:flex-start; background:#fde8e8; color:#8b2020; border-radius:14px; padding:12px 16px; font-size:13px; display:flex; align-items:center; gap:10px; max-width:90%; }
+    .chat-error-retry { background:var(--laranja); color:#fff; border:none; border-radius:999px; padding:7px 16px; font-size:12px; font-weight:800; cursor:pointer; flex-shrink:0; -webkit-tap-highlight-color:transparent; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <div id="lang-bar">
+    <button class="lang-btn active" onclick="setLang('pt')" id="btn-lang-pt" title="Português"><img src="https://flagcdn.com/w40/br.png" alt="PT" /></button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-lang-en" title="English"><img src="https://flagcdn.com/w40/us.png" alt="EN" /></button>
+    <button class="lang-btn" onclick="setLang('es')" id="btn-lang-es" title="Español"><img src="https://flagcdn.com/w40/es.png" alt="ES" /></button>
+  </div>
+
+  <!-- SCREEN 0 — WELCOME -->
+  <div class="screen active" id="screen-welcome">
+    <div class="logo-wrap">
+      <div class="logo-icon">🐐</div>
+      <div class="logo-name">bodinho<span>sugere</span></div>
+      <div class="logo-sub">Bode do Nô · Boa Viagem</div>
+    </div>
+    <div class="context-bar">
+      <div class="ctx-pill"><span>⏰</span><span id="ctx-time">--:--</span></div>
+      <div class="ctx-pill" id="ctx-weather-pill" style="display:none"><span id="ctx-weather-icon">🌡️</span><span id="ctx-weather-text"></span></div>
+    </div>
+    <p class="welcome-msg" id="welcome-headline"></p>
+    <p class="welcome-sub" id="welcome-sub"></p>
+    <button class="btn-primary" onclick="startChat()" id="btn-start"></button>
+    <div class="wine-divider" id="wine-divider">— ou —</div>
+    <button class="wine-cta-card" onclick="goTo('screen-wine-type')" id="wine-cta-btn">
+      <span class="wine-cta-icon">🍷</span>
+      <div class="wine-cta-body">
+        <div class="wine-cta-title" id="wine-cta-title"></div>
+        <div class="wine-cta-desc"  id="wine-cta-desc"></div>
+      </div>
+      <span class="wine-cta-arrow">›</span>
+    </button>
+    <p class="footer-note" id="footer-welcome" style="margin-top:16px"></p>
+  </div>
+
+  <!-- SCREEN 1 — PROTEÍNA -->
+  <div class="screen" id="screen-protein">
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="steps"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+    <div class="card">
+      <div class="section-title" id="title-protein"></div>
+      <div class="section-hint"  id="hint-protein"></div>
+      <div class="options-grid" id="protein-opts">
+        <button class="opt-btn" onclick="selectOpt(this,'protein','bode')"   data-value="bode">
+          <span class="opt-icon">🐐</span><span class="opt-label" id="opt-bode-label"></span><span class="opt-desc" id="opt-bode-desc"></span>
+        </button>
+        <button class="opt-btn" onclick="selectOpt(this,'protein','carne')"  data-value="carne">
+          <span class="opt-icon">🥩</span><span class="opt-label" id="opt-carne-label"></span><span class="opt-desc" id="opt-carne-desc"></span>
+        </button>
+        <button class="opt-btn" onclick="selectOpt(this,'protein','peixe')"  data-value="peixe">
+          <span class="opt-icon">🐟</span><span class="opt-label" id="opt-peixe-label"></span><span class="opt-desc" id="opt-peixe-desc"></span>
+        </button>
+        <button class="opt-btn" onclick="selectOpt(this,'protein','frango')" data-value="frango">
+          <span class="opt-icon">🍗</span><span class="opt-label" id="opt-frango-label"></span><span class="opt-desc" id="opt-frango-desc"></span>
+        </button>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-protein-next" disabled onclick="goTo('screen-pax')"></button>
+    <button class="btn-secondary" id="btn-protein-back" onclick="goTo('screen-welcome')"></button>
+  </div>
+
+  <!-- SCREEN 1b — PAX (quantos vão comer) -->
+  <div class="screen" id="screen-pax">
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="steps"><div class="step-dot done"></div><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+    <div class="card">
+      <div class="section-title" id="title-pax"></div>
+      <div class="section-hint"  id="hint-pax"></div>
+      <div class="triple-choice">
+        <button class="pax-btn" onclick="selectPax(this, 1)">
+          <span class="pax-icon">🐐</span>
+          <span class="pax-label" id="pax1-label"></span>
+          <span class="pax-desc"  id="pax1-desc"></span>
+        </button>
+        <button class="pax-btn" onclick="selectPax(this, 2)">
+          <span class="pax-icon">🐐🐐</span>
+          <span class="pax-label" id="pax2-label"></span>
+          <span class="pax-desc"  id="pax2-desc"></span>
+        </button>
+        <button class="pax-btn" onclick="selectPax(this, 3)">
+          <span class="pax-icon">🐐🐐🐐</span>
+          <span class="pax-label" id="pax3-label"></span>
+          <span class="pax-desc"  id="pax3-desc"></span>
+        </button>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-pax-next" disabled onclick="goTo('screen-style')"></button>
+    <button class="btn-secondary" id="btn-pax-back" onclick="goTo('screen-protein')"></button>
+  </div>
+
+  <!-- SCREEN 2 — ESTILO (Regional / Internacional) -->
+  <div class="screen" id="screen-style">
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="steps"><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+    <div class="card">
+      <div class="section-title" id="title-style"></div>
+      <div class="section-hint"  id="hint-style"></div>
+      <div class="big-choice">
+        <button class="big-opt" onclick="selectStyle(this, true)">
+          <span class="big-icon">🌵</span>
+          <span class="big-label" id="opt-regional-label"></span>
+          <span class="big-desc"  id="opt-regional-desc"></span>
+        </button>
+        <button class="big-opt" onclick="selectStyle(this, false)">
+          <span class="big-icon">🌍</span>
+          <span class="big-label" id="opt-intl-label"></span>
+          <span class="big-desc"  id="opt-intl-desc"></span>
+        </button>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-style-next" disabled onclick="goTo('screen-drink')"></button>
+    <button class="btn-secondary" id="btn-style-back" onclick="goTo('screen-pax')"></button>
+  </div>
+
+  <!-- SCREEN 3 — BEBIDA -->
+  <div class="screen" id="screen-drink">
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="steps"><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot active"></div><div class="step-dot"></div></div>
+    <div class="card">
+      <!-- Alcohol question -->
+      <div class="section-title" id="title-alcohol"></div>
+      <div class="section-hint"  id="hint-alcohol"></div>
+      <div class="big-choice">
+        <button class="big-opt" onclick="selectAlcohol(this, true)">
+          <span class="big-icon">🍺</span>
+          <span class="big-label" id="opt-yes-alcohol-label"></span>
+          <span class="big-desc"  id="opt-yes-alcohol-desc"></span>
+        </button>
+        <button class="big-opt" onclick="selectAlcohol(this, false)">
+          <span class="big-icon">🥤</span>
+          <span class="big-label" id="opt-no-alcohol-label"></span>
+          <span class="big-desc"  id="opt-no-alcohol-desc"></span>
+        </button>
+      </div>
+      <!-- Drink types (revealed only if com álcool) -->
+      <div id="drink-types">
+        <div class="section-title" id="title-drink-type"></div>
+        <div class="options-grid" id="drink-opts">
+          <button class="opt-btn" onclick="selectOpt(this,'drink','chopp')" data-value="chopp">
+            <span class="opt-icon">🍺</span><span class="opt-label" id="opt-chopp-label"></span><span class="opt-desc" id="opt-chopp-desc"></span>
+          </button>
+          <button class="opt-btn" onclick="selectOpt(this,'drink','drink')" data-value="drink">
+            <span class="opt-icon">🍹</span><span class="opt-label" id="opt-drink-label"></span><span class="opt-desc" id="opt-drink-desc"></span>
+          </button>
+          <button class="opt-btn" onclick="selectOpt(this,'drink','whisky')" data-value="whisky">
+            <span class="opt-icon">🥃</span><span class="opt-label" id="opt-whisky-label"></span><span class="opt-desc" id="opt-whisky-desc"></span>
+          </button>
+          <button class="opt-btn" onclick="selectOpt(this,'drink','cachaca')" data-value="cachaca">
+            <span class="opt-icon">🌿</span><span class="opt-label" id="opt-cachaca-label"></span><span class="opt-desc" id="opt-cachaca-desc"></span>
+          </button>
+          <button class="opt-btn" onclick="selectOpt(this,'drink','vinho')" data-value="vinho">
+            <span class="opt-icon">🍷</span><span class="opt-label" id="opt-vinho-label"></span><span class="opt-desc" id="opt-vinho-desc"></span>
+          </button>
+          <button class="opt-btn" onclick="selectOpt(this,'drink','gin')" data-value="gin">
+            <span class="opt-icon">🍋</span><span class="opt-label" id="opt-gin-label"></span><span class="opt-desc" id="opt-gin-desc"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-drink-next" disabled onclick="buildSuggestion()"></button>
+    <button class="btn-secondary" id="btn-drink-back" onclick="goTo('screen-style')"></button>
+  </div>
+
+  <!-- SCREEN 4 — RESULTADO -->
+  <div class="screen" id="screen-result">
+    <div class="suggest-header">
+      <div class="big-emoji">🐐</div>
+      <h2 id="result-title"></h2>
+      <p  id="result-context-line"></p>
+    </div>
+    <div class="steps"><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot active"></div></div>
+    <div class="reasoning-box" id="reasoning-box"></div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="suggest-section-label" id="label-main-dish"></div>
+      <div id="result-main-dishes"></div>
+    </div>
+    <div class="card" id="card-entrada" style="margin-bottom:14px;display:none">
+      <div class="suggest-section-label" id="label-starter"></div>
+      <div id="result-starters"></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="suggest-section-label" id="label-drink"></div>
+      <div id="result-drinks"></div>
+    </div>
+    <div class="card" id="card-other-options" style="margin-bottom:20px;display:none">
+      <div class="suggest-section-label" id="label-other-options"></div>
+      <div id="result-other-dishes"></div>
+    </div>
+    <button class="btn-primary" id="btn-restart" onclick="resetApp()"></button>
+    <p class="footer-note" id="footer-result"></p>
+  </div>
+
+  <!-- WINE SCREEN A — TIPO DE VINHO -->
+  <div class="screen" id="screen-wine-type">
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🍷</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="card">
+      <div class="section-title" id="wt-title"></div>
+      <div class="section-hint"  id="wt-hint"></div>
+      <div class="wine-type-grid">
+        <button class="wine-type-btn" onclick="selectWineType(this,'tinto')">
+          <span class="wt-icon">🍷</span>
+          <span class="wt-label" id="wt-tinto-label"></span>
+          <span class="wt-desc"  id="wt-tinto-desc"></span>
+        </button>
+        <button class="wine-type-btn" onclick="selectWineType(this,'branco')">
+          <span class="wt-icon">🥂</span>
+          <span class="wt-label" id="wt-branco-label"></span>
+          <span class="wt-desc"  id="wt-branco-desc"></span>
+        </button>
+        <button class="wine-type-btn" onclick="selectWineType(this,'rose')">
+          <span class="wt-icon">🌸</span>
+          <span class="wt-label" id="wt-rose-label"></span>
+          <span class="wt-desc"  id="wt-rose-desc"></span>
+        </button>
+        <button class="wine-type-btn" onclick="selectWineType(this,'espumante')">
+          <span class="wt-icon">🍾</span>
+          <span class="wt-label" id="wt-espumante-label"></span>
+          <span class="wt-desc"  id="wt-espumante-desc"></span>
+        </button>
+      </div>
+    </div>
+    <button class="btn-primary"   id="btn-wt-next" disabled onclick="goTo('screen-wine-country')"></button>
+    <button class="btn-secondary" id="btn-wt-back" onclick="goTo('screen-welcome')"></button>
+  </div>
+
+  <!-- WINE SCREEN B — PAÍS -->
+  <div class="screen" id="screen-wine-country">
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🍷</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="card">
+      <div class="section-title" id="wc-title"></div>
+      <div class="section-hint"  id="wc-hint"></div>
+      <div class="country-grid">
+        <button class="country-btn" onclick="selectWineCountry(this,'qualquer')">
+          <span class="cc-flag-emoji">🌍</span>
+          <span class="cc-label" id="wc-any-label"></span>
+        </button>
+        <button class="country-btn" onclick="selectWineCountry(this,'Argentina')">
+          <img class="cc-flag" src="https://flagcdn.com/w40/ar.png" alt="AR">
+          <span class="cc-label">Argentina</span>
+        </button>
+        <button class="country-btn" onclick="selectWineCountry(this,'Brasil')">
+          <img class="cc-flag" src="https://flagcdn.com/w40/br.png" alt="BR">
+          <span class="cc-label">Brasil</span>
+        </button>
+        <button class="country-btn" onclick="selectWineCountry(this,'Chile')">
+          <img class="cc-flag" src="https://flagcdn.com/w40/cl.png" alt="CL">
+          <span class="cc-label">Chile</span>
+        </button>
+        <button class="country-btn" onclick="selectWineCountry(this,'Portugal')">
+          <img class="cc-flag" src="https://flagcdn.com/w40/pt.png" alt="PT">
+          <span class="cc-label">Portugal</span>
+        </button>
+        <button class="country-btn" onclick="selectWineCountry(this,'Itália')">
+          <img class="cc-flag" src="https://flagcdn.com/w40/it.png" alt="IT">
+          <span class="cc-label" id="wc-italy-label"></span>
+        </button>
+      </div>
+    </div>
+    <button class="btn-primary"   id="btn-wc-next" disabled onclick="buildWineSuggestion()"></button>
+    <button class="btn-secondary" id="btn-wc-back" onclick="goTo('screen-wine-type')"></button>
+  </div>
+
+  <!-- WINE SCREEN C — RESULTADO -->
+  <div class="screen" id="screen-wine-result">
+    <div class="suggest-header">
+      <div class="big-emoji">🍷</div>
+      <h2 id="wine-result-title"></h2>
+    </div>
+    <div class="reasoning-box" id="wine-reasoning-box"></div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="suggest-section-label" id="wine-result-label"></div>
+      <div id="wine-result-items"></div>
+    </div>
+    <div class="card" style="margin-bottom:20px">
+      <div class="petisco-toggle">
+        <div class="petisco-question" id="petisco-question"></div>
+        <div class="petisco-btns">
+          <button class="petisco-btn" id="btn-petisco-yes" onclick="showPetisco(true)"></button>
+          <button class="petisco-btn" id="btn-petisco-no"  onclick="showPetisco(false)"></button>
+        </div>
+        <div class="petisco-result" id="petisco-result-items" style="display:none"></div>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-wine-restart" onclick="resetWineFlow()"></button>
+  </div>
+
+  <!-- SCREEN CHAT — Conversa com Bodinho IA -->
+  <div class="screen" id="screen-chat">
+    <div class="logo-wrap logo-sm" style="margin-bottom:20px">
+      <div class="logo-icon">🐐</div>
+      <div class="logo-name">bodinho<span>sugere</span></div>
+    </div>
+    <div class="chat-log" id="chat-log"></div>
+    <div class="chat-opts" id="chat-opts"></div>
+    <button class="btn-secondary" style="margin-top:12px" onclick="resetChat()" id="btn-chat-back"></button>
+  </div>
+
+</div>
+<script>
+/* ── TRANSLATIONS ─────────────────────────────── */
+const T = {
+  pt: {
+    greetMorning:'Bom dia', greetAfternoon:'Boa tarde', greetEvening:'Boa noite',
+    welcomeHeadline: g => `Opa! ${g} 👋`,
+    welcomeSubDefault: 'Deixa o Bodinho te sugerir o melhor prato e bebida pra esse momento!',
+    welcomeSubCold:  t => `Tá fazendo ${t}°C em Recife! Noite fresquinha pede prato quente. Deixa o Bodinho sugerir! 🔥`,
+    welcomeSubHot:   t => `${t}°C em Recife! Que calor — nada melhor que um chopp gelado e fruto do mar. Bora! 🍺`,
+    welcomeSubNice:  t => `${t}°C, clima perfeito pra um jantar arretado. Bodinho te sugere o melhor combo! 🐐`,
+    welcomeSubRain:  t => `Chovendo e ${t}°C em Recife — dia perfeito pra prato quentinho. Bodinho cuida! ☔`,
+    welcomeSubLate:  'Noite avançada — o Bodinho sabe o que você precisa. Vamos lá! 🌙',
+    btnStart: 'Quero uma sugestão! 🍽️',
+    footerWelcome: 'Sugestões do cardápio atual · Preços em reais (R$).',
+    titleProtein: 'Qual proteína você tá afim hoje? 🤔',
+    hintProtein:  'Conta pro Bodinho o que você tá com vontade de comer',
+    bodeLabel:'Bode', bodeDesc:'Especialidade da casa!',
+    carneLabel:'Carne Vermelha', carneDesc:'Picanha, filé, maminha...',
+    peixeLabel:'Peixe / Frutos do Mar', peixeDesc:'Salmão, camarão, polvo...',
+    frangoLabel:'Frango', frangoDesc:'Grelhado, galeto, parmegiana...',
+    btnNext:'Próximo →', btnBack:'← Voltar',
+    titlePax:'Pra quantos bodes vai comer? 🐐', hintPax:'Assim a gente acerta na porção certa pra você',
+    pax1Label:'Só eu mesmo', pax1Desc:'Prato executivo, porção individual',
+    pax2Label:'Somos dois', pax2Desc:'Um prato cada um',
+    pax3Label:'Viemos em trio', pax3Desc:'Pratos pra dividir e peticar',
+    titleStyle:'Você prefere uma comida mais...? 🌵',
+    hintStyle:'Isso nos ajuda a escolher o prato perfeito pra você',
+    regionalLabel:'Regional', regionalDesc:'Do jeito nordestino, tradicional',
+    intlLabel:'Internacional', intlDesc:'Pratos mais contemporâneos',
+    titleAlcohol:'Vai querer uma bebida? 🍹',
+    hintAlcohol:'Nos diz pra sugerirmos a combinação ideal',
+    yesAlcoholLabel:'Com Álcool', yesAlcoholDesc:'Vinho, chopp, drinks...',
+    noAlcoholLabel:'Sem Álcool', noAlcoholDesc:'Sucos, mocktails, soda...',
+    titleDrinkType:'Que tipo de bebida? 🍺',
+    choppLabel:'Chopp / Cerveja', choppDesc:'Brahma, Spaten, Stella...',
+    drinkLabel:'Drinks Especiais', drinkDesc:'Caipis, coquetéis tropicais...',
+    whiskyLabel:'Whisky', whiskyDesc:'Single malt, bourbon...',
+    cachacaLabel:'Cachaça / Regional', cachacaDesc:'Cangaceiro, caipirinha...',
+    vinhoLabel:'Vinho', vinhoDesc:'Tinto, branco, rosé, espumante...',
+    ginLabel:'Gin / Aperitivo', ginDesc:'Aperol, Negroni, Moscow...',
+    btnSuggest:'Ver sugestão do Bodinho 🐐',
+    resultTitle:'Sugestão do Bodinho!',
+    resultContextDefault:'Feita especialmente pra você',
+    resultContextWeather: t => `Com base no clima de ${t}°C em Recife agora`,
+    labelMainDish:'🍽️ Prato Principal', labelStarter:'🥟 Pra Começar', labelDrink:'🍺 Bebida Sugerida',
+    labelOtherOptions: cat => `🔎 Outras opções de ${cat}`,
+    btnRestart:'Recomeçar sugestão 🔄',
+    footerResult:'Sugestões do cardápio atual · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
+    chatError:'⚠️ Não consegui conectar ao Bodinho. Tenta de novo?', chatRetry:'Tentar novamente',
+    badgeChampion:'⭐ Campeão', badgeNew:'Novo', badgeWine:'Vinho',
+    rProtein:{ bode:'bode', carne:'carne vermelha', peixe:'fruto do mar', frango:'frango' },
+    rDrink:{ chopp:'chopp', drink:'drink especial', whisky:'whisky', cachaca:'cachaça', semAlcool:'sem álcool', vinho:'vinho', gin:'gin/aperitivo' },
+    rBase:(p,d) => `Você pediu <strong>${p}</strong> com <strong>${d}</strong>. `,
+    rRegional:'Fui de prato bem nordestino, do jeito que Dona Maria aprova! 🌵',
+    rIntl:'Selecionei uma opção mais contemporânea, com aquele toque especial. ✨',
+    rNoAlcool:'Escolhi bebidas sem álcool perfeitas pra acompanhar. 🥤',
+    rRain: t => `Chovendo e ${t}°C — escolhi pratos que vão te aquecer a alma! ☔`,
+    rCold: t => `Com <strong>${t}°C</strong> em Recife, selecionei pratos quentinhos e cheios de sabor. 🔥`,
+    rHot:  t => `Com <strong>${t}°C</strong> de calor, fui de opções mais leves e refrescantes. 🌞`,
+    rNice: t => `Clima agradável de <strong>${t}°C</strong> — sugeri os queridinhos da casa. 😋`,
+    rLunch:'Hora do almoço — sugeri nossos campeões de vendas! 🌟',
+    rNight:'À noite no Bode do Nô, tudo fica ainda mais gostoso. Confira! ✨',
+    rDefault:'Selecionei os favoritos da casa pra você. 🐐',
+    rPax:{ 1:'Prato executivo na medida certa pra você. 🐐', 2:'Um prato caprichado pra cada um. 🐐🐐', 3:'Selecionei pratos generosos pra dividir e peticar. 🐐🐐🐐' },
+    wTinto:'Tinto', wBranco:'Branco', wRose:'Rosé', wEspumante:'Espumante', wVerde:'Vinho Verde',
+    wineCta:'Só quer um vinho?', wineCtaDesc:'Bodinho encontra o certo pra você →',
+    wtTitle:'Qual tipo de vinho você prefere? 🍷', wtHint:'A gente filtra os melhores da carta',
+    wtTintoLabel:'Tinto', wtTintoDesc:'Encorpado e marcante',
+    wtBrancoLabel:'Branco', wtBrancoDesc:'Leve, fresco e refrescante',
+    wtRoseLabel:'Rosé', wtRoseDesc:'Frutado e elegante',
+    wtEspumanteLabel:'Espumante', wtEspumanteDesc:'Borbulhas e celebração',
+    wcTitle:'De qual país você prefere? 🌍', wcHint:'Cada terra tem seu estilo único',
+    wcAnyLabel:'Qualquer um', wcItalyLabel:'Itália',
+    wineReasoning:(type,country) => country && country!=='qualquer'
+      ? `Encontrando o melhor vinho <strong>${type}</strong> de <strong>${country}</strong> pra você! 🍷`
+      : `Encontrando o melhor vinho <strong>${type}</strong> da nossa carta pra você! 🍷`,
+    wineResultTitle:'Sugestão de Vinho! 🍷', wineResultLabel:'🍷 Nossa sugestão:',
+    petiscoQuestion:'Quer ver um petisco pra acompanhar? 🥗',
+    petiscoYes:'✅ Sim, me sugere!', petiscoNo:'🍷 Só o vinho mesmo',
+    petiscoLabel:'🥟 Petisco Sugerido',
+    btnWineRestart:'Recomeçar 🔄',
+  },
+  en: {
+    greetMorning:'Good morning', greetAfternoon:'Good afternoon', greetEvening:'Good evening',
+    welcomeHeadline: g => `Hey! ${g} 👋`,
+    welcomeSubDefault: 'Let Bodinho suggest the best dish and drink for this moment!',
+    welcomeSubCold:  t => `It's ${t}°C in Recife! A cool night calls for a warm dish. Let Bodinho help! 🔥`,
+    welcomeSubHot:   t => `${t}°C in Recife! Hot outside — nothing better than a cold beer and fresh seafood. Let's go! 🍺`,
+    welcomeSubNice:  t => `${t}°C, perfect weather for a great dinner. Bodinho suggests the best combo! 🐐`,
+    welcomeSubRain:  t => `Raining and ${t}°C — perfect day for a warm hearty dish. Bodinho's got you! ☔`,
+    welcomeSubLate:  "Late night — Bodinho knows what you need. Let's go! 🌙",
+    btnStart:'Get a suggestion! 🍽️',
+    footerWelcome:'Current menu suggestions · Prices in BRL (R$).',
+    titleProtein:'What protein are you in the mood for? 🤔',
+    hintProtein:'Tell Bodinho what you feel like eating',
+    bodeLabel:'Goat', bodeDesc:'House specialty!',
+    carneLabel:'Red Meat', carneDesc:'Picanha, filet, sirloin...',
+    peixeLabel:'Fish / Seafood', peixeDesc:'Salmon, shrimp, octopus...',
+    frangoLabel:'Chicken', frangoDesc:'Grilled, roasted, parmigiana...',
+    btnNext:'Next →', btnBack:'← Back',
+    titlePax:'How many are eating today? 🐐', hintPax:'This helps us suggest the right portion for you',
+    pax1Label:'Just me', pax1Desc:'Executive plate, single portion',
+    pax2Label:"We're two", pax2Desc:'One dish each',
+    pax3Label:'We\'re three', pax3Desc:'Dishes to share and graze',
+    titleStyle:'Do you prefer your food...? 🌵',
+    hintStyle:'This helps us pick the perfect dish for you',
+    regionalLabel:'Regional', regionalDesc:'Traditional Northeastern style',
+    intlLabel:'International', intlDesc:'More contemporary dishes',
+    titleAlcohol:'Would you like a drink? 🍹',
+    hintAlcohol:'Tell us so we can suggest the ideal pairing',
+    yesAlcoholLabel:'With Alcohol', yesAlcoholDesc:'Wine, beer, cocktails...',
+    noAlcoholLabel:'No Alcohol', noAlcoholDesc:'Juices, mocktails, soda...',
+    titleDrinkType:'What kind of drink? 🍺',
+    choppLabel:'Draft / Beer', choppDesc:'Brahma, Spaten, Stella...',
+    drinkLabel:'Special Cocktails', drinkDesc:'Caipis, tropical cocktails...',
+    whiskyLabel:'Whisky', whiskyDesc:'Single malt, bourbon...',
+    cachacaLabel:'Cachaça / Local', cachacaDesc:'Cangaceiro, caipirinha...',
+    vinhoLabel:'Wine', vinhoDesc:'Red, white, rosé, sparkling...',
+    ginLabel:'Gin / Aperitif', ginDesc:'Aperol, Negroni, Moscow...',
+    btnSuggest:"See Bodinho's suggestion 🐐",
+    resultTitle:"Bodinho's Suggestion!",
+    resultContextDefault:'Made especially for you',
+    resultContextWeather: t => `Based on ${t}°C weather in Recife right now`,
+    labelMainDish:'🍽️ Main Course', labelStarter:'🥟 Starters', labelDrink:'🍺 Suggested Drink',
+    labelOtherOptions: cat => `🔎 Other ${cat} options`,
+    btnRestart:'Start over 🔄',
+    footerResult:'Current menu suggestions · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
+    chatError:'⚠️ Could not reach Bodinho. Try again?', chatRetry:'Try again',
+    badgeChampion:'⭐ Best Seller', badgeNew:'New', badgeWine:'Wine',
+    rProtein:{ bode:'goat', carne:'red meat', peixe:'seafood', frango:'chicken' },
+    rDrink:{ chopp:'draft beer', drink:'cocktail', whisky:'whisky', cachaca:'cachaça', semAlcool:'non-alcoholic', vinho:'wine', gin:'gin/aperitif' },
+    rBase:(p,d) => `You chose <strong>${p}</strong> with <strong>${d}</strong>. `,
+    rRegional:'I picked a traditional Northeastern dish, Dona Maria approved! 🌵',
+    rIntl:'I picked a more contemporary option with a special touch. ✨',
+    rNoAlcool:'I picked perfect non-alcoholic drinks to pair with your meal. 🥤',
+    rRain: t => `Raining and ${t}°C — I picked warming, comforting dishes! ☔`,
+    rCold: t => `At <strong>${t}°C</strong> in Recife, I picked hot, flavor-packed dishes. 🔥`,
+    rHot:  t => `With <strong>${t}°C</strong> outside, I went for lighter and refreshing options. 🌞`,
+    rNice: t => `Lovely <strong>${t}°C</strong> weather — I picked our house favorites. 😋`,
+    rLunch:'Lunchtime — I picked our best-sellers! 🌟',
+    rNight:'Evening at Bode do Nô — everything tastes even better. Enjoy! ✨',
+    rDefault:"I picked the house favorites just for you. 🐐",
+    rPax:{ 1:'An executive plate sized just for you. 🐐', 2:'A full dish for each of you. 🐐🐐', 3:'I picked generous sharing plates for the whole crew. 🐐🐐🐐' },
+    wTinto:'Red', wBranco:'White', wRose:'Rosé', wEspumante:'Sparkling', wVerde:'Vinho Verde',
+    wineCta:'Just wine tonight?', wineCtaDesc:'Bodinho will find the right one for you →',
+    wtTitle:'What type of wine do you prefer? 🍷', wtHint:"We'll filter the best from the wine list",
+    wtTintoLabel:'Red', wtTintoDesc:'Full-bodied and bold',
+    wtBrancoLabel:'White', wtBrancoDesc:'Light, fresh and crisp',
+    wtRoseLabel:'Rosé', wtRoseDesc:'Fruity and elegant',
+    wtEspumanteLabel:'Sparkling', wtEspumanteDesc:'Bubbles and celebration',
+    wcTitle:'From which country? 🌍', wcHint:'Each land has its unique style',
+    wcAnyLabel:'Any country', wcItalyLabel:'Italy',
+    wineReasoning:(type,country) => country && country!=='qualquer'
+      ? `Finding the best <strong>${type}</strong> wine from <strong>${country}</strong> for you! 🍷`
+      : `Finding the best <strong>${type}</strong> wine from our list for you! 🍷`,
+    wineResultTitle:'Wine Suggestion! 🍷', wineResultLabel:'🍷 Our suggestion:',
+    petiscoQuestion:'Want a snack to pair with it? 🥗',
+    petiscoYes:'✅ Yes, suggest one!', petiscoNo:'🍷 Wine only, thanks',
+    petiscoLabel:'🥟 Suggested Snack',
+    btnWineRestart:'Start over 🔄',
+  },
+  es: {
+    greetMorning:'Buenos días', greetAfternoon:'Buenas tardes', greetEvening:'Buenas noches',
+    welcomeHeadline: g => `¡Hola! ${g} 👋`,
+    welcomeSubDefault: '¡Deja que Bodinho te sugiera el mejor plato y bebida para este momento!',
+    welcomeSubCold:  t => `¡Hace ${t}°C en Recife! Noche fresca pide plato caliente. ¡Bodinho te ayuda! 🔥`,
+    welcomeSubHot:   t => `¡${t}°C en Recife! Mucho calor — nada mejor que cerveza helada y mariscos. ¡Vamos! 🍺`,
+    welcomeSubNice:  t => `${t}°C, clima perfecto para una cena increíble. ¡Bodinho sugiere el mejor combo! 🐐`,
+    welcomeSubRain:  t => `Lluvia y ${t}°C — día perfecto para un plato calentito. ¡Bodinho cuida de ti! ☔`,
+    welcomeSubLate:  '¡Noche avanzada — Bodinho sabe lo que necesitas. ¡Vamos! 🌙',
+    btnStart:'¡Quiero una sugerencia! 🍽️',
+    footerWelcome:'Sugerencias del menú actual · Precios en reales (R$).',
+    titleProtein:'¿Qué proteína te apetece hoy? 🤔',
+    hintProtein:'Cuéntale a Bodinho qué te provoca comer',
+    bodeLabel:'Cabro / Bode', bodeDesc:'¡Especialidad de la casa!',
+    carneLabel:'Carne Roja', carneDesc:'Picaña, filete, cuadril...',
+    peixeLabel:'Pescado / Mariscos', peixeDesc:'Salmón, camarón, pulpo...',
+    frangoLabel:'Pollo', frangoDesc:'A la parrilla, al horno...',
+    btnNext:'Siguiente →', btnBack:'← Volver',
+    titlePax:'¿Para cuántos van a comer hoy? 🐐', hintPax:'Así acertamos con la porción correcta para ti',
+    pax1Label:'Solo yo', pax1Desc:'Plato ejecutivo, porción individual',
+    pax2Label:'Somos dos', pax2Desc:'Un plato cada uno',
+    pax3Label:'Somos tres', pax3Desc:'Platos para compartir y picotear',
+    titleStyle:'¿Prefieres tu comida más...? 🌵',
+    hintStyle:'Esto nos ayuda a elegir el plato perfecto para ti',
+    regionalLabel:'Regional', regionalDesc:'Estilo tradicional norteño',
+    intlLabel:'Internacional', intlDesc:'Platos más contemporáneos',
+    titleAlcohol:'¿Quieres algo de beber? 🍹',
+    hintAlcohol:'Dinos para sugerirte el maridaje ideal',
+    yesAlcoholLabel:'Con Alcohol', yesAlcoholDesc:'Vino, cerveza, cócteles...',
+    noAlcoholLabel:'Sin Alcohol', noAlcoolDesc:'Jugos, mocktails, soda...',
+    titleDrinkType:'¿Qué tipo de bebida? 🍺',
+    choppLabel:'Cerveza de Barril', choppDesc:'Brahma, Spaten, Stella...',
+    drinkLabel:'Cócteles Especiales', drinkDesc:'Caipis, cócteles tropicales...',
+    whiskyLabel:'Whisky', whiskyDesc:'Single malt, bourbon...',
+    cachacaLabel:'Cachaça / Regional', cachacaDesc:'Cangaceiro, caipirinha...',
+    vinhoLabel:'Vino', vinhoDesc:'Tinto, blanco, rosé, espumante...',
+    ginLabel:'Gin / Aperitivo', ginDesc:'Aperol, Negroni, Moscow...',
+    btnSuggest:'Ver sugerencia de Bodinho 🐐',
+    resultTitle:'¡Sugerencia de Bodinho!',
+    resultContextDefault:'Hecha especialmente para ti',
+    resultContextWeather: t => `Basado en el clima de ${t}°C en Recife ahora`,
+    labelMainDish:'🍽️ Plato Principal', labelStarter:'🥟 Para Empezar', labelDrink:'🍺 Bebida Sugerida',
+    labelOtherOptions: cat => `🔎 Otras opciones de ${cat}`,
+    btnRestart:'Reiniciar sugerencia 🔄',
+    footerResult:'Sugerencias del menú actual · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
+    chatError:'⚠️ No pude conectar con Bodinho. ¿Intentas de nuevo?', chatRetry:'Intentar de nuevo',
+    badgeChampion:'⭐ Más Vendido', badgeNew:'Nuevo', badgeWine:'Vino',
+    rProtein:{ bode:'cabro', carne:'carne roja', peixe:'mariscos', frango:'pollo' },
+    rDrink:{ chopp:'cerveza', drink:'cóctel especial', whisky:'whisky', cachaca:'cachaça', semAlcool:'sin alcohol', vinho:'vino', gin:'gin/aperitivo' },
+    rBase:(p,d) => `Elegiste <strong>${p}</strong> con <strong>${d}</strong>. `,
+    rRegional:'¡Elegí un plato bien norteño, con la aprobación de Dona Maria! 🌵',
+    rIntl:'Elegí una opción más contemporánea con un toque especial. ✨',
+    rNoAlcool:'Elegí bebidas sin alcohol perfectas para acompañar. 🥤',
+    rRain: t => `Lluvia y ${t}°C — elegí platos que te calentarán el alma! ☔`,
+    rCold: t => `Con <strong>${t}°C</strong> en Recife, elegí platos calientes y llenos de sabor. 🔥`,
+    rHot:  t => `Con <strong>${t}°C</strong> de calor, fui por opciones ligeras y refrescantes. 🌞`,
+    rNice: t => `Clima agradable de <strong>${t}°C</strong> — elegí los favoritos de la casa. 😋`,
+    rLunch:'¡Hora del almuerzo — elegí nuestros más vendidos! 🌟',
+    rNight:'Por la noche en Bode do Nô, todo sabe mejor. ¡Disfruta! ✨',
+    rDefault:'Elegí los favoritos de la casa para ti. 🐐',
+    rPax:{ 1:'Un plato ejecutivo justo a tu medida. 🐐', 2:'Un plato generoso para cada uno. 🐐🐐', 3:'Elegí platos generosos para compartir y picotear. 🐐🐐🐐' },
+    wTinto:'Tinto', wBranco:'Blanco', wRose:'Rosé', wEspumante:'Espumante', wVerde:'Vinho Verde',
+    wineCta:'¿Solo vino esta noche?', wineCtaDesc:'Bodinho encuentra el ideal para ti →',
+    wtTitle:'¿Qué tipo de vino prefieres? 🍷', wtHint:'Filtramos los mejores de la carta',
+    wtTintoLabel:'Tinto', wtTintoDesc:'Con cuerpo y marcante',
+    wtBrancoLabel:'Blanco', wtBrancoDesc:'Ligero, fresco y refrescante',
+    wtRoseLabel:'Rosé', wtRoseDesc:'Afrutado y elegante',
+    wtEspumanteLabel:'Espumante', wtEspumanteDesc:'Burbujas y celebración',
+    wcTitle:'¿De qué país prefieres? 🌍', wcHint:'Cada tierra tiene su estilo único',
+    wcAnyLabel:'Cualquier país', wcItalyLabel:'Italia',
+    wineReasoning:(type,country) => country && country!=='qualquer'
+      ? `¡Encontrando el mejor vino <strong>${type}</strong> de <strong>${country}</strong> para ti! 🍷`
+      : `¡Encontrando el mejor vino <strong>${type}</strong> de nuestra carta para ti! 🍷`,
+    wineResultTitle:'¡Sugerencia de Vino! 🍷', wineResultLabel:'🍷 Nuestra sugerencia:',
+    petiscoQuestion:'¿Quieres ver un aperitivo para acompañar? 🥗',
+    petiscoYes:'✅ ¡Sí, sugiéreme uno!', petiscoNo:'🍷 Solo el vino, gracias',
+    petiscoLabel:'🥟 Aperitivo Sugerido',
+    btnWineRestart:'Volver a empezar 🔄',
+  },
+};
+
+/* ── STATE ────────────────────────────────────── */
+const state = {
+  lang: 'pt', protein: null, pax: null, isRegional: null, hasAlcohol: null, drink: null,
+  temp: null, hour: new Date().getHours(), isRaining: false,
+};
+
+/* ── STORIES ──────────────────────────────────── */
+const STORIES = {
+  bode_sertao: {
+    pt: "O bode chegou ao Nordeste com os colonizadores portugueses no século XVI e se adaptou ao semiárido. Resistente à seca, tornou-se símbolo da <strong>resistência nordestina</strong>. Pernambuco é referência nacional em gastronomia de bode.",
+    en: "Goats arrived in Northeast Brazil with Portuguese colonizers in the 16th century and thrived in the semi-arid climate. The goat became a symbol of <strong>Northeastern resilience</strong>. Pernambuco is a national reference for goat cuisine.",
+    es: "El cabro llegó al Nordeste con los colonizadores portugueses en el siglo XVI. Resistente a la sequía, se convirtió en símbolo de la <strong>resistencia norteña</strong>. Pernambuco es referencia nacional en gastronomía de cabro."
+  },
+  bode_guisado: {
+    pt: "O guisado nordestino combina técnica portuguesa com temperos da terra: coentro, cominho, alho e a força do bode do sertão. Um prato que <strong>aquece o corpo e conta histórias de família</strong> há mais de 400 anos.",
+    en: "Northeastern guisado blends Portuguese technique with local spices: coriander, cumin, garlic and the strength of the sertão goat. A dish that <strong>warms the soul and tells family stories</strong> for over 400 years.",
+    es: "El guisado norteño combina técnica portuguesa con especias locales: cilantro, comino y ajo. Un plato que <strong>calienta el cuerpo y cuenta historias de familia</strong> por más de 400 años."
+  },
+  carne_de_sol: {
+    pt: "Antes da refrigeração, o nordestino criou a <strong>carne de sol</strong>: sal grosso e o vento seco do semiárido preservavam e intensificavam o sabor. Menos salgada que a carne-seca, mais úmida e aromática — hoje um dos pratos mais exportados do Brasil.",
+    en: "Before refrigeration, Northeasterners invented <strong>carne de sol</strong>: coarse salt and dry wind preserved and intensified the flavor. Less salty than jerked beef, juicier and more aromatic — today one of Brazil's most exported dishes.",
+    es: "Antes de la refrigeración, los norteños inventaron la <strong>carne de sol</strong>: sal gruesa y el viento seco preservaban e intensificaban el sabor. Menos salada, más jugosa — hoy uno de los platos más exportados de Brasil."
+  },
+  picanha: {
+    pt: "Ignorada até os anos 60, a picanha foi popularizada pelas churrascarias paulistas e virou o <strong>símbolo do churrasco nacional</strong>. A versão argentina traz a suculência dos pampas direto à nossa mesa nordestina.",
+    en: "Overlooked until the 1960s, picanha was popularized by São Paulo steakhouses and became the <strong>symbol of Brazilian BBQ</strong>. The Argentine version brings the succulence of the pampas to our Northeastern table.",
+    es: "Ignorada hasta los años 60, la picaña fue popularizada por las churrasquerías paulistas y se convirtió en el <strong>símbolo del asado brasileño</strong>. La versión argentina trae la suculencia de los pampas a nuestra mesa."
+  },
+  baiao_de_dois: {
+    pt: "Nasceu da <strong>sabedoria sertaneja da escassez criativa</strong>: arroz e feijão juntos numa panela com queijo coalho e nata. O nome vem de uma dança popular nordestina. O que era comida de sobrevivência virou um dos pratos mais celebrados do país.",
+    en: "Born from <strong>sertanejo wisdom under scarcity</strong>: rice and beans cooked together with coalho cheese and cream. The name comes from a Northeastern dance. What was survival food became one of Brazil's most celebrated dishes.",
+    es: "Nació de la <strong>sabiduría norteña ante la escasez</strong>: arroz y frijoles juntos con queso coalho y crema. El nombre viene de un baile popular norteño. La comida de supervivencia se convirtió en uno de los platos más celebrados."
+  },
+  moqueca: {
+    pt: "A moqueca carrega a <strong>alma afro-brasileira</strong>. O azeite de dendê foi trazido pelos africanos escravizados e encontrou os frutos do mar do litoral nordestino. Leite de coco, pimenta e coentro completam uma harmonia que o mundo reconhece como Brasil.",
+    en: "Moqueca carries the <strong>soul of Afro-Brazilian culture</strong>. Palm oil was brought by enslaved Africans and met the seafood of the Northeastern coast. Coconut milk, pepper and coriander complete a harmony the world recognizes as Brazilian.",
+    es: "La moqueca lleva el <strong>alma afrobrasileña</strong>. El aceite de palma fue traído por africanos esclavizados y se encontró con los mariscos de la costa norteña. Leche de coco, pimiento y cilantro completan una armonía que el mundo reconoce como brasileña."
+  },
+  peixada: {
+    pt: "A peixada é a <strong>alma do litoral pernambucano</strong>. Nas vilas de pescadores do Recife, o peixe do dia era cozido com legumes e azeite. O pirão — caldo grosso com farinha de mandioca — é o toque que a separa de qualquer outra do mundo.",
+    en: "Peixada is the <strong>soul of the Pernambuco coast</strong>. In Recife's fishing villages, the daily catch was cooked with vegetables and olive oil. The pirão — thick broth with manioc flour — is the touch that sets it apart from any other in the world.",
+    es: "La peixada es el <strong>alma del litoral pernambucano</strong>. En las aldeas pesqueras de Recife, el pescado del día se cocinaba con verduras y aceite. El pirão — caldo espeso con harina de mandioca — es el toque que la distingue de cualquier otra."
+  },
+  camarao: {
+    pt: "O camarão é <strong>rei nos rios e no litoral pernambucano</strong>. Recife tem uma das maiores indústrias de camarão do país. Combinado com dendê, coco, charque e macaxeira — cria sabores que não existem em mais nenhum lugar do planeta.",
+    en: "Shrimp is <strong>king in Pernambuco's rivers and coast</strong>. Recife hosts one of the country's largest shrimp industries. Combined with palm oil, coconut, charque and cassava — it creates flavors that exist nowhere else on the planet.",
+    es: "El camarón es <strong>rey en los ríos y el litoral pernambucano</strong>. Recife tiene una de las mayores industrias de camarón del país. Combinado con dendê, coco, charque y yuca — crea sabores únicos en el planeta."
+  },
+  salmao: {
+    pt: "O salmão chegou às mesas nordestinas pela <strong>ousadia da cozinha contemporânea</strong>. O chef nordestino abraçou o peixe nórdico e o vestiu com maracujá, gengibre e a criatividade do Recife — criando algo inteiramente novo e irresistível.",
+    en: "Salmon reached Northeastern tables through the <strong>boldness of contemporary cuisine</strong>. Northeastern chefs embraced the Nordic fish and dressed it with passion fruit, ginger and Recife's creativity — creating something entirely new and irresistible.",
+    es: "El salmón llegó a las mesas norteñas gracias a la <strong>audacia de la cocina contemporánea</strong>. Los chefs norteños vistieron el pescado nórdico con maracuyá, jengibre y creatividad recifense — creando algo nuevo e irresistible."
+  },
+  galeto: {
+    pt: "Herança da imigração italiana que ganhou o coração nordestino. Na chapa quente com queijo coalho — tempero 100% pernambucano — o galeto virou uma <strong>fusão que só o Nordeste criativo poderia inventar</strong>.",
+    en: "A legacy of Italian immigration that won Northeastern hearts. On the hot griddle with coalho cheese — 100% Pernambucan flavor — galeto became a <strong>fusion only the creative Northeast could invent</strong>.",
+    es: "Herencia de la inmigración italiana que conquistó el corazón norteño. A la plancha con queso coalho — sabor 100% pernambucano — el galeto se convirtió en una <strong>fusión que solo el Nordeste creativo podría inventar</strong>."
+  },
+  parmegiana: {
+    pt: "A parmegiana chegou ao Brasil com os imigrantes italianos no século XX. No Nordeste, ganhou mussarela generosa e molho de tomate caseiro. Um prato italiano que o Brasil <strong>abraçou e fez totalmente seu</strong>.",
+    en: "Parmigiana arrived in Brazil with Italian immigrants in the 20th century. In the Northeast, it gained generous mozzarella and homemade tomato sauce. An Italian dish that Brazil <strong>embraced and made entirely its own</strong>.",
+    es: "La parmigiana llegó a Brasil con los inmigrantes italianos en el siglo XX. En el Nordeste, ganó abundante mozzarella y salsa de tomate casera. Un plato italiano que Brasil <strong>abrazó e hizo completamente suyo</strong>."
+  },
+};
+
+/* ── MENU DATA ────────────────────────────────── */
+const MENU = {
+  bode: [
+    { name:'Picanha de Bode',   price:154, icon:'🐐', storyId:'bode_sertao',  regional:false, desc:{pt:'Na chapa com queijo coalho e cebolas douradas. Feijão, arroz, macaxeira frita.',en:'On the griddle with coalho cheese and golden onions. Beans, rice, fried cassava.',es:'A la plancha con queso coalho y cebollas doradas. Frijoles, arroz, yuca frita.'}, champion:true },
+    { name:'Bode na Nata',      price:69,  icon:'🐐', storyId:'bode_sertao',  regional:false, desc:{pt:'Fatias na brasa cobertas com creme de nata da casa. Executivo.',en:'Grilled slices topped with house cream sauce. Executive.',es:'Rodajas a la brasa cubiertas con crema de la casa. Ejecutivo.'}, champion:true },
+    { name:'Chã de Bode',       price:154, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Na chapa com queijo coalho e cebolas douradas.',en:'On the griddle with coalho cheese and golden onions.',es:'A la plancha con queso coalho y cebollas doradas.'} },
+    { name:'Bode Guisado',      price:119, icon:'🐐', storyId:'bode_guisado', regional:true,  desc:{pt:'Ao molho da casa. Arroz, feijão, macaxeira cozida.',en:'In house sauce. Rice, beans, boiled cassava.',es:'En salsa de la casa. Arroz, frijoles, yuca cocida.'} },
+    { name:'Bode Assado',       price:64,  icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Na brasa com queijo coalho. Feijão, arroz, macaxeira. Executivo.',en:'Grilled with coalho cheese. Beans, rice, cassava. Executive.',es:'A la brasa con queso coalho. Frijoles, arroz, yuca. Ejecutivo.'} },
+    { name:'Mistão de Bode',    price:199, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'4 cortes: chã, costela, paletão e bode assado.',en:'4 cuts: chã, rib, shoulder and roast goat.',es:'4 cortes: chã, costilla, paleta y cabro asado.'} },
+    { name:'Costela de Bode',   price:119, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Na chapa com queijo coalho e cebolas douradas.',en:'On the griddle with coalho cheese and golden onions.',es:'A la plancha con queso coalho y cebollas doradas.'} },
+  ],
+  carne: [
+    { name:'Picanha Argentina',           price:79,  icon:'🥩', storyId:'picanha',      regional:false, desc:{pt:'Na brasa com queijo coalho e cebolas douradas. Executivo.',en:'Grilled with coalho cheese and golden onions. Executive.',es:'A la brasa con queso coalho y cebollas doradas. Ejecutivo.'}, champion:true },
+    { name:'Carne de Sol na Nata',        price:69,  icon:'🥩', storyId:'carne_de_sol', regional:true,  desc:{pt:'Na brasa coberta por creme de nata da casa. Executivo.',en:'Grilled and topped with house cream sauce. Executive.',es:'A la brasa cubierta con crema de la casa. Ejecutivo.'}, champion:true },
+    { name:'Picanha Importada',           price:239, icon:'🥩', storyId:'picanha',      regional:false, desc:{pt:'Especial na chapa com queijo coalho.',en:'Special cut on the griddle with coalho cheese.',es:'Corte especial a la plancha con queso coalho.'} },
+    { name:'Filé Mignon na Brasa',        price:169, icon:'🥩', storyId:'picanha',      regional:false, desc:{pt:'Curado na chapa com queijo coalho.',en:'Cured and grilled with coalho cheese.',es:'Curado a la plancha con queso coalho.'} },
+    { name:'Filé Mignon ao Molho Madeira',price:199, icon:'🥩', storyId:'picanha',      regional:false, desc:{pt:'Com arroz de ervilha e batatas sauté.',en:'With pea rice and sautéed potatoes.',es:'Con arroz de arvejas y papas salteadas.'}, isnew:true },
+    { name:'Carne de Sol Matuta',         price:145, icon:'🥩', storyId:'carne_de_sol', regional:true,  desc:{pt:'Suculenta na chapa com queijo coalho.',en:'Succulent on the griddle with coalho cheese.',es:'Suculenta a la plancha con queso coalho.'} },
+    { name:'Baião de Dois Amostrado',     price:169, icon:'🥩', storyId:'baiao_de_dois',regional:true,  desc:{pt:'Carne de sol em cubos com arroz, feijão, queijo coalho e nata.',en:'Cured beef cubes with rice, beans, coalho cheese and cream.',es:'Carne curada en cubos con arroz, frijoles, queso coalho y crema.'} },
+    { name:'Maminha Matuta',              price:155, icon:'🥩', storyId:'picanha',      regional:true,  desc:{pt:'Na chapa com queijo coalho e cebolas douradas.',en:'On the griddle with coalho cheese and golden onions.',es:'A la plancha con queso coalho y cebollas doradas.'} },
+  ],
+  peixe: [
+    { name:'Filé de Salmão ao Maracujá', price:199, icon:'🐟', storyId:'salmao',  regional:false, desc:{pt:'Puxado no azeite ao molho maracujá. Arroz brócolis e batata rústica.',en:'Sautéed in olive oil with passion fruit sauce. Broccoli rice and rustic potatoes.',es:'Salteado en aceite de oliva con salsa de maracuyá. Arroz con brócoli y papas rústicas.'} },
+    { name:'Moqueca de Camarão',         price:199, icon:'🦐', storyId:'moqueca', regional:true,  desc:{pt:'No azeite de dendê com pimentões ao molho de coco. Arroz e pirão.',en:'In palm oil with peppers and coconut sauce. Rice and pirão.',es:'En aceite de palma con pimientos y salsa de coco. Arroz y pirão.'} },
+    { name:'Camarão Internacional',      price:199, icon:'🦐', storyId:'camarao', regional:false, desc:{pt:'Molho cremoso gratinado, arroz branco e batata palha.',en:'Creamy gratinéed sauce, white rice and shoestring potatoes.',es:'Salsa cremosa gratinada, arroz blanco y papas paja.'}, isnew:true },
+    { name:'Pescaria do Matuto',         price:299, icon:'🦞', storyId:'peixada', regional:false, desc:{pt:'Salmão, polvo, camarão e lagosta ao molho cremoso.',en:'Salmon, octopus, shrimp and lobster in creamy sauce.',es:'Salmón, pulpo, camarón y langosta en salsa cremosa.'}, isnew:true },
+    { name:'Peixada Mista',             price:194, icon:'🐟', storyId:'peixada', regional:true,  desc:{pt:'Peixe + camarão no azeite, legumes e molho de tomate. Arroz e pirão.',en:'Fish + shrimp in olive oil, veggies and tomato sauce. Rice and pirão.',es:'Pescado + camarón en aceite, vegetales y salsa de tomate. Arroz y pirão.'} },
+    { name:'Salmão na Brasa',           price:69,  icon:'🐟', storyId:'salmao',  regional:false, desc:{pt:'Filé de salmão com legumes e arroz de brócolis. Executivo.',en:'Salmon fillet with vegetables and broccoli rice. Executive.',es:'Filete de salmón con vegetales y arroz con brócoli. Ejecutivo.'} },
+    { name:'Moqueca Mista',             price:69,  icon:'🦐', storyId:'moqueca', regional:true,  desc:{pt:'Peixe + camarão no azeite de dendê ao molho de coco. Executivo.',en:'Fish + shrimp in palm oil and coconut sauce. Executive.',es:'Pescado + camarón en aceite de palma con salsa de coco. Ejecutivo.'}, champion:true },
+    { name:'Tilápia e Camarão à Delícia',price:69, icon:'🐟', storyId:'camarao', regional:true,  desc:{pt:'Tilápia com banana, camarão e molho branco cremoso. Executivo.',en:'Tilapia with banana, shrimp and creamy white sauce. Executive.',es:'Tilapia con plátano, camarón y salsa blanca cremosa. Ejecutivo.'}, champion:true },
+  ],
+  frango: [
+    { name:'Frango Desossado com Parmesão',price:149,icon:'🍗', storyId:'parmegiana',regional:false,desc:{pt:'Com crosta de parmesão, feijão, arroz, farofa de ovos e batata frita.',en:'Parmesan crust, beans, rice, egg farofa and fries.',es:'Costra de parmesano, frijoles, arroz, farofa de huevo y papas fritas.'} },
+    { name:'Galeto na Manteiga',           price:129,icon:'🍗', storyId:'galeto',    regional:true, desc:{pt:'Galeto completo na chapa com queijo coalho.',en:'Full chicken on the griddle with coalho cheese.',es:'Pollo entero a la plancha con queso coalho.'} },
+    { name:'Filé à Parmegiana de Frango',  price:129,icon:'🍗', storyId:'parmegiana',regional:false,desc:{pt:'Empanado com mussarela e molho de tomate.',en:'Breaded with mozzarella and tomato sauce.',es:'Empanizado con mozzarella y salsa de tomate.'} },
+    { name:'Filé de Frango Grelhado',      price:54, icon:'🍗', storyId:'galeto',    regional:false,desc:{pt:'Feijão, arroz, macaxeira frita e vinagrete. Executivo.',en:'Beans, rice, fried cassava and vinaigrette. Executive.',es:'Frijoles, arroz, yuca frita y vinagreta. Ejecutivo.'} },
+    { name:'Parmegiana de Frango',         price:49, icon:'🍗', storyId:'parmegiana',regional:false,desc:{pt:'Empanado com mussarela e molho de tomate. Executivo.',en:'Breaded with mozzarella and tomato sauce. Executive.',es:'Empanizado con mozzarella y salsa de tomate. Ejecutivo.'} },
+  ],
+};
+
+const STARTERS = {
+  bode:  [ { name:'Espetinho de Bode',            price:34, icon:'🍢', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} }, { name:'Panelinha de Bode Guisado', price:49, icon:'🍲', desc:{pt:'Com pão artesanal.',en:'With bread.',es:'Con pan artesanal.'} } ],
+  carne: [ { name:'Espetinho de Carne de Sol',     price:33, icon:'🍢', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} }, { name:'Filezinho Mignon com Parmesão', price:49, icon:'🍖', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} } ],
+  peixe: [ { name:'Espetinho de Camarão',          price:33, icon:'🍢', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} }, { name:'Casquinho de Caranguejo',       price:34, icon:'🦀', champion:true, desc:{pt:'Com farofa crocante.',en:'With crispy farofa.',es:'Con farofa crocante.'} } ],
+  frango:[ { name:'Linguiça de Frango',            price:14, icon:'🌭',               desc:{pt:'Na brasa.',en:'Grilled.',es:'A la brasa.'} }, { name:'Filezinho Mignon com Parmesão',  price:49, icon:'🍖', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} } ],
+};
+
+const DRINKS = {
+  chopp:   [ { name:'Chopp Brahma', price:19, icon:'🍺', desc:{pt:'300ml gelado.',en:'300ml ice cold.',es:'300ml helado.'} }, { name:'Chopp Spaten', price:19, icon:'🍺', desc:{pt:'Encorpado e refrescante.',en:'Full-bodied and fresh.',es:'Con cuerpo y refrescante.'} }, { name:'Cerveja Original 600ml', price:21, icon:'🍻', desc:{pt:'Bem gelada.',en:'Ice cold.',es:'Bien helada.'} } ],
+  drink:   [ { name:'Cangaceiro', price:29, icon:'🌿', desc:{pt:'Cachaça, caju, hortelã, mel de rapadura e água de coco.',en:'Cachaça, cashew, mint, rapadura honey and coconut water.',es:'Cachaça, anacardo, menta, miel de rapadura y agua de coco.'} }, { name:'Coqueiral do Nô', price:32, icon:'🥥', desc:{pt:'Rum, coco, mel de engenho, abacaxi, gengibre.',en:'Rum, coconut, sugarcane honey, pineapple, ginger.',es:'Ron, coco, miel de caña, piña, jengibre.'} }, { name:'Mango Beach', price:34, icon:'🥭', desc:{pt:'Vodka, manga, maracujá e xarope de maçã.',en:'Vodka, mango, passion fruit and apple syrup.',es:'Vodka, mango, maracuyá y jarabe de manzana.'}, isnew:true }, { name:'Cajueiro', price:33, icon:'🫐', desc:{pt:'Tequila, caju, gengibre, coco e limão.',en:'Tequila, cashew, ginger, coconut and lime.',es:'Tequila, anacardo, jengibre, coco y limón.'}, isnew:true } ],
+  whisky:  [ { name:'Johnnie Walker Black Label', price:30, icon:'🥃', desc:{pt:'Premium scotch.',en:'Premium scotch.',es:'Scotch premium.'} }, { name:"Jack Daniel's", price:27, icon:'🥃', desc:{pt:'Tennessee whiskey.',en:'Tennessee whiskey.',es:'Tennessee whiskey.'} }, { name:"Buchanan's 12 Anos", price:30, icon:'🥃', desc:{pt:'Suave e elegante.',en:'Smooth and elegant.',es:'Suave y elegante.'} } ],
+  cachaca: [ { name:'Cangaceiro', price:29, icon:'🌿', desc:{pt:'Cachaça, caju, hortelã, mel de rapadura e água de coco.',en:'Cachaça, cashew, mint, rapadura honey and coconut water.',es:'Cachaça, anacardo, menta, miel de rapadura y agua de coco.'} }, { name:'Xixi de Bode', price:14, icon:'🐐', desc:{pt:'A cachaça da casa!',en:'The house cachaça!',es:'¡La cachaça de la casa!'} }, { name:'Sagatiba Cristal', price:15, icon:'🥃', desc:{pt:'Pura e suave.',en:'Pure and smooth.',es:'Pura y suave.'} } ],
+  semAlcool:[ { name:'Bodrink', price:29, icon:'🥤', desc:{pt:'Tangerina, maracujá, morango, grenadine e água de coco.',en:'Tangerine, passion fruit, strawberry, grenadine & coconut water.',es:'Mandarina, maracuyá, fresa, granadina y agua de coco.'} }, { name:'Enganarosca', price:29, icon:'🍓', desc:{pt:'Frutas da época e água de coco.',en:'Seasonal fruits and coconut water.',es:'Frutas de temporada y agua de coco.'} }, { name:'Suco Natural', price:14, icon:'🍹', desc:{pt:'Manga, maracujá, acerola, graviola, morango...',en:'Mango, passion fruit, acerola, soursop, strawberry...',es:'Mango, maracuyá, acerola, guanábana, fresa...'} } ],
+  gin:     [ { name:'Aperol Spritz', price:32, icon:'🍊', desc:{pt:'Aperol, espumante Brut e água com gás.',en:'Aperol, Brut sparkling wine and soda water.',es:'Aperol, espumante Brut y agua con gas.'} }, { name:'Moscow Gin', price:39, icon:'🍋', desc:{pt:'Gin, limão, tônica, maracujá e espuma de gengibre.',en:'Gin, lime, tonic, passion fruit and ginger foam.',es:'Gin, limón, tónica, maracuyá y espuma de jengibre.'} }, { name:'Bode Red', price:39, icon:'🍷', desc:{pt:'Gin, morango, uva, maçã verde, limão e tônica.',en:'Gin, strawberry, grape, green apple, lime and tonic.',es:'Gin, fresa, uva, manzana verde, limón y tónica.'} }, { name:'Arretado', price:39, icon:'🌿', desc:{pt:'Gin, gengibre, limão e água tônica.',en:'Gin, ginger, lime and tonic water.',es:'Gin, jengibre, limón y agua tónica.'}, isnew:true } ],
+};
+
+/* ── WINES — carta completa com harmonização ─── */
+const WINES = [
+  // TINTOS
+  { name:'Alamos Malbec',              price:219, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec',             pair:['bode','carne'],        desc:{pt:'Argentina · Malbec · Encorpado, frutado e aveludado.',en:'Argentina · Malbec · Full-bodied, fruity and velvety.',es:'Argentina · Malbec · Con cuerpo, afrutado y aterciopelado.'} },
+  { name:'Alta Vista Premium Malbec',  price:199, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec | Cabernet',  pair:['bode','carne'],        desc:{pt:'Argentina · Malbec/Cabernet · Estruturado e persistente.',en:'Argentina · Malbec/Cabernet · Structured and persistent.',es:'Argentina · Malbec/Cabernet · Estructurado y persistente.'} },
+  { name:'Alta Vista Classic Malbec',  price:169, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec',             pair:['bode','carne'],        desc:{pt:'Argentina · Malbec · Frutado, ameixa e especiarias.',en:'Argentina · Malbec · Fruity, plum and spices.',es:'Argentina · Malbec · Afrutado, ciruela y especias.'} },
+  { name:'Catena Malbec',              price:369, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec',             pair:['carne'],               desc:{pt:'Argentina · Malbec premium · Complexo e elegante.',en:'Argentina · Premium Malbec · Complex and elegant.',es:'Argentina · Malbec premium · Complejo y elegante.'} },
+  { name:'Crux Malbec',               price:209, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec',             pair:['bode','carne'],        desc:{pt:'Argentina · Malbec · Potente, taninos maduros.',en:'Argentina · Malbec · Powerful, ripe tannins.',es:'Argentina · Malbec · Potente, taninos maduros.'} },
+  { name:'Estancia Mendoza',           price:99,  icon:'🍷', type:'tinto',    country:'Argentina', grape:'Merlot | Malbec',    pair:['bode','carne','frango'],desc:{pt:'Argentina · Merlot/Malbec · Suave e acessível.',en:'Argentina · Merlot/Malbec · Smooth and approachable.',es:'Argentina · Merlot/Malbec · Suave y accesible.'} },
+  { name:'Indomita Cabernet Sauvignon',price:99,  icon:'🍷', type:'tinto',    country:'Chile',     grape:'Cabernet Sauvignon', pair:['bode','carne'],        desc:{pt:'Chile · Cabernet · Intenso, cerejas e cedro.',en:'Chile · Cabernet · Intense, cherries and cedar.',es:'Chile · Cabernet · Intenso, cerezas y cedro.'} },
+  { name:'Urban Sauvg Tinto',          price:129, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec',             pair:['bode','carne'],        desc:{pt:'Argentina · Malbec · Direto e frutado.',en:'Argentina · Malbec · Straightforward and fruity.',es:'Argentina · Malbec · Directo y afrutado.'} },
+  { name:'Miluna Rosso Puglia',        price:149, icon:'🍷', type:'tinto',    country:'Itália',    grape:'Sangiovese | Negroamaro', pair:['bode','carne','frango'], desc:{pt:'Itália · Sangiovese/Negroamaro · Rústico e saboroso.',en:'Italy · Sangiovese/Negroamaro · Rustic and flavorful.',es:'Italia · Sangiovese/Negroamaro · Rústico y sabroso.'} },
+  { name:'Mario Geisse Reserva Carmenere',price:199, icon:'🍷', type:'tinto', country:'Brasil',    grape:'Carmenere',          pair:['bode','carne'],        desc:{pt:'Brasil · Carmenere · Pimentão, frutas vermelhas e especiarias.',en:'Brazil · Carmenere · Bell pepper, red fruit and spices.',es:'Brasil · Carmenere · Pimiento, frutos rojos y especias.'} },
+  { name:'Esporão Pé Tinto',           price:129, icon:'🍷', type:'tinto',    country:'Portugal',  grape:'Blend',              pair:['bode','carne'],        desc:{pt:'Portugal · Blend · Elegante, frutas escuras e tostado.',en:'Portugal · Blend · Elegant, dark fruits and toast.',es:'Portugal · Blend · Elegante, frutos oscuros y tostado.'} },
+  { name:'Bacalhôa Serras de Azeitão', price:169, icon:'🍷', type:'tinto',    country:'Portugal',  grape:'Blend',              pair:['bode','carne'],        desc:{pt:'Portugal · Blend · Encorpado, taninos presentes.',en:'Portugal · Blend · Full-bodied, present tannins.',es:'Portugal · Blend · Con cuerpo, taninos presentes.'} },
+  { name:'Cabriz Tinto',               price:139, icon:'🍷', type:'tinto',    country:'Portugal',  grape:'Blend',              pair:['bode','carne'],        desc:{pt:'Portugal · Blend · Equilibrado e persistente.',en:'Portugal · Blend · Balanced and persistent.',es:'Portugal · Blend · Equilibrado y persistente.'} },
+  // BRANCOS
+  { name:'Esporão Pé Branco',          price:99,  icon:'🥂', type:'branco',   country:'Portugal',  grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Portugal · Blend · Fresco, cítrico e mineral.',en:'Portugal · Blend · Fresh, citrus and mineral.',es:'Portugal · Blend · Fresco, cítrico y mineral.'} },
+  { name:'Castelo de Pias Blanc',      price:79,  icon:'🥂', type:'branco',   country:'Portugal',  grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Portugal · Blend · Leve, floral e refrescante.',en:'Portugal · Blend · Light, floral and refreshing.',es:'Portugal · Blend · Ligero, floral y refrescante.'} },
+  { name:'Cousino Macul Sauvignon Blanc',price:129,icon:'🥂', type:'branco',  country:'Chile',     grape:'Sauvignon Blanc',    pair:['peixe','frango'],      desc:{pt:'Chile · Sauvignon Blanc · Herbáceo, maracujá e limão.',en:'Chile · Sauvignon Blanc · Herbaceous, passion fruit and lime.',es:'Chile · Sauvignon Blanc · Herbáceo, maracuyá y limón.'} },
+  { name:'Indomita Sauvignon Blanc',   price:89,  icon:'🥂', type:'branco',   country:'Chile',     grape:'Sauvignon Blanc',    pair:['peixe','frango'],      desc:{pt:'Chile · Sauvignon Blanc · Fresco, cítrico e herbáceo.',en:'Chile · Sauvignon Blanc · Fresh, citrus and herbaceous.',es:'Chile · Sauvignon Blanc · Fresco, cítrico y herbáceo.'} },
+  { name:'Cosecha Tarapacá Chardonnay',price:159, icon:'🥂', type:'branco',   country:'Chile',     grape:'Chardonnay',         pair:['peixe','frango'],      desc:{pt:'Chile · Chardonnay · Pêssego, baunilha e tostado leve.',en:'Chile · Chardonnay · Peach, vanilla and light toast.',es:'Chile · Chardonnay · Melocotón, vainilla y tostado leve.'} },
+  { name:'Urban Torrontés',            price:119, icon:'🥂', type:'branco',   country:'Argentina', grape:'Torrontés',          pair:['peixe','frango'],      desc:{pt:'Argentina · Torrontés · Floral, aromático, muscat.',en:'Argentina · Torrontés · Floral, aromatic, muscat notes.',es:'Argentina · Torrontés · Floral, aromático, moscatel.'} },
+  { name:'Freixenet Pinot Grigio DOC', price:149, icon:'🥂', type:'branco',   country:'Itália',    grape:'Pinot Grigio',       pair:['peixe','frango'],      desc:{pt:'Itália · Pinot Grigio · Delicado, maçã verde e pera.',en:'Italy · Pinot Grigio · Delicate, green apple and pear.',es:'Italia · Pinot Grigio · Delicado, manzana verde y pera.'} },
+  { name:'Miluna Puglia Bianco',       price:129, icon:'🥂', type:'branco',   country:'Itália',    grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Itália · Blend branco · Fresco e aromático.',en:'Italy · White blend · Fresh and aromatic.',es:'Italia · Blend blanco · Fresco y aromático.'} },
+  // ROSÉ
+  { name:'Mar Salgado Rosé',           price:109, icon:'🌸', type:'rose',     country:'Brasil',    grape:'Blend',              pair:['peixe','frango','carne'],desc:{pt:'Brasil · Blend rosé · Frutado, morango e floral.',en:'Brazil · Rosé blend · Fruity, strawberry and floral.',es:'Brasil · Blend rosé · Afrutado, fresa y floral.'} },
+  { name:'Macaw Frisante Rosé',        price:89,  icon:'🌸', type:'rose',     country:'Brasil',    grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Brasil · Frisante rosé · Leve, borbulhas e frutas vermelhas.',en:'Brazil · Sparkling rosé · Light, bubbles and red fruits.',es:'Brasil · Frisante rosé · Ligero, burbujas y frutos rojos.'} },
+  { name:'Freixenet Rosé',             price:149, icon:'🌸', type:'rose',     country:'Espanha',   grape:'Blend',              pair:['peixe','frango','carne'],desc:{pt:'Espanha · Blend rosé · Elegante, morango e pêssego.',en:'Spain · Rosé blend · Elegant, strawberry and peach.',es:'España · Blend rosé · Elegante, fresa y melocotón.'} },
+  // VINHO VERDE
+  { name:'Coração Obra Prima Verde',   price:119, icon:'🍃', type:'verde',    country:'Portugal',  grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Portugal · Vinho Verde · Efervescente, cítrico e fresco.',en:'Portugal · Vinho Verde · Sparkling, citrus and fresh.',es:'Portugal · Vinho Verde · Efervescente, cítrico y fresco.'} },
+  // ESPUMANTE
+  { name:'Cave Geisse Rosé Brut',      price:199, icon:'🍾', type:'espumante',country:'Brasil',    grape:'Chardonnay | Pinot Noir',pair:['peixe','frango','carne'],desc:{pt:'Brasil · Espumante rosé brut · Elegante, pão e morango.',en:'Brazil · Rosé brut · Elegant, bread and strawberry.',es:'Brasil · Espumante rosé brut · Elegante, pan y fresa.'} },
+  { name:'Chandon Brut',               price:189, icon:'🍾', type:'espumante',country:'Brasil',    grape:'Chardonnay | Pinot Noir',pair:['peixe','frango'],      desc:{pt:'Brasil · Espumante brut · Clássico, cítrico e borbulhas finas.',en:'Brazil · Brut · Classic, citrus and fine bubbles.',es:'Brasil · Brut · Clásico, cítrico y burbujas finas.'} },
+  { name:'Seival by Miolo Brut',       price:110, icon:'🍾', type:'espumante',country:'Brasil',    grape:'Chardonnay | Pinot Noir',pair:['peixe','frango','carne'],desc:{pt:'Brasil · Brut · Frescor, elegância e custo-benefício.',en:'Brazil · Brut · Freshness, elegance and great value.',es:'Brasil · Brut · Frescura, elegancia y gran valor.'} },
+  { name:'Macaw Frisante Branco',      price:79,  icon:'🍾', type:'espumante',country:'Brasil',    grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Brasil · Frisante branco · Leve e refrescante.',en:'Brazil · Sparkling white · Light and refreshing.',es:'Brasil · Frisante blanco · Ligero y refrescante.'} },
+];
+
+function pickWines(protein, isCold, isHot) {
+  const L = T[state.lang];
+  let pool = WINES.filter(w => w.pair.includes(protein));
+  // Climate override: hot day with red meat? add rosé option
+  if (isHot && (protein === 'bode' || protein === 'carne')) {
+    const roses = WINES.filter(w => w.type === 'rose' && !pool.find(p => p.name === w.name));
+    pool = [...pool, ...roses];
+  }
+  // Cold night with fish? allow light red
+  if (isCold && protein === 'peixe') {
+    const light = WINES.filter(w => w.type === 'tinto' && w.country === 'Itália' && !pool.find(p => p.name === w.name));
+    pool = [...pool, ...light];
+  }
+  // Prefer type by temperature
+  let sorted;
+  if (isCold) {
+    // tintos first, then espumante, then branco/rosé
+    sorted = [...pool.filter(w => w.type === 'tinto'), ...pool.filter(w => w.type === 'espumante'), ...pool.filter(w => !['tinto','espumante'].includes(w.type))];
+  } else if (isHot) {
+    // branco/rosé/espumante first, then verde, then tinto
+    sorted = [...pool.filter(w => ['branco','rose','espumante','verde'].includes(w.type)), ...pool.filter(w => w.type === 'tinto')];
+  } else {
+    sorted = pool;
+  }
+  return sorted.slice(0, 2).map(w => ({
+    ...w,
+    isWine: true,
+    wineType: L['w' + w.type.charAt(0).toUpperCase() + w.type.slice(1)] || w.type,
+  }));
+}
+
+/* ── CONTEXT ──────────────────────────────────── */
+async function loadContext() {
+  const now = new Date();
+  state.hour = now.getHours();
+  console.log('[loadContext] hora local:', state.hour, '| data:', now.toISOString());
+  document.getElementById('ctx-time').textContent =
+    now.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit', hour12:false });
+  applyTranslations();
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(async pos => {
+      try {
+        const { latitude: lat, longitude: lon } = pos.coords;
+        console.log('[loadContext] GPS obtido:', lat.toFixed(4), lon.toFixed(4));
+        const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&timezone=auto`);
+        const d = await r.json();
+        state.temp = Math.round(d.current.temperature_2m);
+        state.isRaining = d.current.weathercode >= 51;
+        console.log('[loadContext] clima:', state.temp, 'C | weathercode:', d.current.weathercode, '| chovendo:', state.isRaining);
+        const icons = c => c >= 95 ? '⛈️' : c >= 61 ? '🌧️' : c >= 51 ? '🌦️' : c >= 3 ? '☁️' : c >= 1 ? '⛅' : state.temp <= 20 ? '🌙' : '☀️';
+        document.getElementById('ctx-weather-icon').textContent = icons(d.current.weathercode);
+        document.getElementById('ctx-weather-text').textContent = `${state.temp}°C`;
+        document.getElementById('ctx-weather-pill').style.display = 'flex';
+        applyTranslations();
+      } catch(err) { console.warn('[loadContext] erro clima:', err.message); }
+    }, (err) => { console.warn('[loadContext] geolocation negado/erro:', err.message); });
+  } else {
+    console.warn('[loadContext] geolocation nao suportado');
+  }
+}
+
+/* ── TRANSLATIONS APPLY ───────────────────────── */
+function setLang(lang) {
+  console.log('[setLang]', lang);
+  state.lang = lang;
+  document.documentElement.lang = { pt:'pt-BR', en:'en', es:'es' }[lang];
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-lang-' + lang).classList.add('active');
+  applyTranslations();
+}
+
+function s(id, text) { const e = document.getElementById(id); if (e) e.textContent = text; }
+
+function applyTranslations() {
+  const L = T[state.lang];
+  const h = state.hour;
+  let gr = h < 12 ? L.greetMorning : h < 18 ? L.greetAfternoon : L.greetEvening;
+  s('welcome-headline', L.welcomeHeadline(gr));
+  s('welcome-sub', buildWelcomeSub());
+  s('btn-start', L.btnStart);
+  s('footer-welcome', L.footerWelcome);
+  s('title-protein', L.titleProtein); s('hint-protein', L.hintProtein);
+  s('opt-bode-label', L.bodeLabel);   s('opt-bode-desc', L.bodeDesc);
+  s('opt-carne-label', L.carneLabel); s('opt-carne-desc', L.carneDesc);
+  s('opt-peixe-label', L.peixeLabel); s('opt-peixe-desc', L.peixeDesc);
+  s('opt-frango-label', L.frangoLabel); s('opt-frango-desc', L.frangoDesc);
+  s('btn-protein-next', L.btnNext); s('btn-protein-back', L.btnBack);
+  s('title-pax', L.titlePax); s('hint-pax', L.hintPax);
+  s('pax1-label', L.pax1Label); s('pax1-desc', L.pax1Desc);
+  s('pax2-label', L.pax2Label); s('pax2-desc', L.pax2Desc);
+  s('pax3-label', L.pax3Label); s('pax3-desc', L.pax3Desc);
+  s('btn-pax-next', L.btnNext); s('btn-pax-back', L.btnBack);
+  s('title-style', L.titleStyle); s('hint-style', L.hintStyle);
+  s('opt-regional-label', L.regionalLabel); s('opt-regional-desc', L.regionalDesc);
+  s('opt-intl-label', L.intlLabel); s('opt-intl-desc', L.intlDesc);
+  s('btn-style-next', L.btnNext); s('btn-style-back', L.btnBack);
+  s('title-alcohol', L.titleAlcohol); s('hint-alcohol', L.hintAlcohol);
+  s('opt-yes-alcohol-label', L.yesAlcoholLabel); s('opt-yes-alcohol-desc', L.yesAlcoholDesc);
+  s('opt-no-alcohol-label', L.noAlcoholLabel);
+  const nd = document.getElementById('opt-no-alcohol-desc');
+  if (nd) nd.textContent = L.noAlcoolDesc || L.noAlcoholDesc || '';
+  s('title-drink-type', L.titleDrinkType);
+  s('opt-chopp-label', L.choppLabel);   s('opt-chopp-desc', L.choppDesc);
+  s('opt-drink-label', L.drinkLabel);   s('opt-drink-desc', L.drinkDesc);
+  s('opt-whisky-label', L.whiskyLabel); s('opt-whisky-desc', L.whiskyDesc);
+  s('opt-cachaca-label', L.cachacaLabel); s('opt-cachaca-desc', L.cachacaDesc);
+  s('opt-vinho-label', L.vinhoLabel);   s('opt-vinho-desc', L.vinhoDesc);
+  s('opt-gin-label', L.ginLabel);       s('opt-gin-desc', L.ginDesc);
+  s('btn-drink-next', L.btnSuggest); s('btn-drink-back', L.btnBack);
+  s('result-title', L.resultTitle);
+  s('label-main-dish', L.labelMainDish); s('label-starter', L.labelStarter); s('label-drink', L.labelDrink);
+  s('btn-restart', L.btnRestart);
+  s('btn-chat-back', L.btnBack);
+  // Wine flow labels
+  s('wine-cta-title', L.wineCta); s('wine-cta-desc', L.wineCtaDesc);
+  s('wt-title', L.wtTitle); s('wt-hint', L.wtHint);
+  s('wt-tinto-label', L.wtTintoLabel); s('wt-tinto-desc', L.wtTintoDesc);
+  s('wt-branco-label', L.wtBrancoLabel); s('wt-branco-desc', L.wtBrancoDesc);
+  s('wt-rose-label', L.wtRoseLabel); s('wt-rose-desc', L.wtRoseDesc);
+  s('wt-espumante-label', L.wtEspumanteLabel); s('wt-espumante-desc', L.wtEspumanteDesc);
+  s('btn-wt-next', L.btnNext); s('btn-wt-back', L.btnBack);
+  s('wc-title', L.wcTitle); s('wc-hint', L.wcHint);
+  s('wc-any-label', L.wcAnyLabel); s('wc-italy-label', L.wcItalyLabel);
+  s('btn-wc-next', L.btnNext); s('btn-wc-back', L.btnBack);
+  const fr = document.getElementById('footer-result');
+  if (fr) fr.innerHTML = L.footerResult.replace('\n', '<br><strong style="color:rgba(255,255,255,.5)">') + '</strong>';
+}
+
+function buildWelcomeSub() {
+  const L = T[state.lang]; const { temp, hour, isRaining } = state;
+  if (temp !== null) {
+    if (isRaining) return L.welcomeSubRain(temp);
+    if (temp <= 22) return L.welcomeSubCold(temp);
+    if (temp >= 29) return L.welcomeSubHot(temp);
+    return L.welcomeSubNice(temp);
+  }
+  if (hour >= 22 || hour < 5) return L.welcomeSubLate;
+  return L.welcomeSubDefault;
+}
+
+/* ── NAVIGATION ───────────────────────────────── */
+function goTo(id) {
+  console.log('[goTo]', id);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function selectOpt(btn, group, value) {
+  const cid = group === 'protein' ? 'protein-opts' : 'drink-opts';
+  document.getElementById(cid).querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state[group] = value;
+  const nextId = group === 'protein' ? 'btn-protein-next' : 'btn-drink-next';
+  document.getElementById(nextId).disabled = false;
+}
+
+function selectStyle(btn, isRegional) {
+  document.querySelectorAll('#screen-style .big-opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.isRegional = isRegional;
+  document.getElementById('btn-style-next').disabled = false;
+}
+
+function selectPax(btn, n) {
+  document.querySelectorAll('#screen-pax .pax-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.pax = n;
+  document.getElementById('btn-pax-next').disabled = false;
+}
+
+function selectAlcohol(btn, hasAlcohol) {
+  document.querySelectorAll('#screen-drink .big-opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.hasAlcohol = hasAlcohol;
+  const drinkTypes = document.getElementById('drink-types');
+  const nextBtn = document.getElementById('btn-drink-next');
+  if (hasAlcohol) {
+    drinkTypes.style.display = 'block';
+    nextBtn.disabled = state.drink === null;
+  } else {
+    drinkTypes.style.display = 'none';
+    state.drink = 'semAlcool';
+    nextBtn.disabled = false;
+  }
+}
+
+/* ── SUGGESTION ENGINE ────────────────────────── */
+function buildSuggestion() {
+  const { protein, isRegional, hasAlcohol, drink, temp, hour, isRaining, lang } = state;
+  const isCold = temp !== null ? temp <= 22 : (hour >= 19 || hour < 6);
+  const isHot  = temp !== null && temp >= 29;
+  const L = T[lang];
+
+  // Filter by pax (serving size)
+  const isExec  = d => /executivo/i.test(d.desc?.pt || '');
+  const isLarge = d => d.price >= 150 || /mistão|pescaria|galeto/i.test(d.name);
+  let pool = [...MENU[protein]];
+  let paxPool;
+  if (state.pax === 1) {
+    paxPool = pool.filter(isExec);
+    if (!paxPool.length) paxPool = pool.filter(d => d.price <= 75);
+  } else if (state.pax === 3) {
+    paxPool = pool.filter(isLarge);
+    if (!paxPool.length) paxPool = pool.filter(d => !isExec(d));
+  } else {
+    paxPool = pool.filter(d => !isExec(d));
+    if (!paxPool.length) paxPool = pool;
+  }
+  if (!paxPool.length) paxPool = pool;
+  const pickCount = state.pax === 1 ? 1 : 2;
+
+  // Pick dishes respecting regional preference
+  let picked;
+  if (isRegional === true) {
+    const reg = paxPool.filter(d => d.regional);
+    picked = (reg.length >= pickCount ? reg : paxPool).slice(0, pickCount);
+  } else if (isRegional === false) {
+    const intl = paxPool.filter(d => !d.regional);
+    picked = (intl.length >= pickCount ? intl : paxPool).slice(0, pickCount);
+  } else {
+    if (isCold || isRaining) {
+      const warm = paxPool.filter(d => /guisado|molho|nata|moqueca/i.test(d.name));
+      picked = (warm.length >= pickCount ? warm : paxPool).slice(0, pickCount);
+    } else {
+      const top = paxPool.filter(d => d.champion || d.isnew);
+      picked = (top.length >= pickCount ? top : paxPool).slice(0, pickCount);
+    }
+  }
+  if (!picked || picked.length < 1) picked = pool.slice(0, pickCount);
+
+  // Starter
+  const starterPool = STARTERS[protein] || [];
+  const starter = starterPool.find(s => s.champion) || starterPool[0];
+
+  // Drinks
+  let pickedDrinks;
+  if (!hasAlcohol) {
+    pickedDrinks = DRINKS.semAlcool.slice(0, 2);
+  } else if (drink === 'vinho') {
+    pickedDrinks = pickWines(protein, isCold, isHot);
+  } else {
+    pickedDrinks = (DRINKS[drink] || []).slice(0, 2);
+  }
+
+  // Reasoning
+  const drinkKey = !hasAlcohol ? 'semAlcool' : drink;
+  let reasoning = L.rBase(L.rProtein[protein], L.rDrink[drinkKey] || drinkKey);
+  if (isRegional === true)       reasoning += L.rRegional;
+  else if (isRegional === false) reasoning += L.rIntl;
+  else if (temp !== null) {
+    if (isRaining)    reasoning += L.rRain(temp);
+    else if (isCold)  reasoning += L.rCold(temp);
+    else if (isHot)   reasoning += L.rHot(temp);
+    else              reasoning += L.rNice(temp);
+  } else {
+    if (hour >= 12 && hour < 15) reasoning += L.rLunch;
+    else if (hour >= 19)         reasoning += L.rNight;
+    else                         reasoning += L.rDefault;
+  }
+  if (state.pax && L.rPax[state.pax]) reasoning += ' ' + L.rPax[state.pax];
+  if (!hasAlcohol) reasoning += ' ' + L.rNoAlcool;
+
+  goTo('screen-result');
+  document.getElementById('reasoning-box').innerHTML = reasoning;
+  document.getElementById('result-context-line').textContent =
+    temp !== null ? L.resultContextWeather(temp) : L.resultContextDefault;
+  document.getElementById('result-main-dishes').innerHTML = picked.map(d => renderItem(d, true)).join('');
+  if (starter) {
+    document.getElementById('card-entrada').style.display = 'block';
+    document.getElementById('result-starters').innerHTML = renderItem(starter, false);
+  }
+  document.getElementById('result-drinks').innerHTML = pickedDrinks.map(d => renderItem(d, false)).join('');
+}
+
+function renderItem(item, showStory) {
+  const L = T[state.lang];
+  const desc = typeof item.desc === 'object' ? item.desc[state.lang] : (item.desc || '');
+  const bc = item.champion ? `<span class="badge-champion">${L.badgeChampion}</span>` : '';
+  const bn = item.isnew    ? `<span class="badge-new">${L.badgeNew}</span>` : '';
+  const bw = item.isWine   ? `<span class="badge-wine">${item.wineType}</span>` : '';
+  const story = (showStory && item.storyId && STORIES[item.storyId])
+    ? `<div class="story-card">${STORIES[item.storyId][state.lang]}</div>` : '';
+  return `
+    <div class="suggest-item">
+      <div class="suggest-item-icon">${item.icon}</div>
+      <div class="suggest-item-body">
+        <div class="suggest-item-name">${item.name}${bc}${bn}${bw}</div>
+        <div class="suggest-item-desc">${desc}</div>
+        ${story}
+      </div>
+      <div class="suggest-item-price">R$ ${item.price}</div>
+    </div>`;
+}
+
+/* ── RESET ────────────────────────────────────── */
+function resetApp() {
+  state.protein = null; state.pax = null; state.isRegional = null; state.hasAlcohol = null; state.drink = null;
+  document.querySelectorAll('.opt-btn, .big-opt').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('#screen-pax .pax-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('btn-protein-next').disabled = true;
+  document.getElementById('btn-pax-next').disabled     = true;
+  document.getElementById('btn-style-next').disabled   = true;
+  document.getElementById('btn-drink-next').disabled   = true;
+  document.getElementById('drink-types').style.display = 'none';
+  clearChatState();
+  goTo('screen-welcome');
+}
+
+/* ── WINE FLOW ────────────────────────────────── */
+const wineState = { type: null, country: null };
+
+function selectWineType(btn, type) {
+  document.querySelectorAll('#screen-wine-type .wine-type-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  wineState.type = type;
+  document.getElementById('btn-wt-next').disabled = false;
+}
+
+function selectWineCountry(btn, country) {
+  document.querySelectorAll('#screen-wine-country .country-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  wineState.country = country;
+  document.getElementById('btn-wc-next').disabled = false;
+}
+
+function buildWineSuggestion() {
+  const L = T[state.lang];
+  const { type, country } = wineState;
+
+  // Filter wines by type (branco includes verde)
+  let pool = [...WINES];
+  if (type === 'branco') pool = pool.filter(w => w.type === 'branco' || w.type === 'verde');
+  else if (type) pool = pool.filter(w => w.type === type);
+
+  // Filter by country
+  if (country && country !== 'qualquer') {
+    const byCountry = pool.filter(w => w.country === country);
+    if (byCountry.length) pool = byCountry;
+    // else keep type-only pool (graceful fallback)
+  }
+
+  const picked = pool.slice(0, 2);
+
+  // Petisco pairing by wine type
+  const petiscoPool = (type === 'tinto')
+    ? [STARTERS.bode[0], STARTERS.carne[0]]
+    : [STARTERS.peixe[0], STARTERS.peixe[1] || STARTERS.frango[1]];
+
+  // Render
+  goTo('screen-wine-result');
+  const typeLabel = L['w' + type.charAt(0).toUpperCase() + type.slice(1)] || type;
+  const countryLabel = (country && country !== 'qualquer') ? country : null;
+  document.getElementById('wine-reasoning-box').innerHTML = L.wineReasoning(typeLabel, countryLabel);
+  s('wine-result-title', L.wineResultTitle);
+  s('wine-result-label', L.wineResultLabel);
+  document.getElementById('wine-result-items').innerHTML = picked.map(w => renderItem(
+    { ...w, isWine:true, wineType: L['w'+w.type.charAt(0).toUpperCase()+w.type.slice(1)] || w.type }, false
+  )).join('');
+  s('petisco-question', L.petiscoQuestion);
+  s('btn-petisco-yes', L.petiscoYes);
+  s('btn-petisco-no',  L.petiscoNo);
+  document.getElementById('petisco-result-items').innerHTML =
+    '<div class="suggest-section-label">' + L.petiscoLabel + '</div>' +
+    petiscoPool.filter(Boolean).map(p => renderItem(p, false)).join('');
+  document.getElementById('petisco-result-items').style.display = 'none';
+  document.querySelectorAll('.petisco-btn').forEach(b => b.classList.remove('selected'));
+  s('btn-wine-restart', L.btnWineRestart);
+}
+
+function showPetisco(yes) {
+  document.querySelectorAll('.petisco-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById(yes ? 'btn-petisco-yes' : 'btn-petisco-no').classList.add('selected');
+  document.getElementById('petisco-result-items').style.display = yes ? 'block' : 'none';
+}
+
+function resetWineFlow() {
+  wineState.type = null; wineState.country = null;
+  document.querySelectorAll('#screen-wine-type .wine-type-btn, #screen-wine-country .country-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('btn-wt-next').disabled = true;
+  document.getElementById('btn-wc-next').disabled = true;
+  goTo('screen-welcome');
+}
+
+/* ── CLAUDE CHAT ──────────────────────────────── */
+const CLAUDE_API_ENDPOINT = '/api/claude';
+const CLAUDE_MODEL        = 'claude-haiku-4-5-20251001';
+let chatHistory = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const HAPPY_HOUR_MENU = `=== HAPPY HOUR — Todos os dias das 16h às 20h30 ===
+
+[Petiscos HH]
+  • Camarão na Cerveja | R$84
+  • Camarão Alho e Óleo | R$84
+  • Filé de Camarão Crocante (empanado, acompanha molho rosé) | R$74
+  • Pastéis de Camarão Cremoso (4 un) | R$45
+  • Pastéis de Charque e Requeijão (4 un) | R$45
+  • Torres de Macaxeira com Catupiry e Camarão | R$37
+  • Torres de Macaxeira com Catupiry e Carne de Sol | R$37
+  • Cupim Desfiado na Nata com Batata Frita | R$79
+  • Tripinha de Porco (acompanha farofa panko e limão) | R$49
+  • Bolinho de Feijoada (acompanha molho de pimenta) | R$29
+  • Espetinho de Carne de Sol com Queijo Coalho | R$27
+  • Espetinho de Coração de Galinha | R$21
+  • Casquinho de Caranguejo com Farofa Crocante | R$27
+  • Caldinho de Feijão ou Peixe | R$16
+  • Linguiça de Bode | R$10
+  • Linguiça de Frango | R$9
+  • Linguiça Toscana | R$9
+  • Pão de Alho | R$16
+
+[Servidos na Chapa — HH]
+  • Picanha Fatiada (acompanha pão de alho, farofa e vinagrete) | R$169
+  • Carne de Sol com Macaxeira Frita e Queijo Coalho | R$109
+  • Do Mar — Lula, polvo, camarão, salmão e cebolas | R$134
+  • Frango e Queijo (cubos, cebolas douradas, queijo coalho) | R$79
+  • Misturado Regional (carne de sol, calabresa, torresmo, macaxeira, queijo coalho, pão de alho) | R$109
+
+[Drinks HH]
+  • Chopp Brahma | R$9,90
+  • Caipirinha Tradicional | R$19
+  • Caipirosca Tradicional | R$20
+  • Caipifrutas com Frutas da Época | R$23
+  • Mojito (rum, limão, hortelã) | R$27
+  • Caipigin com Frutas Vermelhas | R$30
+  • Moscow Gin (Gordon's + Red Bull Tropical) | R$32
+  • Double de Gin Tônica | R$39
+  • Double de Gin Tropical | R$39
+  • Double de Gin Melancita | R$39
+  • Xixi de Bode (cachaça da casa) | R$9
+  • Johnnie Walker Red (dose) | R$9
+  • Old Parr 12 Anos (dose) | R$12`;
+
+function buildMenuContext() {
+  const lang = state.lang;
+  const lines = [];
+
+  lines.push('=== CARDÁPIO — PRATOS PRINCIPAIS ===');
+  for (const [cat, items] of Object.entries(MENU)) {
+    const catName = { bode:'Bode', carne:'Carne Vermelha', peixe:'Peixe/Frutos do Mar', frango:'Frango' }[cat];
+    lines.push(`\n[${catName}]`);
+    // Shuffle para variar sugestões a cada conversa
+    const shuffled = [...items].sort(() => Math.random() - 0.5);
+    for (const d of shuffled) {
+      const tags = [];
+      if (d.regional) tags.push('regional/nordestino');
+      if (/executivo/i.test(d.desc?.pt || '')) tags.push('executivo-individual');
+      if (d.price >= 150 || /mistão|pescaria|galeto/i.test(d.name)) tags.push('grande/pra-compartilhar');
+      if (d.champion) tags.push('campeão-de-vendas');
+      if (d.isnew) tags.push('novo');
+      const desc = d.desc[lang] || d.desc.pt;
+      lines.push(`  • ${d.name} | R$${d.price}${tags.length ? ' ['+tags.join(',')+']' : ''} | ${desc}`);
+    }
+  }
+
+  lines.push('\n=== ENTRADAS ===');
+  for (const [cat, items] of Object.entries(STARTERS)) {
+    const catName = { bode:'Bode', carne:'Carne', peixe:'Peixe/Frutos do Mar', frango:'Frango' }[cat];
+    lines.push(`[${catName}]`);
+    for (const d of items) {
+      const desc = d.desc[lang] || d.desc.pt;
+      lines.push(`  • ${d.name} | R$${d.price}${d.champion ? ' [campeão]' : ''} | ${desc}`);
+    }
+  }
+
+  lines.push('\n=== BEBIDAS ===');
+  const drinkCats = { chopp:'Chopp/Cerveja', drink:'Drinks Especiais', whisky:'Whisky', cachaca:'Cachaça', semAlcool:'Sem Álcool', gin:'Gin/Aperitivo' };
+  for (const [cat, items] of Object.entries(DRINKS)) {
+    lines.push(`[${drinkCats[cat] || cat}]`);
+    for (const d of items) {
+      const desc = d.desc[lang] || d.desc.pt;
+      lines.push(`  • ${d.name} | R$${d.price}${d.isnew ? ' [novo]' : ''} | ${desc}`);
+    }
+  }
+
+  lines.push('\n=== CARTA DE VINHOS ===');
+  const wineTypeNames = { tinto:'Tinto', branco:'Branco', rose:'Rosé', espumante:'Espumante', verde:'Vinho Verde' };
+  const wByType = {};
+  for (const w of WINES) { if (!wByType[w.type]) wByType[w.type] = []; wByType[w.type].push(w); }
+  for (const [type, wines] of Object.entries(wByType)) {
+    lines.push(`[${wineTypeNames[type] || type}]`);
+    for (const w of wines) {
+      lines.push(`  • ${w.name} | R$${w.price} | ${w.country} · ${w.grape} | harmoniza: ${w.pair.join('/')}`);
+    }
+  }
+
+  // Inclui happy hour se estiver no horário
+  const h = state.hour;
+  if (h >= 16 && h < 21) lines.push('\n' + HAPPY_HOUR_MENU);
+
+  return lines.join('\n');
+}
+
+function buildSystemPrompt() {
+  const langFull = { pt:'português brasileiro (informal, nordestino)', en:'English (friendly, casual)', es:'español (amigable, informal)' }[state.lang] || 'português brasileiro';
+  const h = state.hour;
+  const isHappyHour = h >= 16 && h < 21;
+  const isLunch     = h >= 11 && h < 15;
+  const isDinner    = h >= 19;
+  const isMorning   = h < 11;
+
+  let timeCtx = '';
+  if (isHappyHour) timeCtx = `⚡ HAPPY HOUR ATIVO agora (16h às 20h30)! Priorize sugerir os petiscos e drinks do happy hour — são os mais procurados nesse horário e têm ótimo custo-benefício. Mencione proativamente que é happy hour.`;
+  else if (isLunch) timeCtx = `🌞 Horário de almoço (${h}h). Priorize pratos executivos (rápidos, individuais) e combos completos. Clientes geralmente estão com menos tempo.`;
+  else if (isDinner) timeCtx = `🌙 Jantar (${h}h). Sugira pratos mais elaborados, harmonização com vinho e petiscos para começar. Noite é momento de curtir.`;
+  else if (isMorning) timeCtx = `☀️ Manhã (${h}h). Restaurante abrindo. Seja acolhedor.`;
+  else timeCtx = `🕑 Tarde (${h}h). Horário mais tranquilo, bom para pratos especiais.`;
+
+  const weatherCtx = state.temp !== null
+    ? `Temperatura em Recife: ${state.temp}°C.${state.isRaining ? ' Está chovendo — sugira pratos quentinhos!' : state.temp <= 22 ? ' Fresquinho — bom pra vinho tinto e pratos quentes.' : state.temp >= 29 ? ' Muito calor — priorize frutos do mar, drinks gelados.' : ''}`
+    : '';
+
+  return `Você é o Bodinho, mascote simpático e acolhedor do restaurante "Bode do Nô Boa Viagem" em Recife, PE, Brasil.
+
+CONTEXTO ATUAL:
+- ${timeCtx}
+${weatherCtx ? '- ' + weatherCtx : ''}
+- IDIOMA: Responda SEMPRE em ${langFull}.
+
+ESPAÇOS DO RESTAURANTE — pergunte onde o cliente quer sentar e destaque o mais adequado:
+- Salão Externo: área aberta, ventilada, ótima pra quem quer um ventinho e curtir o ambiente — ideal em noites mais fresquinhas ou para quem gosta de ar livre
+- Salão Família: climatizado, fechado, ótimo pra grupos com crianças ou quem prefere mais conforto e silêncio
+- Salão Novo: o mais animado! Tem música ao vivo e transmite jogos ao vivo (Copa do Mundo, futebol) — perfeito pra quem quer agito e festa
+- Espaço Kids: parquinho, máquinas e piscina de bolinhas — mencione se tiver crianças no grupo
+- Happy Hour todos os dias das 16h às 20h30
+
+${buildMenuContext()}
+
+COMO CONDUZIR A CONVERSA:
+- SEMPRE pergunte onde o cliente quer sentar (externo/família/salão novo) — essa é uma das primeiras perguntas
+- Pergunte também: proteína preferida, quantas pessoas, tem crianças?, bebida
+- Contextualize o espaço com o clima: se estiver fresco, exalte o salão externo; se estiver quente, destaque o Salão Família climatizado
+- Se o cliente mencionar jogo/futebol/copa: direcione pro Salão Novo com entusiasmo
+- Se tiver crianças: mencione o espaço kids e o Salão Família
+- Se for happy hour: destaque o cardápio especial e os drinks do HH logo na conversa
+- Uma pergunta por vez — nunca mais de uma por mensagem
+- Ofereça 2 a 4 opções de resposta rápida no campo "options"
+- Tom caloroso, simpático — expressões nordestinas com leveza (arretado, bora, etc.)
+- Máximo 5 trocas antes de recomendar. Se tiver informação suficiente, recomende antes
+- Não mencione JSON nem que você é IA — aja como o Bodinho mesmo
+
+REGRAS DA RECOMENDAÇÃO FINAL:
+- Use nomes EXATOS dos pratos/bebidas como listados no cardápio acima — NUNCA invente nomes
+- VARIEDADE: NÃO sugira sempre o mesmo prato. Explore toda a lista — há pratos excelentes além dos campeões
+- BEBIDAS: escolha SEMPRE do cardápio. Se o cliente quiser água ou algo simples → use "Suco Natural". Se quiser sem álcool → "Bodrink" ou "Suco Natural". NUNCA coloque "Água" pois não existe no cardápio
+- Em happy hour: prefira itens do cardápio HH quando possível
+- PAX (número de pessoas): use para escolher tamanho do prato
+  • 1 pessoa → prefira pratos com tag [executivo-individual]
+  • 2 pessoas → executivo ou pratos médios (R$69–R$155)
+  • 3+ pessoas → pratos grandes [grande/pra-compartilhar] ou múltiplos
+- "dishes" pode ter 1 item (individual) ou 2-3 (pra compartilhar)
+- "starter" é opcional — omita se não for sugerir
+- "drinks" deve ter 1 ou 2 itens, SEMPRE do cardápio
+- "category": informe qual categoria principal recomendou: "bode", "carne", "peixe" ou "frango"
+- "pax": informe o número de pessoas (número inteiro, ex: 2)
+- Mensagem final: calorosa, personalizada, contextualize o momento (clima, horário, ocasião, espaço escolhido)
+
+FORMATO DE RESPOSTA — SEMPRE JSON VÁLIDO, nenhum texto fora do JSON:
+
+Durante a conversa:
+{"type":"question","message":"texto do Bodinho","options":["opção 1","opção 2","opção 3"]}
+
+Recomendação final:
+{"type":"recommendation","message":"texto caloroso e personalizado","category":"bode","pax":2,"dishes":["Nome Exato do Prato"],"starter":"Nome Exato da Entrada","drinks":["Nome Exato da Bebida"]}`;
+}
+
+async function callClaude(userMessage) {
+  if (userMessage !== null) {
+    chatHistory.push({ role:'user', content: userMessage });
+  }
+  const payload = {
+    model: CLAUDE_MODEL,
+    max_tokens: 600,
+    system: buildSystemPrompt(),
+    messages: chatHistory,
+  };
+  console.log('[callClaude] enviando', chatHistory.length, 'mensagem(ns) | system prompt:', payload.system.length, 'chars | model:', payload.model);
+  console.log('[callClaude] historico:', JSON.stringify(chatHistory.map(m => ({ role: m.role, len: m.content.length }))));
+  const resp = await fetch(CLAUDE_API_ENDPOINT, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!resp.ok) {
+    const errText = await resp.text();
+    console.error('[Claude] erro', resp.status, errText);
+    throw new Error(`HTTP ${resp.status}: ${errText}`);
+  }
+  const data = await resp.json();
+  const raw = data.content[0].text.trim();
+  console.log('[Claude] resposta bruta:', raw);
+  chatHistory.push({ role:'assistant', content: raw });
+  const jsonStr = raw.replace(/^```json?\s*/,'').replace(/\s*```$/,'').trim();
+  return JSON.parse(jsonStr);
+}
+
+function showTypingIndicator() {
+  const log = document.getElementById('chat-log');
+  const el = document.createElement('div');
+  el.className = 'chat-typing'; el.id = 'chat-typing';
+  el.innerHTML = '<span></span><span></span><span></span>';
+  log.appendChild(el);
+  log.scrollTop = log.scrollHeight;
+}
+
+function hideTypingIndicator() {
+  const el = document.getElementById('chat-typing');
+  if (el) el.remove();
+}
+
+function mdToHtml(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
+
+function addBotBubble(text) {
+  const log = document.getElementById('chat-log');
+  const el = document.createElement('div');
+  el.className = 'chat-bubble bot';
+  el.innerHTML = '<span class="chat-avatar">🐐</span>' + mdToHtml(text);
+  log.appendChild(el);
+  log.scrollTop = log.scrollHeight;
+}
+
+function addUserBubble(text) {
+  const log = document.getElementById('chat-log');
+  const el = document.createElement('div');
+  el.className = 'chat-bubble user';
+  el.textContent = text;
+  log.appendChild(el);
+  log.scrollTop = log.scrollHeight;
+}
+
+function renderChatOptions(options) {
+  const container = document.getElementById('chat-opts');
+  container.innerHTML = '';
+  (options || []).forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'chat-opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => userTapped(opt);
+    container.appendChild(btn);
+  });
+  setTimeout(() => { const log = document.getElementById('chat-log'); log.scrollTop = log.scrollHeight; }, 80);
+}
+
+function clearOptions() {
+  const c = document.getElementById('chat-opts');
+  if (c) c.innerHTML = '';
+}
+
+function showChatError(retryFn) {
+  hideTypingIndicator();
+  const L = T[state.lang];
+  const log = document.getElementById('chat-log');
+  const el = document.createElement('div');
+  el.className = 'chat-error';
+  el.innerHTML = `<span>${L.chatError}</span>`;
+  const btn = document.createElement('button');
+  btn.className = 'chat-error-retry';
+  btn.textContent = L.chatRetry;
+  btn.onclick = () => { el.remove(); retryFn(); };
+  el.appendChild(btn);
+  log.appendChild(el);
+  log.scrollTop = log.scrollHeight;
+}
+
+function normalize(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
+}
+
+function findItem(name) {
+  const n = normalize(name);
+
+  // exact then fuzzy for MENU
+  for (const cat of Object.values(MENU)) {
+    for (const d of cat) {
+      if (d.name === name || normalize(d.name) === n) { console.log('[findItem] MENU exato:', name); return { ...d }; }
+    }
+  }
+  // partial match MENU
+  for (const cat of Object.values(MENU)) {
+    for (const d of cat) {
+      const dn = normalize(d.name);
+      if (dn.includes(n) || n.includes(dn)) { console.log('[findItem] MENU parcial:', name, '->', d.name); return { ...d }; }
+    }
+  }
+
+  // WINES
+  for (const w of WINES) {
+    if (w.name === name || normalize(w.name) === n) {
+      console.log('[findItem] WINE exato:', name);
+      const L = T[state.lang];
+      return { ...w, isWine:true, wineType: L['w'+w.type.charAt(0).toUpperCase()+w.type.slice(1)] || w.type };
+    }
+  }
+  for (const w of WINES) {
+    const wn = normalize(w.name);
+    if (wn.includes(n) || n.includes(wn)) {
+      console.log('[findItem] WINE parcial:', name, '->', w.name);
+      const L = T[state.lang];
+      return { ...w, isWine:true, wineType: L['w'+w.type.charAt(0).toUpperCase()+w.type.slice(1)] || w.type };
+    }
+  }
+
+  // DRINKS
+  for (const cat of Object.values(DRINKS))
+    for (const d of cat)
+      if (d.name === name || normalize(d.name) === n) { console.log('[findItem] DRINK exato:', name); return { ...d }; }
+  for (const cat of Object.values(DRINKS))
+    for (const d of cat) {
+      const dn = normalize(d.name);
+      if (dn.includes(n) || n.includes(dn)) { console.log('[findItem] DRINK parcial:', name, '->', d.name); return { ...d }; }
+    }
+
+  // STARTERS
+  for (const cat of Object.values(STARTERS))
+    for (const d of cat)
+      if (d.name === name || normalize(d.name) === n) { console.log('[findItem] STARTER exato:', name); return { ...d }; }
+  for (const cat of Object.values(STARTERS))
+    for (const d of cat) {
+      const dn = normalize(d.name);
+      if (dn.includes(n) || n.includes(dn)) { console.log('[findItem] STARTER parcial:', name, '->', d.name); return { ...d }; }
+    }
+
+  // Fallback: mapeia itens comuns fora do cardápio para equivalentes reais
+  const fallbacks = {
+    'agua':           'Suco Natural',
+    'agua mineral':   'Suco Natural',
+    'agua com gas':   'Suco Natural',
+    'refrigerante':   'Suco Natural',
+    'coca':           'Suco Natural',
+    'coca-cola':      'Suco Natural',
+    'guarana':        'Suco Natural',
+    'soda':           'Suco Natural',
+    'limonada':       'Caipirinha',
+    'cerveja':        'Cerveja Brahma Duplo Malte 350ml',
+    'chopp':          'Chopp Brahma',
+  };
+  const fallbackName = fallbacks[n] || fallbacks[n.split(' ')[0]];
+  if (fallbackName) {
+    console.warn('[findItem] fallback:', name, '\u2192', fallbackName);
+    return findItem(fallbackName);
+  }
+
+  console.warn('[findItem] não encontrado:', name);
+  return null;
+}
+
+function handleRecommendation(data) {
+  console.log('[handleRecommendation] JSON completo:', JSON.stringify(data));
+  console.log('[handleRecommendation] dishes:', data.dishes, '| starter:', data.starter, '| drinks:', data.drinks);
+  const L = T[state.lang];
+  document.getElementById('reasoning-box').innerHTML = mdToHtml(data.message);
+  s('result-title', L.resultTitle);
+  document.getElementById('result-context-line').textContent =
+    state.temp !== null ? L.resultContextWeather(state.temp) : L.resultContextDefault;
+
+  const dishItems = (data.dishes || []).map(n => { const item = findItem(n); console.log('[handleRecommendation] dish', JSON.stringify(n), '->', item ? item.name : 'NAO ENCONTRADO'); return item; }).filter(Boolean);
+  console.log('[handleRecommendation] pratos resolvidos:', dishItems.length, 'de', (data.dishes||[]).length);
+  s('label-main-dish', L.labelMainDish);
+  document.getElementById('result-main-dishes').innerHTML = dishItems.map(d => renderItem(d, true)).join('');
+
+  const starterItem = data.starter ? findItem(data.starter) : null;
+  console.log('[handleRecommendation] entrada:', data.starter, '->', starterItem ? starterItem.name : 'NAO ENCONTRADO');
+  if (starterItem) {
+    document.getElementById('card-entrada').style.display = 'block';
+    s('label-starter', L.labelStarter);
+    document.getElementById('result-starters').innerHTML = renderItem(starterItem, false);
+  } else {
+    document.getElementById('card-entrada').style.display = 'none';
+  }
+
+  const drinkItems = (data.drinks || []).map(n => { const item = findItem(n); console.log('[handleRecommendation] drink', JSON.stringify(n), '->', item ? item.name : 'NAO ENCONTRADO'); return item; }).filter(Boolean);
+  console.log('[handleRecommendation] bebidas resolvidas:', drinkItems.length, 'de', (data.drinks||[]).length);
+  s('label-drink', L.labelDrink);
+  document.getElementById('result-drinks').innerHTML = drinkItems.map(d => renderItem(d, false)).join('');
+
+  // Outras opções da mesma categoria, filtradas por pax
+  const category = data.category;
+  const pax = parseInt(data.pax) || 0;
+  const cardOther = document.getElementById('card-other-options');
+  if (category && MENU[category]) {
+    const suggestedNorm = (data.dishes || []).map(normalize);
+    const pool = MENU[category].filter(d => !suggestedNorm.includes(normalize(d.name)));
+    let others = pool;
+    if (pax === 1) {
+      others = pool.filter(d => /executivo/i.test(d.desc?.pt || '') || d.price <= 79);
+    } else if (pax === 2) {
+      others = pool.filter(d => /executivo/i.test(d.desc?.pt || '') || d.price <= 155);
+    }
+    // pax >= 3: mostra tudo
+    console.log('[handleRecommendation] outras opcoes category:', category, '| pax:', pax, '| total:', others.length);
+    if (others.length > 0) {
+      const catLabel = { bode:'Bode', carne:'Carne Vermelha', peixe:'Peixe/Frutos do Mar', frango:'Frango' }[category] || category;
+      s('label-other-options', L.labelOtherOptions(catLabel));
+      document.getElementById('result-other-dishes').innerHTML = others.map(d => renderItem(d, false)).join('');
+      cardOther.style.display = 'block';
+    } else {
+      cardOther.style.display = 'none';
+    }
+  } else {
+    cardOther.style.display = 'none';
+  }
+
+  s('btn-restart', L.btnRestart);
+  const fr = document.getElementById('footer-result');
+  if (fr) fr.innerHTML = L.footerResult.replace('\n','<br><strong style="color:rgba(255,255,255,.5)">') + '</strong>';
+
+  goTo('screen-result');
+}
+
+async function userTapped(option) {
+  console.log('[userTapped] opção escolhida:', option, '| turno:', chatHistory.length);
+  document.querySelectorAll('.chat-opt-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === option) b.classList.add('chosen');
+  });
+  clearOptions();
+  addUserBubble(option);
+  showTypingIndicator();
+  try {
+    const data = await callClaude(option);
+    hideTypingIndicator();
+    console.log('[userTapped] resposta type:', data.type, data.type === 'question' ? '| options:' + JSON.stringify(data.options) : '| dishes:' + JSON.stringify(data.dishes));
+    if (data.type === 'recommendation') {
+      addBotBubble(data.message);
+      setTimeout(() => handleRecommendation(data), 1400);
+    } else {
+      addBotBubble(data.message);
+      renderChatOptions(data.options);
+    }
+  } catch(e) {
+    console.error('[userTapped] erro ao chamar Claude:', e);
+    showChatError(() => userTapped(option));
+  }
+}
+
+async function startChat() {
+  console.log('[startChat] iniciando chat — lang:', state.lang, '| hora:', state.hour, '| temp:', state.temp, '| chovendo:', state.isRaining);
+  goTo('screen-chat');
+  chatHistory = [];
+  document.getElementById('chat-log').innerHTML = '';
+  clearOptions();
+  showTypingIndicator();
+  // Anthropic API exige pelo menos 1 mensagem — usamos contexto invisível para iniciar
+  const starters = { pt:'Olá! Acabei de chegar no restaurante.', en:'Hi! I just arrived at the restaurant.', es:'Hola! Acabo de llegar al restaurante.' };
+  const starter = starters[state.lang] || starters.pt;
+  console.log('[startChat] mensagem inicial injetada:', starter);
+  chatHistory.push({ role:'user', content: starter });
+  try {
+    const data = await callClaude(null);
+    hideTypingIndicator();
+    console.log('[startChat] resposta inicial recebida. type:', data.type, '| options:', data.options);
+    addBotBubble(data.message);
+    renderChatOptions(data.options);
+  } catch(e) {
+    console.error('[startChat] erro:', e);
+    showChatError(startChat);
+  }
+}
+
+function clearChatState() {
+  chatHistory = [];
+  const log = document.getElementById('chat-log');
+  if (log) log.innerHTML = '';
+  clearOptions();
+}
+
+function resetChat() {
+  clearChatState();
+  goTo('screen-welcome');
+}
+
+loadContext();
+</script>
+</body>
+</html>

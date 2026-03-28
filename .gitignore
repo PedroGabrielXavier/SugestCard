@@ -1,0 +1,7 @@
+# Chave da API — NUNCA commitar
+api_key.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
