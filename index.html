@@ -1282,7 +1282,7 @@ function shuffle(arr) {
   return a;
 }
 
-const HAPPY_HOUR_MENU = `=== HAPPY HOUR — Todos os dias das 16h às 20h30 ===
+const HAPPY_HOUR_MENU = `=== HAPPY HOUR — Todos os dias das 16h às 19h ===
 
 [Petiscos HH]
   • Camarão na Cerveja | R$84
@@ -1381,7 +1381,7 @@ function buildMenuContext() {
 
   // Inclui happy hour se estiver no horário
   const h = state.hour;
-  if (h >= 16 && h < 21) lines.push('\n' + HAPPY_HOUR_MENU);
+  if (h >= 16 && h < 19) lines.push('\n' + HAPPY_HOUR_MENU);
 
   return lines.join('\n');
 }
@@ -1389,13 +1389,13 @@ function buildMenuContext() {
 function buildSystemPrompt() {
   const langFull = { pt:'português brasileiro (informal, nordestino)', en:'English (friendly, casual)', es:'español (amigable, informal)' }[state.lang] || 'português brasileiro';
   const h = state.hour;
-  const isHappyHour = h >= 16 && h < 21;
+  const isHappyHour = h >= 16 && h < 19;
   const isLunch     = h >= 11 && h < 15;
   const isDinner    = h >= 19;
   const isMorning   = h < 11;
 
   let timeCtx = '';
-  if (isHappyHour) timeCtx = `⚡ HAPPY HOUR ATIVO agora (16h às 20h30)! Priorize sugerir os petiscos e drinks do happy hour — são os mais procurados nesse horário e têm ótimo custo-benefício. Mencione proativamente que é happy hour.`;
+  if (isHappyHour) timeCtx = `⚡ HAPPY HOUR ATIVO agora (16h às 19h)! Priorize sugerir os petiscos e drinks do happy hour — são os mais procurados nesse horário e têm ótimo custo-benefício. Mencione proativamente que é happy hour.`;
   else if (isLunch) timeCtx = `🌞 Horário de almoço (${h}h). Priorize pratos executivos (rápidos, individuais) e combos completos. Clientes geralmente estão com menos tempo.`;
   else if (isDinner) timeCtx = `🌙 Jantar (${h}h). Sugira pratos mais elaborados, harmonização com vinho e petiscos para começar. Noite é momento de curtir.`;
   else if (isMorning) timeCtx = `☀️ Manhã (${h}h). Restaurante abrindo. Seja acolhedor.`;
@@ -1417,7 +1417,7 @@ ESPAÇOS DO RESTAURANTE — pergunte onde o cliente quer sentar e destaque o mai
 - Salão Família: climatizado, fechado, ótimo pra grupos com crianças ou quem prefere mais conforto e silêncio
 - Salão Novo: o mais animado! Tem música ao vivo e transmite jogos ao vivo (Copa do Mundo, futebol) — perfeito pra quem quer agito e festa
 - Espaço Kids: parquinho, máquinas e piscina de bolinhas — mencione se tiver crianças no grupo
-- Happy Hour todos os dias das 16h às 20h30
+- Happy Hour todos os dias das 16h às 19h
 
 ${buildMenuContext()}
 
