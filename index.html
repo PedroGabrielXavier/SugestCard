@@ -1320,8 +1320,16 @@ async function loadContext() {
   const now = new Date();
   state.hour = now.getHours();
   console.log('[loadContext] hora local:', state.hour, '| data:', now.toISOString());
-  document.getElementById('ctx-time').textContent =
-    now.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit', hour12:false });
+  function updateClock() {
+    const t = new Date();
+    state.hour = t.getHours();
+    document.getElementById('ctx-time').textContent =
+      t.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit', hour12:false });
+  }
+  updateClock();
+  if (!window._clockInterval) {
+    window._clockInterval = setInterval(updateClock, 60000);
+  }
   applyTranslations();
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(async pos => {
