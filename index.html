@@ -244,12 +244,12 @@
     .menu-topbar-title { flex:1; text-align:center; font-size:16px; font-weight:700; color:var(--amarelo); letter-spacing:-.2px; }
     .menu-topbar-spacer { width:72px; flex-shrink:0; }
 
-    .menu-tabs { display:flex; gap:0; width:100%; background:rgba(0,0,0,.2); border-bottom:1px solid rgba(255,255,255,.08); overflow-x:auto; scrollbar-width:none; }
+    .menu-tabs { display:flex; gap:8px; padding:10px 16px; background:rgba(0,0,0,.18); border-bottom:1px solid rgba(255,255,255,.07); overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; scroll-snap-type:x mandatory; }
     .menu-tabs::-webkit-scrollbar { display:none; }
-    .menu-tab { flex:1; min-width:70px; padding:12px 6px 10px; text-align:center; cursor:pointer; border:none; background:transparent; color:rgba(255,255,255,.5); font-size:11px; font-weight:600; font-family:'Poppins',sans-serif; transition:all .2s; border-bottom:2px solid transparent; -webkit-tap-highlight-color:transparent; white-space:nowrap; }
-    .menu-tab .tab-icon { font-size:18px; display:block; margin-bottom:3px; }
-    .menu-tab.active { color:var(--amarelo); border-bottom-color:var(--amarelo); background:rgba(232,168,62,.08); }
-    .menu-tab:active { background:rgba(255,255,255,.08); }
+    .menu-tab { flex-shrink:0; scroll-snap-align:start; padding:8px 14px; text-align:center; cursor:pointer; border:1.5px solid rgba(255,255,255,.15); border-radius:999px; background:rgba(255,255,255,.07); color:rgba(255,255,255,.65); font-size:12px; font-weight:600; font-family:'Poppins',sans-serif; transition:all .2s; -webkit-tap-highlight-color:transparent; white-space:nowrap; display:flex; align-items:center; gap:5px; }
+    .menu-tab .tab-icon { font-size:15px; }
+    .menu-tab.active { color:var(--marrom); background:#fff; border-color:#fff; font-weight:700; }
+    .menu-tab:active { transform:scale(.95); }
 
     .menu-body { padding:16px 16px 36px; }
     .menu-section { margin-bottom:22px; animation: fadeUp .35s cubic-bezier(.22,.68,0,1.2) both; }
@@ -272,6 +272,8 @@
     .menu-wine-item { display:flex; align-items:flex-start; gap:12px; background:rgba(123,45,139,.08); border:1.5px solid rgba(123,45,139,.18); border-radius:14px; padding:14px; margin-bottom:10px; animation: slideLeft .3s cubic-bezier(.22,.68,0,1.2) both; }
     .menu-wine-grape { font-size:10px; color:#7b2d8b; font-weight:600; margin-top:3px; }
     .menu-wine-pair  { font-size:10px; color:var(--muted); margin-top:2px; }
+    .menu-badge-sec   { display:inline-block; background:linear-gradient(135deg,#7b2d8b,#5a1f66); color:#fff; font-size:9px; font-weight:700; letter-spacing:.5px; padding:2px 7px; border-radius:999px; margin-left:5px; vertical-align:middle; }
+    .menu-badge-suave { display:inline-block; background:linear-gradient(135deg,#e8783e,#d4521e); color:#fff; font-size:9px; font-weight:700; letter-spacing:.5px; padding:2px 7px; border-radius:999px; margin-left:5px; vertical-align:middle; }
   </style>
 </head>
 <body>
@@ -515,8 +517,36 @@
         </button>
       </div>
     </div>
-    <button class="btn-primary"   id="btn-wt-next" disabled onclick="goTo('screen-wine-country')"></button>
+    <button class="btn-primary"   id="btn-wt-next" disabled onclick="goTo('screen-wine-sweet')"></button>
     <button class="btn-secondary" id="btn-wt-back" onclick="goTo('screen-welcome')"></button>
+  </div>
+
+  <!-- WINE SCREEN A2 — SECURA -->
+  <div class="screen" id="screen-wine-sweet">
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🍷</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="card">
+      <div class="section-title" id="ws-title"></div>
+      <div class="section-hint"  id="ws-hint"></div>
+      <div class="wine-type-grid">
+        <button class="wine-type-btn" onclick="selectWineSweetness(this,'seco')">
+          <span class="wt-icon">🍷</span>
+          <span class="wt-label" id="ws-seco-label"></span>
+          <span class="wt-desc"  id="ws-seco-desc"></span>
+        </button>
+        <button class="wine-type-btn" onclick="selectWineSweetness(this,'suave')">
+          <span class="wt-icon">🍬</span>
+          <span class="wt-label" id="ws-suave-label"></span>
+          <span class="wt-desc"  id="ws-suave-desc"></span>
+        </button>
+        <button class="wine-type-btn" onclick="selectWineSweetness(this,'qualquer')">
+          <span class="wt-icon">🤷</span>
+          <span class="wt-label" id="ws-qualquer-label"></span>
+          <span class="wt-desc"  id="ws-qualquer-desc"></span>
+        </button>
+      </div>
+    </div>
+    <button class="btn-primary"   id="btn-ws-next" disabled onclick="goTo('screen-wine-country')"></button>
+    <button class="btn-secondary" id="btn-ws-back" onclick="goTo('screen-wine-type')"></button>
   </div>
 
   <!-- WINE SCREEN B — PAÍS -->
@@ -588,8 +618,17 @@
       <div class="menu-topbar-spacer"></div>
     </div>
     <div class="menu-tabs" id="menu-tabs">
-      <button class="menu-tab active" onclick="switchMenuTab('pratos',this)"><span class="tab-icon">🍽️</span><span id="tab-pratos-label">Pratos</span></button>
+      <button class="menu-tab active" onclick="switchMenuTab('destaques',this)"><span class="tab-icon">⭐</span><span id="tab-destaques-label">Destaques</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('bode',this)"><span class="tab-icon">🐐</span><span id="tab-bode-label">Bode</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('carnes',this)"><span class="tab-icon">🥩</span><span id="tab-carnes-label">Carnes</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('mar',this)"><span class="tab-icon">🐟</span><span id="tab-mar-label">Frutos do Mar</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('aves',this)"><span class="tab-icon">🍗</span><span id="tab-aves-label">Aves</span></button>
       <button class="menu-tab" onclick="switchMenuTab('entradas',this)"><span class="tab-icon">🥟</span><span id="tab-entradas-label">Entradas</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('caldos',this)"><span class="tab-icon">🫕</span><span id="tab-caldos-label">Caldos</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('petiscos',this)"><span class="tab-icon">🍖</span><span id="tab-petiscos-label">Petiscos</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('saladas',this)"><span class="tab-icon">🥗</span><span id="tab-saladas-label">Saladas</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('sobremesas',this)"><span class="tab-icon">🍰</span><span id="tab-sobremesas-label">Sobremesas</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('bodinhos',this)"><span class="tab-icon">👶</span><span id="tab-bodinhos-label">Bodinhos</span></button>
       <button class="menu-tab" onclick="switchMenuTab('bebidas',this)"><span class="tab-icon">🍺</span><span id="tab-bebidas-label">Bebidas</span></button>
       <button class="menu-tab" onclick="switchMenuTab('vinhos',this)"><span class="tab-icon">🍷</span><span id="tab-vinhos-label">Vinhos</span></button>
     </div>
@@ -663,11 +702,19 @@ const T = {
     footerResult:'Sugestões do cardápio atual · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
     menuCtaTitle:'Ver o Cardápio Completo', menuCtaDesc:'Pratos, bebidas, vinhos e valores',
     menuTopbarTitle:'📋 Cardápio', menuBack:'← Voltar',
-    tabPratos:'Pratos', tabEntradas:'Entradas', tabBebidas:'Bebidas', tabVinhos:'Vinhos',
-    menuCatBode:'🐐 Bode', menuCatCarne:'🥩 Carne Vermelha', menuCatPeixe:'🐟 Peixe & Frutos do Mar', menuCatFrango:'🍗 Frango',
-    menuCatDrinkChopp:'🍺 Chopp & Cerveja', menuCatDrinkDrink:'🍹 Drinks Especiais', menuCatDrinkWhisky:'🥃 Whisky',
-    menuCatDrinkCachaca:'🌿 Cachaça & Regional', menuCatDrinkSemAlcool:'🥤 Sem Álcool', menuCatDrinkGin:'🍋 Gin & Aperitivo',
+    tabDestaques:'Destaques', tabBode:'Bode', tabCarnes:'Carnes', tabMar:'Frutos do Mar', tabAves:'Aves',
+    tabEntradas:'Entradas', tabCaldos:'Caldos', tabPetiscos:'Petiscos', tabSaladas:'Saladas', tabSobremesas:'Sobremesas', tabBodinhos:'Bodinhos',
+    tabBebidas:'Bebidas', tabVinhos:'Vinhos',
+    menuCatBode:'🐐 Estrelas do Bode', menuCatCarne:'🥩 Carnes do Nô', menuCatPeixe:'🐟 Frutos do Mar', menuCatFrango:'🍗 Aves',
+    menuCatMatuto:'🍖 Invenções do Matuto', menuCatChapa:'🔥 Petiscos na Chapa',
+    menuCatDrinkChopp:'🍺 Chopp', menuCatDrinkCerveja:'🍻 Cervejas', menuCatDrinkDrink:'🍹 Drinks Especiais', menuCatDrinkWhisky:'🥃 Whisky',
+    menuCatDrinkCachaca:'🌿 Cachaça & Regional', menuCatDrinkSemAlcool:'🥤 Sem Álcool', menuCatDrinkGin:'🍋 Gin & Refrescantes',
     menuWineTinto:'🍷 Tintos', menuWineBranco:'🥂 Brancos', menuWineRose:'🌹 Rosés', menuWineEspumante:'✨ Espumantes', menuWineVerde:'🍃 Vinho Verde',
+    wsSweetTitle:'Como você prefere seu vinho?', wsSweetHint:'Isso nos ajuda a escolher melhor pra você!',
+    wsSecoLabel:'Seco', wsSecoDesc:'Encorpado, intenso, sem açúcar',
+    wsSuaveLabel:'Suave', wsSuaveDesc:'Aromático, frutado, mais redondo',
+    wsQualquerLabel:'Tanto faz!', wsQualquerDesc:'Me surpreende com o melhor!',
+    btnNext:'Próximo →', btnBack:'← Voltar',
     chatError:'⚠️ Não consegui conectar ao Bodinho. Tenta de novo?', chatRetry:'Tentar novamente',
     badgeChampion:'⭐ Campeão', badgeNew:'Novo', badgeWine:'Vinho',
     rProtein:{ bode:'bode', carne:'carne vermelha', peixe:'fruto do mar', frango:'frango' },
@@ -749,11 +796,19 @@ const T = {
     footerResult:'Current menu suggestions · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
     menuCtaTitle:'See the Full Menu', menuCtaDesc:'Dishes, drinks, wines and prices',
     menuTopbarTitle:'📋 Menu', menuBack:'← Back',
-    tabPratos:'Dishes', tabEntradas:'Starters', tabBebidas:'Drinks', tabVinhos:'Wines',
-    menuCatBode:'🐐 Goat', menuCatCarne:'🥩 Red Meat', menuCatPeixe:'🐟 Fish & Seafood', menuCatFrango:'🍗 Chicken',
-    menuCatDrinkChopp:'🍺 Draft & Beer', menuCatDrinkDrink:'🍹 Special Drinks', menuCatDrinkWhisky:'🥃 Whisky',
-    menuCatDrinkCachaca:'🌿 Cachaça & Regional', menuCatDrinkSemAlcool:'🥤 Non-Alcoholic', menuCatDrinkGin:'🍋 Gin & Aperitif',
+    tabDestaques:'Highlights', tabBode:'Goat', tabCarnes:'Meats', tabMar:'Seafood', tabAves:'Poultry',
+    tabEntradas:'Starters', tabCaldos:'Broths', tabPetiscos:'Snacks', tabSaladas:'Salads', tabSobremesas:'Desserts', tabBodinhos:'Kids',
+    tabBebidas:'Drinks', tabVinhos:'Wines',
+    menuCatBode:'🐐 Goat Specialties', menuCatCarne:'🥩 Nô\'s Meats', menuCatPeixe:'🐟 Seafood', menuCatFrango:'🍗 Poultry',
+    menuCatMatuto:'🍖 Matuto Snacks', menuCatChapa:'🔥 Griddle Snacks',
+    menuCatDrinkChopp:'🍺 Draft Beer', menuCatDrinkCerveja:'🍻 Beers', menuCatDrinkDrink:'🍹 Special Drinks', menuCatDrinkWhisky:'🥃 Whisky',
+    menuCatDrinkCachaca:'🌿 Cachaça & Regional', menuCatDrinkSemAlcool:'🥤 Non-Alcoholic', menuCatDrinkGin:'🍋 Gin & Refreshing',
     menuWineTinto:'🍷 Reds', menuWineBranco:'🥂 Whites', menuWineRose:'🌹 Rosés', menuWineEspumante:'✨ Sparkling', menuWineVerde:'🍃 Vinho Verde',
+    wsSweetTitle:'How do you prefer your wine?', wsSweetHint:'This helps us find the perfect match for you!',
+    wsSecoLabel:'Dry', wsSecoDesc:'Full-bodied, intense, no sugar',
+    wsSuaveLabel:'Smooth', wsSuaveDesc:'Aromatic, fruity, round finish',
+    wsQualquerLabel:'Surprise me!', wsQualquerDesc:'Show me the best option!',
+    btnNext:'Next →', btnBack:'← Back',
     chatError:'⚠️ Could not reach Bodinho. Try again?', chatRetry:'Try again',
     badgeChampion:'⭐ Best Seller', badgeNew:'New', badgeWine:'Wine',
     rProtein:{ bode:'goat', carne:'red meat', peixe:'seafood', frango:'chicken' },
@@ -835,11 +890,19 @@ const T = {
     footerResult:'Sugerencias del menú actual · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
     menuCtaTitle:'Ver el Menú Completo', menuCtaDesc:'Platos, bebidas, vinos y precios',
     menuTopbarTitle:'📋 Menú', menuBack:'← Volver',
-    tabPratos:'Platos', tabEntradas:'Entradas', tabBebidas:'Bebidas', tabVinhos:'Vinos',
-    menuCatBode:'🐐 Cabro', menuCatCarne:'🥩 Carne Roja', menuCatPeixe:'🐟 Pescado & Mariscos', menuCatFrango:'🍗 Pollo',
-    menuCatDrinkChopp:'🍺 Chopp & Cerveza', menuCatDrinkDrink:'🍹 Drinks Especiales', menuCatDrinkWhisky:'🥃 Whisky',
-    menuCatDrinkCachaca:'🌿 Cachaça & Regional', menuCatDrinkSemAlcool:'🥤 Sin Alcohol', menuCatDrinkGin:'🍋 Gin & Aperitivo',
+    tabDestaques:'Destacados', tabBode:'Cabro', tabCarnes:'Carnes', tabMar:'Mariscos', tabAves:'Aves',
+    tabEntradas:'Entradas', tabCaldos:'Caldos', tabPetiscos:'Picadas', tabSaladas:'Ensaladas', tabSobremesas:'Postres', tabBodinhos:'Niños',
+    tabBebidas:'Bebidas', tabVinhos:'Vinos',
+    menuCatBode:'🐐 Especialidades de Cabro', menuCatCarne:'🥩 Carnes del Nô', menuCatPeixe:'🐟 Mariscos', menuCatFrango:'🍗 Aves',
+    menuCatMatuto:'🍖 Picadas del Matuto', menuCatChapa:'🔥 Picadas a la Plancha',
+    menuCatDrinkChopp:'🍺 Chopp', menuCatDrinkCerveja:'🍻 Cervezas', menuCatDrinkDrink:'🍹 Drinks Especiales', menuCatDrinkWhisky:'🥃 Whisky',
+    menuCatDrinkCachaca:'🌿 Cachaça & Regional', menuCatDrinkSemAlcool:'🥤 Sin Alcohol', menuCatDrinkGin:'🍋 Gin & Refrescantes',
     menuWineTinto:'🍷 Tintos', menuWineBranco:'🥂 Blancos', menuWineRose:'🌹 Rosados', menuWineEspumante:'✨ Espumosos', menuWineVerde:'🍃 Vino Verde',
+    wsSweetTitle:'¿Cómo prefieres tu vino?', wsSweetHint:'¡Esto nos ayuda a elegir el mejor para ti!',
+    wsSecoLabel:'Seco', wsSecoDesc:'Con cuerpo, intenso, sin azúcar',
+    wsSuaveLabel:'Suave', wsSuaveDesc:'Aromático, afrutado, final redondo',
+    wsQualquerLabel:'¡Sorpréndeme!', wsQualquerDesc:'¡Muéstrame la mejor opción!',
+    btnNext:'Siguiente →', btnBack:'← Volver',
     chatError:'⚠️ No pude conectar con Bodinho. ¿Intentas de nuevo?', chatRetry:'Intentar de nuevo',
     badgeChampion:'⭐ Más Vendido', badgeNew:'Nuevo', badgeWine:'Vino',
     rProtein:{ bode:'cabro', carne:'carne roja', peixe:'mariscos', frango:'pollo' },
@@ -944,14 +1007,18 @@ const STORIES = {
 /* ── MENU DATA ────────────────────────────────── */
 const MENU = {
   bode: [
-    { name:'Buchada de Bode',   price:69,  icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Receita exclusiva da Dona Maria, feita com amor e carinho. Miúdos temperados e cozidos lentamente no bucho do bode. Prato de alma nordestina. Executivo.',en:'Exclusive recipe by Dona Maria, made with love and care. Slow-cooked offal inside goat tripe. A true Northeastern soul dish. Executive.',es:'Receta exclusiva de Doña Maria, hecha con amor y cariño. Menudencias cocinadas lentamente dentro del buche de cabro. Plato del alma norteña. Ejecutivo.'}, champion:true },
+    { name:'Buchada de Bode',   price:129, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Tradicional buchada de bode. Receita exclusiva da Dona Maria, feita com amor desde 1991. Acompanha: pirão de buchada, legumes e arroz branco.',en:'Traditional goat buchada. Exclusive recipe by Dona Maria, made with love since 1991. Comes with: buchada pirão, vegetables and white rice.',es:'Tradicional buchada de cabro. Receta exclusiva de Doña Maria, hecha con amor desde 1991. Incluye: pirão de buchada, vegetales y arroz blanco.'}, champion:true },
     { name:'Picanha de Bode',   price:154, icon:'🐐', storyId:'bode_sertao',  regional:false, desc:{pt:'Na chapa com queijo coalho e cebolas douradas. Feijão, arroz, macaxeira frita.',en:'On the griddle with coalho cheese and golden onions. Beans, rice, fried cassava.',es:'A la plancha con queso coalho y cebollas doradas. Frijoles, arroz, yuca frita.'}, champion:true },
     { name:'Bode na Nata',      price:69,  icon:'🐐', storyId:'bode_sertao',  regional:false, desc:{pt:'Fatias na brasa cobertas com creme de nata da casa. Executivo.',en:'Grilled slices topped with house cream sauce. Executive.',es:'Rodajas a la brasa cubiertas con crema de la casa. Ejecutivo.'}, champion:true },
     { name:'Chã de Bode',       price:154, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Na chapa com queijo coalho e cebolas douradas.',en:'On the griddle with coalho cheese and golden onions.',es:'A la plancha con queso coalho y cebollas doradas.'} },
     { name:'Bode Guisado',      price:119, icon:'🐐', storyId:'bode_guisado', regional:true,  desc:{pt:'Ao molho da casa. Arroz, feijão, macaxeira cozida.',en:'In house sauce. Rice, beans, boiled cassava.',es:'En salsa de la casa. Arroz, frijoles, yuca cocida.'} },
     { name:'Bode Assado',       price:64,  icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Na brasa com queijo coalho. Feijão, arroz, macaxeira. Executivo.',en:'Grilled with coalho cheese. Beans, rice, cassava. Executive.',es:'A la brasa con queso coalho. Frijoles, arroz, yuca. Ejecutivo.'} },
     { name:'Mistão de Bode',    price:199, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'4 cortes: chã, costela, paletão e bode assado.',en:'4 cuts: chã, rib, shoulder and roast goat.',es:'4 cortes: chã, costilla, paleta y cabro asado.'} },
-    { name:'Costela de Bode',   price:119, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Na chapa com queijo coalho e cebolas douradas.',en:'On the griddle with coalho cheese and golden onions.',es:'A la plancha con queso coalho y cebollas doradas.'} },
+    { name:'Costela de Bode',      price:119, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Na chapa com queijo coalho e cebolas douradas.',en:'On the griddle with coalho cheese and golden onions.',es:'A la plancha con queso coalho y cebollas doradas.'} },
+    { name:'Paletão de Bode',      price:194, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Paletão na chapa com queijo coalho e cebolas douradas. Feijão ou fava, arroz branco, macaxeira frita, vinagrete e farofa da casa.',en:'Shoulder on griddle with coalho cheese and golden onions. Beans, rice, fried cassava, vinaigrette and house farofa.',es:'Paleta a la plancha con queso coalho y cebollas doradas. Frijoles, arroz, yuca frita, vinagreta y farofa.'} },
+    { name:'Carne de Sol de Bode', price:184, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Carne de sol de bode na chapa com queijo coalho e cebolas douradas. Feijão ou fava, arroz branco, macaxeira frita, vinagrete e farofa da casa.',en:'Goat sun-dried meat on griddle with coalho cheese and golden onions. Beans, rice, fried cassava, vinaigrette and house farofa.',es:'Carne de sol de cabro a la plancha con queso coalho y cebollas doradas.'} },
+    { name:'Contrafilé de Bode',   price:139, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Contrafilé de bode na chapa com queijo coalho e cebolas douradas. Feijão ou fava, arroz branco, macaxeira frita, vinagrete e farofa da casa.',en:'Goat sirloin on the griddle with coalho cheese and golden onions.',es:'Contrafilé de cabro a la plancha con queso coalho y cebollas doradas.'} },
+    { name:'Super Bode Assado',    price:174, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Bode na chapa com queijo coalho e cebolas douradas. Feijão ou fava, arroz branco, batata frita, cuscuz, macaxeira frita, vinagrete e farofa da casa.',en:'Grilled goat with coalho cheese and golden onions. Beans, rice, fries, couscous, fried cassava, vinaigrette and house farofa.',es:'Cabro a la plancha con queso coalho y cebollas doradas. Frijoles, arroz, papas fritas, cuscuz, yuca frita.'} },
   ],
   carne: [
     { name:'Picanha Argentina',           price:79,  icon:'🥩', storyId:'picanha',      regional:false, desc:{pt:'Na brasa com queijo coalho e cebolas douradas. Executivo.',en:'Grilled with coalho cheese and golden onions. Executive.',es:'A la brasa con queso coalho y cebollas doradas. Ejecutivo.'}, champion:true },
@@ -962,6 +1029,10 @@ const MENU = {
     { name:'Carne de Sol Matuta',         price:145, icon:'🥩', storyId:'carne_de_sol', regional:true,  desc:{pt:'Suculenta na chapa com queijo coalho.',en:'Succulent on the griddle with coalho cheese.',es:'Suculenta a la plancha con queso coalho.'} },
     { name:'Baião de Dois Amostrado',     price:169, icon:'🥩', storyId:'baiao_de_dois',regional:true,  desc:{pt:'Carne de sol em cubos com arroz, feijão, queijo coalho e nata.',en:'Cured beef cubes with rice, beans, coalho cheese and cream.',es:'Carne curada en cubos con arroz, frijoles, queso coalho y crema.'} },
     { name:'Maminha Matuta',              price:155, icon:'🥩', storyId:'picanha',      regional:true,  desc:{pt:'Na chapa com queijo coalho e cebolas douradas.',en:'On the griddle with coalho cheese and golden onions.',es:'A la plancha con queso coalho y cebollas doradas.'} },
+    { name:'Churrasco Misto',             price:259, icon:'🥩', storyId:'picanha',      regional:false, desc:{pt:'Seleção dos cortes mais vendidos: picanha, maminha, carne de sol, frango e linguiça toscana. Feijão ou fava, arroz branco, macaxeira frita, vinagrete e farofa.',en:'Selection of best-selling cuts: rump, flank, sun-dried beef, chicken and sausage. Beans, rice, fried cassava, vinaigrette and farofa.',es:'Selección de los cortes más vendidos: picaña, sobrebarriga, carne de sol, pollo y salchicha.'} },
+    { name:'Cupim na Chapa',              price:155, icon:'🥩', storyId:'picanha',      regional:false, desc:{pt:'Porção do tradicional cupim. Arroz branco, feijão ou fava, macaxeira frita e farofa crocante.',en:'Traditional cupim portion. White rice, beans, fried cassava and crispy farofa.',es:'Porción del tradicional cupim. Arroz blanco, frijoles, yuca frita y farofa crocante.'} },
+    { name:'Feijoada',                    price:99,  icon:'🍲', storyId:'baiao_de_dois', regional:true,  desc:{pt:'Feijoada completa. Arroz branco, couve refogada, farofa da casa, laranja e torresmo crocante.',en:'Complete feijoada. White rice, sautéed kale, house farofa, orange and crispy pork rinds.',es:'Feijoada completa. Arroz blanco, col salteada, farofa de la casa, naranja y chicharrón crocante.'}, isnew:true },
+    { name:'Filé Mignon ao Molho 4 Queijos', price:189, icon:'🥩', storyId:'picanha',   regional:false, desc:{pt:'Filé mignon servido ao molho cremoso de quatro queijos. Arroz de castanha e batatas sauté.',en:'Filet mignon in four-cheese creamy sauce. Chestnut rice and sautéed potatoes.',es:'Solomillo al molho cremoso de cuatro quesos. Arroz de castaña y papas salteadas.'}, isnew:true },
   ],
   peixe: [
     { name:'Filé de Salmão ao Maracujá', price:199, icon:'🐟', storyId:'salmao',  regional:false, desc:{pt:'Puxado no azeite ao molho maracujá. Arroz brócolis e batata rústica.',en:'Sautéed in olive oil with passion fruit sauce. Broccoli rice and rustic potatoes.',es:'Salteado en aceite de oliva con salsa de maracuyá. Arroz con brócoli y papas rústicas.'} },
@@ -971,7 +1042,16 @@ const MENU = {
     { name:'Peixada Mista',             price:194, icon:'🐟', storyId:'peixada', regional:true,  desc:{pt:'Peixe + camarão no azeite, legumes e molho de tomate. Arroz e pirão.',en:'Fish + shrimp in olive oil, veggies and tomato sauce. Rice and pirão.',es:'Pescado + camarón en aceite, vegetales y salsa de tomate. Arroz y pirão.'} },
     { name:'Salmão na Brasa',           price:69,  icon:'🐟', storyId:'salmao',  regional:false, desc:{pt:'Filé de salmão com legumes e arroz de brócolis. Executivo.',en:'Salmon fillet with vegetables and broccoli rice. Executive.',es:'Filete de salmón con vegetales y arroz con brócoli. Ejecutivo.'} },
     { name:'Moqueca Mista',             price:69,  icon:'🦐', storyId:'moqueca', regional:true,  desc:{pt:'Peixe + camarão no azeite de dendê ao molho de coco. Executivo.',en:'Fish + shrimp in palm oil and coconut sauce. Executive.',es:'Pescado + camarón en aceite de palma con salsa de coco. Ejecutivo.'}, champion:true },
-    { name:'Tilápia e Camarão à Delícia',price:69, icon:'🐟', storyId:'camarao', regional:true,  desc:{pt:'Tilápia com banana, camarão e molho branco cremoso. Executivo.',en:'Tilapia with banana, shrimp and creamy white sauce. Executive.',es:'Tilapia con plátano, camarón y salsa blanca cremosa. Ejecutivo.'}, champion:true },
+    { name:'Tilápia e Camarão à Delícia',price:69,  icon:'🐟', storyId:'camarao', regional:true,  desc:{pt:'Tilápia com banana, camarão e molho branco cremoso. Executivo.',en:'Tilapia with banana, shrimp and creamy white sauce. Executive.',es:'Tilapia con plátano, camarón y salsa blanca cremosa. Ejecutivo.'}, champion:true },
+    { name:'Cioba Recheada ao Molho de Camarão', price:299, icon:'🐟', storyId:'peixada', regional:true, desc:{pt:'Peixe cioba recheado com farofa de camarão ao molho de camarão. Arroz branco e pirão de peixe.',en:'Cioba fish stuffed with shrimp farofa in shrimp sauce. White rice and fish pirão.',es:'Pez cioba relleno con farofa de camarón en salsa de camarón. Arroz blanco y pirão de pescado.'} },
+    { name:'Camarão na Moranga',         price:194, icon:'🦐', storyId:'camarao',  regional:true,  desc:{pt:'Filé de camarão na moranga. Arroz branco.',en:'Shrimp fillet in pumpkin. White rice.',es:'Filete de camarón en calabaza. Arroz blanco.'} },
+    { name:'Camarão Sertanejo',          price:194, icon:'🦐', storyId:'camarao',  regional:true,  desc:{pt:'Camarões salteados na manteiga com charque acebolada e pimentões coloridos. Farofa de jerimum, arroz branco e purê de macaxeira.',en:'Shrimp sautéed in butter with sun-dried beef and colored peppers. Pumpkin farofa, white rice and cassava mash.',es:'Camarones salteados en mantequilla con charque y pimientos coloridos. Farofa de calabaza, arroz y puré de yuca.'} },
+    { name:'Camarão ao Molho 4 Queijos', price:189, icon:'🦐', storyId:'camarao',  regional:false, desc:{pt:'Camarões ao molho super cremoso de quatro queijos. Arroz com brócolis e purê de batatas.',en:'Shrimp in four-cheese creamy sauce. Broccoli rice and mashed potatoes.',es:'Camarones al molho cremoso de cuatro quesos. Arroz con brócoli y puré de papas.'} },
+    { name:'Peixada Pernambucana',       price:194, icon:'🐟', storyId:'peixada',  regional:true,  desc:{pt:'Peixe em posta puxado no azeite com legumes cozidos. Arroz branco, pirão e farofa de dendê.',en:'Fish in olive oil with cooked vegetables. White rice, pirão and palm oil farofa.',es:'Pez en aceite con vegetales cocidos. Arroz blanco, pirão y farofa de dendê.'} },
+    { name:'Moqueca de Peixe',           price:189, icon:'🐟', storyId:'moqueca',  regional:true,  desc:{pt:'Peixe em posta puxado no azeite de dendê com pimentões, cebolas douradas e tomates ao molho de coco. Arroz branco, pirão e farofa de dendê.',en:'Fish in palm oil with peppers, golden onions and tomatoes in coconut sauce. White rice, pirão and palm oil farofa.',es:'Pez en aceite de palma con pimientos, cebollas doradas y tomates en salsa de coco.'} },
+    { name:'Filé de Peixe Grelhado com Camarão', price:199, icon:'🐟', storyId:'peixada', regional:false, desc:{pt:'Filé de peixe grelhado com camarões e pimentões coloridos. Batatas rústicas e arroz à grega.',en:'Grilled fish fillet with shrimp and colored peppers. Rustic potatoes and Greek-style rice.',es:'Filete de pescado a la plancha con camarones y pimientos coloridos.'} },
+    { name:'Sinfonia Marítima',          price:199, icon:'🦞', storyId:'peixada',  regional:false, desc:{pt:'Filé de peixe, salmão, camarão e polvo preparados ao molho especial da casa. Arroz branco e pirão.',en:'Fish fillet, salmon, shrimp and octopus in house special sauce. White rice and pirão.',es:'Filete de pescado, salmón, camarón y pulpo al molho especial de la casa.'}, isnew:true },
+    { name:'Peixada Especial do Nô',     price:269, icon:'🦞', storyId:'peixada',  regional:true,  desc:{pt:'Peixe em posta, lagosta e filé de camarão puxados no azeite com pimentões, legumes e cebolas ao molho de tomate. Arroz branco, pirão e farofa de dendê.',en:'Fish, lobster and shrimp in olive oil with peppers, vegetables and onions in tomato sauce. White rice, pirão and farofa.',es:'Pez, langosta y camarón en aceite con pimientos, vegetales y cebollas en salsa de tomate.'}, isnew:true },
   ],
   frango: [
     { name:'Frango Desossado com Parmesão',price:149,icon:'🍗', storyId:'parmegiana',regional:false,desc:{pt:'Com crosta de parmesão, feijão, arroz, farofa de ovos e batata frita.',en:'Parmesan crust, beans, rice, egg farofa and fries.',es:'Costra de parmesano, frijoles, arroz, farofa de huevo y papas fritas.'} },
@@ -983,57 +1063,222 @@ const MENU = {
 };
 
 const STARTERS = {
-  bode:  [ { name:'Espetinho de Bode',            price:34, icon:'🍢', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} }, { name:'Panelinha de Bode Guisado', price:49, icon:'🍲', desc:{pt:'Com pão artesanal.',en:'With bread.',es:'Con pan artesanal.'} } ],
-  carne: [ { name:'Espetinho de Carne de Sol',     price:33, icon:'🍢', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} }, { name:'Filezinho Mignon com Parmesão', price:49, icon:'🍖', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} } ],
-  peixe: [ { name:'Espetinho de Camarão',          price:33, icon:'🍢', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} }, { name:'Casquinho de Caranguejo',       price:34, icon:'🦀', champion:true, desc:{pt:'Com farofa crocante.',en:'With crispy farofa.',es:'Con farofa crocante.'} } ],
-  frango:[ { name:'Linguiça de Frango',            price:14, icon:'🌭',               desc:{pt:'Na brasa.',en:'Grilled.',es:'A la brasa.'} }, { name:'Filezinho Mignon com Parmesão',  price:49, icon:'🍖', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} } ],
+  bode:  [
+    { name:'Espetinho de Bode',               price:34, icon:'🍢', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} },
+    { name:'Panelinha de Bode Guisado',        price:49, icon:'🍲', desc:{pt:'Com pão artesanal.',en:'With artisanal bread.',es:'Con pan artesanal.'} },
+    { name:'Pastel de Bode',                   price:49, icon:'🥟', desc:{pt:'4 unidades.',en:'4 units.',es:'4 unidades.'} },
+    { name:'Linguiça de Bode',                 price:16, icon:'🌭', desc:{pt:'Na brasa.',en:'Grilled.',es:'A la brasa.'} },
+  ],
+  carne: [
+    { name:'Espetinho de Carne de Sol',        price:33, icon:'🍢', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} },
+    { name:'Filezinho Mignon com Parmesão',    price:39, icon:'🍖', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} },
+    { name:'Pastel Misto',                     price:49, icon:'🥟', desc:{pt:'4 unidades. Carne de sol, camarão, charque e queijo.',en:'4 units. Sun-dried beef, shrimp, charque and cheese.',es:'4 unidades. Carne de sol, camarón, charque y queso.'} },
+    { name:'Pastel de Carne de Sol',           price:49, icon:'🥟', desc:{pt:'4 unidades.',en:'4 units.',es:'4 unidades.'} },
+    { name:'Pastel de Charque e Requeijão',    price:55, icon:'🥟', desc:{pt:'4 unidades.',en:'4 units.',es:'4 unidades.'} },
+    { name:'Bolinho de Feijoada com Molho',    price:39, icon:'🫕', desc:{pt:'6 unidades com molho de pimenta.',en:'6 units with pepper sauce.',es:'6 unidades con salsa de pimiento.'} },
+    { name:'Torres de Macaxeira, Catupiry e Carne de Sol', price:49, icon:'🏗️', desc:{pt:'8 unidades.',en:'8 units.',es:'8 unidades.'} },
+    { name:'Tábua de Frios',                   price:79, icon:'🧀', desc:{pt:'Salame, presunto, queijo gorgonzola, queijo do reino, mussarela, queijo coalho e azeitonas.',en:'Cold cuts platter: salami, ham, gorgonzola, kingdom cheese, mozzarella, coalho cheese and olives.',es:'Tabla de fiambres: salami, jamón, gorgonzola, queso del reino, mozzarella, queso coalho y aceitunas.'} },
+  ],
+  peixe: [
+    { name:'Espetinho de Camarão',             price:33, icon:'🍢', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} },
+    { name:'Casquinho de Caranguejo',          price:34, icon:'🦀', champion:true, desc:{pt:'Com farofa crocante.',en:'With crispy farofa.',es:'Con farofa crocante.'} },
+    { name:'Pastel de Camarão Praiano',        price:55, icon:'🥟', desc:{pt:'4 unidades.',en:'4 units.',es:'4 unidades.'} },
+    { name:'Torres de Macaxeira, Catupiry e Camarão', price:49, icon:'🏗️', desc:{pt:'8 unidades.',en:'8 units.',es:'8 unidades.'} },
+    { name:'Cauda de Lagosta',                 price:49, icon:'🦞', desc:{pt:'Unidade.',en:'Per unit.',es:'Unidad.'}, isnew:true },
+  ],
+  frango:[
+    { name:'Linguiça de Frango',               price:14, icon:'🌭', desc:{pt:'Na brasa.',en:'Grilled.',es:'A la brasa.'} },
+    { name:'Linguiça Toscana',                 price:14, icon:'🌭', desc:{pt:'Na brasa.',en:'Grilled.',es:'A la brasa.'} },
+    { name:'Filezinho Mignon com Parmesão',    price:39, icon:'🍖', champion:true, desc:{pt:'Campeão de vendas!',en:'Best seller!',es:'¡Más vendido!'} },
+    { name:'Croqueta de Costela Suína',        price:39, icon:'🍖', desc:{pt:'6 unidades.',en:'6 units.',es:'6 unidades.'} },
+    { name:'Empada de Frango',                 price:16, icon:'🥧', desc:{pt:'Unidade.',en:'Per unit.',es:'Unidad.'} },
+    { name:'Empada de Camarão',                price:16, icon:'🥧', desc:{pt:'Unidade.',en:'Per unit.',es:'Unidad.'} },
+    { name:'Pão de Alho',                      price:21, icon:'🧄', desc:{pt:'Na brasa.',en:'Grilled garlic bread.',es:'Pan de ajo a la brasa.'} },
+    { name:'Queijo Coalho na Brasa',           price:29, icon:'🧀', desc:{pt:'Na brasa.',en:'Grilled coalho cheese.',es:'Queso coalho a la brasa.'} },
+    { name:'Queijo Coalho à Milanesa',         price:32, icon:'🧀', desc:{pt:'Cubos empanados e fritos com molho rosé.',en:'Breaded and fried cubes with rosé sauce.',es:'Cubos empanizados y fritos con salsa rosada.'} },
+    { name:'Dadinho de Tapioca',               price:36, icon:'🟡', desc:{pt:'Cubos de tapioca fritos.',en:'Fried tapioca cubes.',es:'Cubos de tapioca fritos.'} },
+    { name:'Bolinho de Queijo',                price:39, icon:'🧀', desc:{pt:'6 unidades.',en:'6 units.',es:'6 unidades.'} },
+    { name:'Pão Recheado de Carne de Sol',     price:29, icon:'🥖', desc:{pt:'Recheado.',en:'Stuffed.',es:'Relleno.'} },
+    { name:'Pão Recheado de Camarão',          price:34, icon:'🥖', desc:{pt:'Recheado.',en:'Stuffed.',es:'Relleno.'} },
+  ],
 };
 
+const CALDOS = [
+  { name:'Caldinho de Feijão',     price:23, icon:'🫘', desc:{pt:'Caldo quente de feijão.',en:'Hot bean broth.',es:'Caldo caliente de frijol.'} },
+  { name:'Caldinho de Peixe',      price:23, icon:'🐟', desc:{pt:'Caldo quente de peixe.',en:'Hot fish broth.',es:'Caldo caliente de pescado.'} },
+  { name:'Caldinho de Mocotó',     price:23, icon:'🦴', desc:{pt:'Caldo quente de mocotó.',en:'Hot mocotó broth.',es:'Caldo caliente de mocotó.'} },
+  { name:'Caldinho de Aratu',      price:24, icon:'🦀', desc:{pt:'Caldo quente de aratu.',en:'Hot crab broth.',es:'Caldo caliente de cangrejo.'} },
+  { name:'Caldinho de Camarão',    price:24, icon:'🦐', desc:{pt:'Caldo quente de camarão.',en:'Hot shrimp broth.',es:'Caldo caliente de camarón.'} },
+  { name:'Caldinho de Marisco',    price:24, icon:'🦪', desc:{pt:'Caldo quente de marisco.',en:'Hot seafood broth.',es:'Caldo caliente de marisco.'} },
+  { name:'Caldinho de Polvo',      price:25, icon:'🐙', desc:{pt:'Caldo quente de polvo.',en:'Hot octopus broth.',es:'Caldo caliente de pulpo.'} },
+  { name:'Caldinho de Caldeirada', price:27, icon:'🍲', desc:{pt:'Caldo de caldeirada especial.',en:'Special fish stew broth.',es:'Caldo de caldeirada especial.'} },
+];
+
+const SALADAS = [
+  { name:'Salada Regional',   price:64, icon:'🥗', desc:{pt:'Carne de sol grelhada em tiras com queijo coalho, alface americana, alface roxa, rúcula, tomate, croûtons, gergelim e molho de mel de engenho.',en:'Grilled sun-dried beef with coalho cheese, lettuce, arugula, tomato, croutons and molasses dressing.',es:'Carne de sol a la plancha con queso coalho, lechuga, rúcula, tomate, croûtons y molho de melaza.'} },
+  { name:'Salada de Salmão',  price:79, icon:'🥗', desc:{pt:'Salmão grelhado, alface americana, alface roxa, rúcula, tomate cereja, croûtons, gergelim e molho pesto de castanha.',en:'Grilled salmon, lettuce, arugula, cherry tomato, croutons and chestnut pesto dressing.',es:'Salmón a la plancha, lechuga, rúcula, tomate cherry, croûtons y pesto de castaña.'} },
+  { name:'Salada Filezinho',  price:69, icon:'🥗', desc:{pt:'Filé assado na brasa, alface americana, alface roxa, rúcula, tomate seco, croûtons, castanha e molho parmesão.',en:'Grilled filet, lettuce, arugula, sun-dried tomato, croutons, chestnut and parmesan dressing.',es:'Filete a la brasa, lechuga, rúcula, tomate seco, croûtons, castaña y molho parmesano.'} },
+  { name:'Salada Caesar',     price:59, icon:'🥗', desc:{pt:'Filé de frango grelhado, alface americana, queijo parmesão, bacon, croûtons e molho Caesar.',en:'Grilled chicken fillet, romaine lettuce, parmesan, bacon, croutons and Caesar dressing.',es:'Filete de pollo a la plancha, lechuga romana, parmesano, tocino, croûtons y aderezo Caesar.'} },
+];
+
+const SOBREMESAS = [
+  { name:'Serra das Russas',             price:59, icon:'🍫', desc:{pt:'Super torre: 3 fatias de brownie, 3 bolas de sorvete, ganache de chocolate, calda de caramelo, merengue, farofa de castanha e cereja.',en:'Super tower: 3 brownie slices, 3 ice cream scoops, chocolate ganache, caramel, meringue, chestnut crumble and cherry.',es:'Super torre: 3 brownies, 3 bolas de helado, ganache, caramelo, merengue, crumble de castaña y cereza.'} },
+  { name:'Torta Cacto',                  price:43, icon:'🌵', desc:{pt:'Mini torta de sorvete com mousse de chocolate coberta com ganache e massa crocante polvilhada no açúcar e canela.',en:'Mini ice cream tart with chocolate mousse, ganache and crispy pastry dusted with sugar and cinnamon.',es:'Mini torta de helado con mousse de chocolate, ganache y masa crocante con azúcar y canela.'} },
+  { name:'Cocada Assada com Sorvete',    price:43, icon:'🥥', desc:{pt:'Cocada assada ao forno servida com sorvete de creme, merengue, crocante de coco e cereja.',en:'Oven-baked cocada with cream ice cream, meringue, coconut crisp and cherry.',es:'Cocada al horno con helado de crema, merengue, crocante de coco y cereza.'} },
+  { name:'Mini Serra das Russas',        price:37, icon:'🍫', desc:{pt:'Brownie quente com sorvete de creme, calda de caramelo e farofa de castanha.',en:'Warm brownie with cream ice cream, caramel sauce and chestnut crumble.',es:'Brownie caliente con helado de crema, salsa de caramelo y crumble de castaña.'} },
+  { name:'Petit Gateau com Sorvete',     price:37, icon:'🍮', desc:{pt:'Clássico bolinho de chocolate com ganache servido com sorvete de creme.',en:'Classic chocolate lava cake with ganache and cream ice cream.',es:'Clásico volcán de chocolate con ganache y helado de crema.'} },
+  { name:'Cartola Tradicional',          price:34, icon:'🍌', desc:{pt:'Bananas douradas com queijo manteiga cobertas por açúcar com canela.',en:'Golden bananas with butter cheese covered in cinnamon sugar.',es:'Plátanos dorados con queso mantequilla cubiertos de azúcar con canela.'} },
+  { name:'Pudim',                        price:27, icon:'🍮', desc:{pt:'Pudim de leite condensado.',en:'Condensed milk pudding.',es:'Flan de leche condensada.'} },
+  { name:'Sorvete 2 Bolas',             price:23, icon:'🍦', desc:{pt:'Escolha o sabor.',en:'Choose the flavor.',es:'Elige el sabor.'} },
+  { name:'Pastel de Belém',             price:17, icon:'🥐', desc:{pt:'Unidade. Pastel português tradicional.',en:'Per unit. Traditional Portuguese custard tart.',es:'Unidad. Pastel de nata portugués tradicional.'}, isnew:true },
+];
+
+const PETISCOS = {
+  matuto: [
+    { name:'Picanha com Fritas',                     price:119, icon:'🥩', desc:{pt:'Porção de picanha com batatas fritas.',en:'Rump steak portion with fries.',es:'Porción de picaña con papas fritas.'} },
+    { name:'Filé com Fritas',                        price:119, icon:'🥩', desc:{pt:'Porção de filé com batatas fritas.',en:'Filet portion with fries.',es:'Porción de filete con papas fritas.'} },
+    { name:'Filé de Bode com Fritas',                price:99,  icon:'🐐', desc:{pt:'Porção de filé de bode com batatas fritas.',en:'Goat filet with fries.',es:'Filete de cabro con papas fritas.'} },
+    { name:'Carne de Sol com Fritas',                price:99,  icon:'🥩', desc:{pt:'Porção de carne de sol com batatas fritas.',en:'Sun-dried beef with fries.',es:'Carne de sol con papas fritas.'} },
+    { name:'Filé de Camarão Crocante',               price:119, icon:'🦐', desc:{pt:'Filé de camarão empanado em massa crocante e frito. Acompanha molho rosé.',en:'Shrimp fillet in crispy batter, fried. Served with rosé sauce.',es:'Filete de camarón empanizado en masa crocante. Salsa rosada.'}, champion:true },
+    { name:'Sarapatel',                              price:69,  icon:'🍲', desc:{pt:'Clássico nordestino com tempero tradicional da casa. Com farofa.',en:'Classic Northeastern dish with house seasoning. With farofa.',es:'Clásico norteño con sazón tradicional de la casa. Con farofa.'}, isnew:true },
+    { name:'Maminha com Fritas',                     price:99,  icon:'🥩', desc:{pt:'Porção de maminha com batatas fritas.',en:'Flank portion with fries.',es:'Porción de sobrebarriga con papas fritas.'} },
+    { name:'Costelinha de Bode Crocante',            price:99,  icon:'🐐', desc:{pt:'Costelinha de bode crocante.',en:'Crispy goat ribs.',es:'Costillitas de cabro crocantes.'} },
+    { name:'Frango à Passarinha',                    price:64,  icon:'🍗', desc:{pt:'Coxa/sobrecoxa de frango. Geleia de pimenta, farofa e vinagrete. Com batatas fritas.',en:'Chicken thighs. Pepper jam, farofa and vinaigrette. With fries.',es:'Muslos de pollo. Mermelada de pimiento, farofa y vinagreta.'} },
+    { name:'Camarão na Cerveja',                     price:99,  icon:'🦐', desc:{pt:'Camarão e cebola empanados em massa de cerveja. Molho rosé e shoyu.',en:'Shrimp and onion in beer batter. Rosé sauce and soy sauce.',es:'Camarón y cebolla en masa de cerveza. Salsa rosada y soya.'} },
+    { name:'Arrumadinho Tradicional',                price:89,  icon:'🫘', desc:{pt:'Charque com feijão verde. Farofa da casa e vinagrete.',en:'Sun-dried meat with green beans. House farofa and vinaigrette.',es:'Charque con frijoles verdes. Farofa de la casa y vinagreta.'} },
+    { name:'Pancetta à Pururuca',                    price:84,  icon:'🥓', desc:{pt:'Barriga de porco crocante.',en:'Crispy pork belly.',es:'Barriga de cerdo crocante.'} },
+    { name:'Linguiça de Bode Picante na Chapa',      price:74,  icon:'🌶️', desc:{pt:'Na chapa.',en:'On the griddle.',es:'A la plancha.'} },
+    { name:'Tripinha de Porco',                      price:79,  icon:'🍖', desc:{pt:'Com farofa panko e fatia de limão.',en:'With panko farofa and lemon slice.',es:'Con farofa panko y rodaja de limón.'} },
+    { name:'Camarão ao Alho e Óleo',                 price:99,  icon:'🦐', desc:{pt:'Camarão ao alho e óleo.',en:'Shrimp with garlic and olive oil.',es:'Camarón al ajo y aceite.'} },
+    { name:'Iscas de Peixe',                         price:89,  icon:'🐟', desc:{pt:'Iscas de peixe empanadas. Molho rosé e limão.',en:'Breaded fish strips. Rosé sauce and lemon.',es:'Tiras de pescado empanizadas. Salsa rosada y limón.'} },
+    { name:'Cupim Desfiado na Nata com Batata Frita', price:99, icon:'🥩', desc:{pt:'Cupim desfiado na nata da casa com batatas fritas.',en:'Shredded cupim in house cream with fries.',es:'Cupim desmenuzado en crema de la casa con papas fritas.'} },
+    { name:'Coração de Galinha',                     price:59,  icon:'🍗', desc:{pt:'Porção de 30 unidades.',en:'30 units.',es:'30 unidades.'}, isnew:true },
+  ],
+  chapa: [
+    { name:'Picanha Argentina Fatiada na Chapa',       price:199, icon:'🥩', champion:true, desc:{pt:'Picanha fatiada. Pão de alho, farofa da casa e vinagrete.',en:'Sliced rump steak. Garlic bread, house farofa and vinaigrette.',es:'Picaña en rodajas. Pan de ajo, farofa y vinagreta.'} },
+    { name:'Chapa do Mar',                             price:164, icon:'🌊', desc:{pt:'Lula, polvo, camarão com casca, salmão, cebolas douradas e pimentões coloridos.',en:'Squid, octopus, whole shrimp, salmon, golden onions and colored peppers.',es:'Calamar, pulpo, camarón, salmón, cebollas doradas y pimientos coloridos.'} },
+    { name:'Chã de Bode Fatiada na Chapa',             price:149, icon:'🐐', desc:{pt:'Chã de bode fatiada. Pão de alho, farofa da casa e vinagrete.',en:'Sliced goat flank. Garlic bread, house farofa and vinaigrette.',es:'Chã de cabro en rodajas. Pan de ajo, farofa y vinagreta.'} },
+    { name:'Maminha Fatiada na Chapa',                 price:149, icon:'🥩', desc:{pt:'Maminha fatiada. Pão de alho, farofa da casa e vinagrete.',en:'Sliced flank steak. Garlic bread, house farofa and vinaigrette.',es:'Sobrebarriga en rodajas. Pan de ajo, farofa y vinagreta.'} },
+    { name:'Carne de Sol Fatiada na Chapa',            price:149, icon:'🥩', desc:{pt:'Carne de sol fatiada. Pão de alho, farofa da casa e vinagrete.',en:'Sliced sun-dried beef. Garlic bread, house farofa and vinaigrette.',es:'Carne de sol en rodajas. Pan de ajo, farofa y vinagreta.'} },
+    { name:'Chapa de Picanha com Macaxeira e Queijo',  price:145, icon:'🥩', desc:{pt:'Picanha em cubos, macaxeira frita, queijo coalho empanado e cebolas douradas.',en:'Diced rump steak, fried cassava, breaded coalho cheese and golden onions.',es:'Cubos de picaña, yuca frita, queso coalho empanizado y cebollas doradas.'} },
+    { name:'Confit de Camarão',                        price:139, icon:'🦐', desc:{pt:'Filé de camarão no azeite especial de ervas. Com torradas.',en:'Shrimp fillet in special herb olive oil. With toast.',es:'Filete de camarón en aceite de hierbas especial. Con tostadas.'} },
+    { name:'Chapa de Camarão Sertanejo',               price:149, icon:'🦐', desc:{pt:'Charque desfiada, filé de camarão, cebolas empanadas e queijo coalho empanado.',en:'Shredded charque, shrimp fillet, breaded onions and breaded coalho cheese.',es:'Charque desmenuzada, filete de camarón, cebollas empanizadas y queso coalho empanizado.'} },
+    { name:'Chapa Sol e Mar',                          price:139, icon:'🌅', desc:{pt:'Iscas de peixes, camarão empanado, carne de sol em cubos, queijo coalho empanado e cebolas douradas.',en:'Fish strips, breaded shrimp, diced sun-dried beef, breaded coalho cheese and golden onions.',es:'Tiras de pescado, camarón empanizado, cubos de carne de sol, queso coalho y cebollas doradas.'} },
+    { name:'Chapa do Reino',                           price:129, icon:'👑', desc:{pt:'Carne de sol em cubos, rodelas de cebola empanada e super creme de queijo do reino.',en:'Diced sun-dried beef, breaded onion rings and super kingdom cheese cream.',es:'Cubos de carne de sol, aros de cebolla empanizados y crema de queso del reino.'} },
+    { name:'Chapa de Carne de Sol com Macaxeira e Queijo', price:129, icon:'🥩', desc:{pt:'Carne de sol em cubos, macaxeira frita, queijo coalho empanado e cebolas douradas.',en:'Diced sun-dried beef, fried cassava, breaded coalho cheese and golden onions.',es:'Cubos de carne de sol, yuca frita, queso coalho empanizado y cebollas doradas.'} },
+    { name:'Chapa de Frango e Queijo',                 price:119, icon:'🍗', desc:{pt:'Frango em cubos, cebolas douradas e queijo coalho empanado.',en:'Diced chicken, golden onions and breaded coalho cheese.',es:'Cubos de pollo, cebollas doradas y queso coalho empanizado.'} },
+    { name:'Misturado Regional',                       price:129, icon:'🍽️', desc:{pt:'Carne de sol, calabresa, cebola, torresmo, macaxeira frita, queijo coalho frito e pão de alho.',en:'Sun-dried beef, sausage, onion, pork rinds, fried cassava, fried coalho cheese and garlic bread.',es:'Carne de sol, chorizo, cebolla, chicharrón, yuca frita, queso coalho frito y pan de ajo.'} },
+  ],
+};
+
+const BODINHOS = [
+  { name:'Camarão aos 4 Queijos',  price:64, icon:'🦐', desc:{pt:'Camarões ao molho super cremoso de quatro queijos. Arroz com brócolis e purê de batatas.',en:'Shrimp in four-cheese creamy sauce. Broccoli rice and mashed potatoes.',es:'Camarones al molho cremoso de cuatro quesos. Arroz con brócoli y puré de papas.'} },
+  { name:'Mini Filezinho ao Queijo', price:49, icon:'🥩', desc:{pt:'Filezinho ao molho de queijo. Arroz com brócolis e batata frita.',en:'Filet in cheese sauce. Broccoli rice and fries.',es:'Filete en salsa de queso. Arroz con brócoli y papas fritas.'} },
+  { name:'Mini Filezinho Grelhado',  price:49, icon:'🥩', desc:{pt:'Filezinho grelhado. Arroz branco e legumes cozidos.',en:'Grilled filet. White rice and cooked vegetables.',es:'Filete a la plancha. Arroz blanco y vegetales cocidos.'} },
+  { name:'Mini Filezinho de Frango', price:46, icon:'🍗', desc:{pt:'Frango em cubos com espaguetinho na manteiga, molho de tomate e queijo ralado.',en:'Chicken cubes with buttered spaghetti, tomato sauce and grated cheese.',es:'Cubos de pollo con espaguetini en mantequilla, salsa de tomate y queso rallado.'} },
+];
+
 const DRINKS = {
-  chopp:   [ { name:'Chopp Brahma', price:19, icon:'🍺', desc:{pt:'300ml gelado.',en:'300ml ice cold.',es:'300ml helado.'} }, { name:'Chopp Spaten', price:19, icon:'🍺', desc:{pt:'Encorpado e refrescante.',en:'Full-bodied and fresh.',es:'Con cuerpo y refrescante.'} }, { name:'Cerveja Original 600ml', price:21, icon:'🍻', desc:{pt:'Bem gelada.',en:'Ice cold.',es:'Bien helada.'} } ],
-  drink:   [ { name:'Cangaceiro', price:29, icon:'🌿', desc:{pt:'Cachaça, caju, hortelã, mel de rapadura e água de coco.',en:'Cachaça, cashew, mint, rapadura honey and coconut water.',es:'Cachaça, anacardo, menta, miel de rapadura y agua de coco.'} }, { name:'Coqueiral do Nô', price:32, icon:'🥥', desc:{pt:'Rum, coco, mel de engenho, abacaxi, gengibre.',en:'Rum, coconut, sugarcane honey, pineapple, ginger.',es:'Ron, coco, miel de caña, piña, jengibre.'} }, { name:'Mango Beach', price:34, icon:'🥭', desc:{pt:'Vodka, manga, maracujá e xarope de maçã.',en:'Vodka, mango, passion fruit and apple syrup.',es:'Vodka, mango, maracuyá y jarabe de manzana.'}, isnew:true }, { name:'Cajueiro', price:33, icon:'🫐', desc:{pt:'Tequila, caju, gengibre, coco e limão.',en:'Tequila, cashew, ginger, coconut and lime.',es:'Tequila, anacardo, jengibre, coco y limón.'}, isnew:true } ],
-  whisky:  [ { name:'Johnnie Walker Black Label', price:30, icon:'🥃', desc:{pt:'Premium scotch.',en:'Premium scotch.',es:'Scotch premium.'} }, { name:"Jack Daniel's", price:27, icon:'🥃', desc:{pt:'Tennessee whiskey.',en:'Tennessee whiskey.',es:'Tennessee whiskey.'} }, { name:"Buchanan's 12 Anos", price:30, icon:'🥃', desc:{pt:'Suave e elegante.',en:'Smooth and elegant.',es:'Suave y elegante.'} } ],
-  cachaca: [ { name:'Cangaceiro', price:29, icon:'🌿', desc:{pt:'Cachaça, caju, hortelã, mel de rapadura e água de coco.',en:'Cachaça, cashew, mint, rapadura honey and coconut water.',es:'Cachaça, anacardo, menta, miel de rapadura y agua de coco.'} }, { name:'Xixi de Bode', price:14, icon:'🐐', desc:{pt:'A cachaça da casa!',en:'The house cachaça!',es:'¡La cachaça de la casa!'} }, { name:'Sagatiba Cristal', price:15, icon:'🥃', desc:{pt:'Pura e suave.',en:'Pure and smooth.',es:'Pura y suave.'} } ],
-  semAlcool:[ { name:'Bodrink', price:29, icon:'🥤', desc:{pt:'Tangerina, maracujá, morango, grenadine e água de coco.',en:'Tangerine, passion fruit, strawberry, grenadine & coconut water.',es:'Mandarina, maracuyá, fresa, granadina y agua de coco.'} }, { name:'Enganarosca', price:29, icon:'🍓', desc:{pt:'Frutas da época e água de coco.',en:'Seasonal fruits and coconut water.',es:'Frutas de temporada y agua de coco.'} }, { name:'Suco Natural', price:14, icon:'🍹', desc:{pt:'Manga, maracujá, acerola, graviola, morango...',en:'Mango, passion fruit, acerola, soursop, strawberry...',es:'Mango, maracuyá, acerola, guanábana, fresa...'} } ],
-  gin:     [ { name:'Aperol Spritz', price:32, icon:'🍊', desc:{pt:'Aperol, espumante Brut e água com gás.',en:'Aperol, Brut sparkling wine and soda water.',es:'Aperol, espumante Brut y agua con gas.'} }, { name:'Moscow Gin', price:39, icon:'🍋', desc:{pt:'Gin, limão, tônica, maracujá e espuma de gengibre.',en:'Gin, lime, tonic, passion fruit and ginger foam.',es:'Gin, limón, tónica, maracuyá y espuma de jengibre.'} }, { name:'Bode Red', price:39, icon:'🍷', desc:{pt:'Gin, morango, uva, maçã verde, limão e tônica.',en:'Gin, strawberry, grape, green apple, lime and tonic.',es:'Gin, fresa, uva, manzana verde, limón y tónica.'} }, { name:'Arretado', price:39, icon:'🌿', desc:{pt:'Gin, gengibre, limão e água tônica.',en:'Gin, ginger, lime and tonic water.',es:'Gin, jengibre, limón y agua tónica.'}, isnew:true } ],
+  chopp: [
+    { name:'Chopp Brahma',  price:19, icon:'🍺', desc:{pt:'300ml gelado.',en:'300ml ice cold.',es:'300ml helado.'} },
+    { name:'Chopp Spaten',  price:19, icon:'🍺', desc:{pt:'Encorpado e refrescante.',en:'Full-bodied and fresh.',es:'Con cuerpo y refrescante.'} },
+    { name:'Chopp Stella',  price:20, icon:'🍺', desc:{pt:'300ml gelado.',en:'300ml ice cold.',es:'300ml helado.'} },
+  ],
+  cerveja: [
+    { name:'Stella Artois 600ml',        price:23, icon:'🍻', desc:{pt:'600ml bem gelada.',en:'600ml ice cold.',es:'600ml bien helada.'} },
+    { name:'Spaten 600ml',               price:22, icon:'🍻', desc:{pt:'600ml bem gelada.',en:'600ml ice cold.',es:'600ml bien helada.'} },
+    { name:'Original 600ml',             price:21, icon:'🍻', desc:{pt:'600ml bem gelada.',en:'600ml ice cold.',es:'600ml bien helada.'} },
+    { name:'Budweiser 600ml',            price:21, icon:'🍻', desc:{pt:'600ml bem gelada.',en:'600ml ice cold.',es:'600ml bien helada.'} },
+    { name:'Brahma Duplo Malte 600ml',   price:20, icon:'🍻', desc:{pt:'600ml bem gelada.',en:'600ml ice cold.',es:'600ml bien helada.'} },
+    { name:'Bohemia 600ml',              price:19, icon:'🍻', desc:{pt:'600ml bem gelada.',en:'600ml ice cold.',es:'600ml bien helada.'} },
+    { name:'Corona Long Neck',           price:18, icon:'🍻', desc:{pt:'Long neck.',en:'Long neck.',es:'Long neck.'} },
+    { name:'Stella Pure Gold Long Neck', price:17, icon:'🍻', desc:{pt:'Sem glúten, menos calorias.',en:'Gluten-free, fewer calories.',es:'Sin gluten, menos calorías.'} },
+    { name:'Budweiser Zero Long Neck',   price:15, icon:'🍻', desc:{pt:'Sem álcool.',en:'Non-alcoholic.',es:'Sin alcohol.'} },
+  ],
+  drink: [
+    { name:'O Cangaceiro',        price:39, icon:'🌿', desc:{pt:'Cachaça, caju, hortelã, mel de rapadura e água de coco.',en:'Cachaça, cashew, mint, rapadura honey and coconut water.',es:'Cachaça, anacardo, menta, miel de rapadura y agua de coco.'} },
+    { name:'Coqueiral do Nô',     price:34, icon:'🥥', desc:{pt:'Rum, coco, mel de engenho, abacaxi, gengibre, água de coco e espuma de gengibre.',en:'Rum, coconut, sugarcane honey, pineapple, ginger, coconut water and ginger foam.',es:'Ron, coco, miel de caña, piña, jengibre, agua de coco y espuma de jengibre.'} },
+    { name:'Mango Beach',         price:29, icon:'🥭', desc:{pt:'Vodka, manga, maracujá, xarope de maçã, sumo de limão e água com gás.',en:'Vodka, mango, passion fruit, apple syrup, lemon juice and soda.',es:'Vodka, mango, maracuyá, jarabe de manzana, limón y soda.'}, isnew:true },
+    { name:'Cajueiro',            price:32, icon:'🫐', desc:{pt:'Tequila, caju, xarope de gengibre, xarope de coco, sumo de limão e água com gás.',en:'Tequila, cashew, ginger syrup, coconut syrup, lemon juice and soda.',es:'Tequila, anacardo, jengibre, coco, limón y soda.'}, isnew:true },
+    { name:'Sweet Red',           price:32, icon:'🍓', desc:{pt:'Vodka, purê de frutas vermelhas, xarope de pêssego e espumante Brut.',en:'Vodka, red fruit purée, peach syrup and Brut sparkling wine.',es:'Vodka, puré de frutos rojos, jarabe de durazno y espumante Brut.'}, isnew:true },
+    { name:'Coconut Tropical',    price:34, icon:'🌴', desc:{pt:'Rum, xarope de coco, maracujá, sumo de limão, água de coco e espuma de gengibre.',en:'Rum, coconut syrup, passion fruit, lemon juice, coconut water and ginger foam.',es:'Ron, coco, maracuyá, limón, agua de coco y espuma de jengibre.'}, isnew:true },
+    { name:'Laranja do Nordeste', price:37, icon:'🍊', desc:{pt:'Vodka, suco de laranja, sumo de limão, maracujá, gengibre e água com gás.',en:'Vodka, orange juice, lemon, passion fruit, ginger and soda.',es:'Vodka, jugo de naranja, limón, maracuyá, jengibre y soda.'} },
+    { name:'Mojito',              price:34, icon:'🌿', desc:{pt:'Rum, sumo de limão, hortelã, xarope de açúcar e água com gás.',en:'Rum, lime juice, mint, sugar syrup and soda.',es:'Ron, jugo de limón, menta, jarabe de azúcar y agua con gas.'} },
+    { name:'Aperol Spritz',       price:32, icon:'🍊', desc:{pt:'Aperol, espumante Brut e água com gás.',en:'Aperol, Brut sparkling wine and soda water.',es:'Aperol, espumante Brut y agua con gas.'} },
+    { name:'Margarita',           price:37, icon:'🍋', desc:{pt:'Tequila Jose Cuervo, licor de laranja e sumo de limão.',en:'Jose Cuervo tequila, orange liqueur and lime juice.',es:'Tequila Jose Cuervo, licor de naranja y jugo de limón.'} },
+    { name:'Cosmopolitan',        price:34, icon:'🍸', desc:{pt:'Vodka, licor de laranja, sumo de limão e suco de cranberry.',en:'Vodka, orange liqueur, lemon juice and cranberry juice.',es:'Vodka, licor de naranja, jugo de limón y cranberry.'} },
+    { name:'Moscow Mule',         price:33, icon:'🫙', desc:{pt:'Vodka, sumo de limão, gengibre e água com gás.',en:'Vodka, lime juice, ginger and soda.',es:'Vodka, jugo de limón, jengibre y agua con gas.'} },
+    { name:'Piña Colada',         price:34, icon:'🍍', desc:{pt:'Rum, suco de abacaxi, creme de coco e leite condensado.',en:'Rum, pineapple juice, coconut cream and condensed milk.',es:'Ron, jugo de piña, crema de coco y leche condensada.'} },
+    { name:'Negroni',             price:32, icon:'🍊', desc:{pt:'Gin, Campari e vermute rosso.',en:'Gin, Campari and rosso vermouth.',es:'Gin, Campari y vermut rojo.'} },
+  ],
+  whisky: [
+    { name:'Johnnie Walker Black Label', price:30, icon:'🥃', desc:{pt:'Premium scotch.',en:'Premium scotch.',es:'Scotch premium.'} },
+    { name:"Jack Daniel's",             price:27, icon:'🥃', desc:{pt:'Tennessee whiskey.',en:'Tennessee whiskey.',es:'Tennessee whiskey.'} },
+    { name:"Buchanan's 12 Anos",        price:30, icon:'🥃', desc:{pt:'Suave e elegante.',en:'Smooth and elegant.',es:'Suave y elegante.'} },
+    { name:'Old Parr 12 Anos',          price:27, icon:'🥃', desc:{pt:'Clássico e encorpado.',en:'Classic and full-bodied.',es:'Clásico y con cuerpo.'} },
+    { name:'Johnnie Walker Red Label',  price:20, icon:'🥃', desc:{pt:'Dose.',en:'Single measure.',es:'Copa.'} },
+  ],
+  cachaca: [
+    { name:'O Cangaceiro',       price:39, icon:'🌿', desc:{pt:'Cachaça, caju, hortelã, mel de rapadura e água de coco.',en:'Cachaça, cashew, mint, rapadura honey and coconut water.',es:'Cachaça, anacardo, menta, miel de rapadura y agua de coco.'} },
+    { name:'Xixi de Bode',       price:14, icon:'🐐', desc:{pt:'A cachaça da casa!',en:'The house cachaça!',es:'¡La cachaça de la casa!'} },
+    { name:'Sagatiba Cristal',   price:15, icon:'🥃', desc:{pt:'Pura e suave.',en:'Pure and smooth.',es:'Pura y suave.'} },
+    { name:'Sagatiba Envelhecida', price:18, icon:'🥃', desc:{pt:'Envelhecida em carvalho.',en:'Oak-aged cachaça.',es:'Cachaça envejecida en roble.'} },
+    { name:'Pitú Gold',          price:16, icon:'🦐', desc:{pt:'Cachaça especial.',en:'Special cachaça.',es:'Cachaça especial.'} },
+  ],
+  semAlcool: [
+    { name:'Bodrink',            price:29, icon:'🥤', desc:{pt:'Tangerina, maracujá, morango, grenadine e água de coco.',en:'Tangerine, passion fruit, strawberry, grenadine & coconut water.',es:'Mandarina, maracuyá, fresa, grenadine y agua de coco.'} },
+    { name:'Enganarosca',        price:29, icon:'🍓', desc:{pt:'Frutas da época e água de coco.',en:'Seasonal fruits and coconut water.',es:'Frutas de temporada y agua de coco.'} },
+    { name:'Coquetel de Frutas', price:24, icon:'🍹', desc:{pt:'Suco de frutas, creme de leite, leite condensado e grenadine.',en:'Fruit juice, cream, condensed milk and grenadine.',es:'Jugo de frutas, crema, leche condensada y grenadine.'} },
+    { name:'Soda Italiana',      price:21, icon:'🫧', desc:{pt:'Xarope Monin e água com gás. Consultar sabores.',en:'Monin syrup and sparkling water. Ask for flavors.',es:'Jarabe Monin y agua con gas. Consultar sabores.'} },
+    { name:'Suco Natural',       price:14, icon:'🍹', desc:{pt:'Manga, maracujá, acerola, graviola, morango, abacaxi...',en:'Mango, passion fruit, acerola, soursop, strawberry, pineapple...',es:'Mango, maracuyá, acerola, guanábana, fresa, piña...'} },
+    { name:'Água de Coco',       price:12, icon:'🥥', desc:{pt:'Copo.',en:'Glass.',es:'Vaso.'} },
+  ],
+  gin: [
+    { name:'Moscow Gin',  price:39, icon:'🍋', desc:{pt:'Gin, suco de limão, tônica, xarope de maracujá e espuma de gengibre.',en:'Gin, lime juice, tonic, passion fruit syrup and ginger foam.',es:'Gin, limón, tónica, maracuyá y espuma de jengibre.'} },
+    { name:'Bode Red',    price:39, icon:'🍷', desc:{pt:'Gin, morango, uva, xarope de maçã verde, suco de limão e tônica.',en:'Gin, strawberry, grape, green apple syrup, lime juice and tonic.',es:'Gin, fresa, uva, manzana verde, limón y tónica.'} },
+    { name:'Arretado',    price:39, icon:'🌿', desc:{pt:'Gin, xarope de gengibre, suco de limão e água tônica.',en:'Gin, ginger syrup, lime juice and tonic water.',es:'Gin, jengibre, limón y agua tónica.'} },
+    { name:'Azulgin',     price:39, icon:'💙', desc:{pt:'Gin, xarope de curaçau blue, tônica, xarope de pêssego e espuma de gengibre.',en:'Gin, blue curaçao, tonic, peach syrup and ginger foam.',es:'Gin, curaçao azul, tónica, durazno y espuma de jengibre.'}, isnew:true },
+    { name:'Apple Gin',   price:32, icon:'🍏', desc:{pt:'Gin, xarope de maçã, hortelã, sumo de limão e tônica.',en:'Gin, apple syrup, mint, lemon juice and tonic.',es:'Gin, manzana, menta, limón y tónica.'} },
+    { name:'Gin Tônica',  price:34, icon:'🍋', desc:{pt:'Dose de gin e água tônica.',en:'Gin measure and tonic water.',es:'Copa de gin y agua tónica.'} },
+  ],
 };
 
 /* ── WINES — carta completa com harmonização ─── */
 const WINES = [
-  // TINTOS
-  { name:'Alamos Malbec',              price:219, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec',             pair:['bode','carne'],        desc:{pt:'Argentina · Malbec · Encorpado, frutado e aveludado.',en:'Argentina · Malbec · Full-bodied, fruity and velvety.',es:'Argentina · Malbec · Con cuerpo, afrutado y aterciopelado.'} },
-  { name:'Alta Vista Premium Malbec',  price:199, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec | Cabernet',  pair:['bode','carne'],        desc:{pt:'Argentina · Malbec/Cabernet · Estruturado e persistente.',en:'Argentina · Malbec/Cabernet · Structured and persistent.',es:'Argentina · Malbec/Cabernet · Estructurado y persistente.'} },
-  { name:'Alta Vista Classic Malbec',  price:169, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec',             pair:['bode','carne'],        desc:{pt:'Argentina · Malbec · Frutado, ameixa e especiarias.',en:'Argentina · Malbec · Fruity, plum and spices.',es:'Argentina · Malbec · Afrutado, ciruela y especias.'} },
-  { name:'Catena Malbec',              price:369, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec',             pair:['carne'],               desc:{pt:'Argentina · Malbec premium · Complexo e elegante.',en:'Argentina · Premium Malbec · Complex and elegant.',es:'Argentina · Malbec premium · Complejo y elegante.'} },
-  { name:'Crux Malbec',               price:209, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec',             pair:['bode','carne'],        desc:{pt:'Argentina · Malbec · Potente, taninos maduros.',en:'Argentina · Malbec · Powerful, ripe tannins.',es:'Argentina · Malbec · Potente, taninos maduros.'} },
-  { name:'Estancia Mendoza',           price:99,  icon:'🍷', type:'tinto',    country:'Argentina', grape:'Merlot | Malbec',    pair:['bode','carne','frango'],desc:{pt:'Argentina · Merlot/Malbec · Suave e acessível.',en:'Argentina · Merlot/Malbec · Smooth and approachable.',es:'Argentina · Merlot/Malbec · Suave y accesible.'} },
-  { name:'Indomita Cabernet Sauvignon',price:99,  icon:'🍷', type:'tinto',    country:'Chile',     grape:'Cabernet Sauvignon', pair:['bode','carne'],        desc:{pt:'Chile · Cabernet · Intenso, cerejas e cedro.',en:'Chile · Cabernet · Intense, cherries and cedar.',es:'Chile · Cabernet · Intenso, cerezas y cedro.'} },
-  { name:'Urban Sauvg Tinto',          price:129, icon:'🍷', type:'tinto',    country:'Argentina', grape:'Malbec',             pair:['bode','carne'],        desc:{pt:'Argentina · Malbec · Direto e frutado.',en:'Argentina · Malbec · Straightforward and fruity.',es:'Argentina · Malbec · Directo y afrutado.'} },
-  { name:'Miluna Rosso Puglia',        price:149, icon:'🍷', type:'tinto',    country:'Itália',    grape:'Sangiovese | Negroamaro', pair:['bode','carne','frango'], desc:{pt:'Itália · Sangiovese/Negroamaro · Rústico e saboroso.',en:'Italy · Sangiovese/Negroamaro · Rustic and flavorful.',es:'Italia · Sangiovese/Negroamaro · Rústico y sabroso.'} },
-  { name:'Mario Geisse Reserva Carmenere',price:199, icon:'🍷', type:'tinto', country:'Brasil',    grape:'Carmenere',          pair:['bode','carne'],        desc:{pt:'Brasil · Carmenere · Pimentão, frutas vermelhas e especiarias.',en:'Brazil · Carmenere · Bell pepper, red fruit and spices.',es:'Brasil · Carmenere · Pimiento, frutos rojos y especias.'} },
-  { name:'Esporão Pé Tinto',           price:129, icon:'🍷', type:'tinto',    country:'Portugal',  grape:'Blend',              pair:['bode','carne'],        desc:{pt:'Portugal · Blend · Elegante, frutas escuras e tostado.',en:'Portugal · Blend · Elegant, dark fruits and toast.',es:'Portugal · Blend · Elegante, frutos oscuros y tostado.'} },
-  { name:'Bacalhôa Serras de Azeitão', price:169, icon:'🍷', type:'tinto',    country:'Portugal',  grape:'Blend',              pair:['bode','carne'],        desc:{pt:'Portugal · Blend · Encorpado, taninos presentes.',en:'Portugal · Blend · Full-bodied, present tannins.',es:'Portugal · Blend · Con cuerpo, taninos presentes.'} },
-  { name:'Cabriz Tinto',               price:139, icon:'🍷', type:'tinto',    country:'Portugal',  grape:'Blend',              pair:['bode','carne'],        desc:{pt:'Portugal · Blend · Equilibrado e persistente.',en:'Portugal · Blend · Balanced and persistent.',es:'Portugal · Blend · Equilibrado y persistente.'} },
+  // TINTOS — todos secos
+  { name:'Alamos Malbec',                 price:219, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Argentina', grape:'Malbec',                  pair:['bode','carne'],         desc:{pt:'Argentina · Malbec · Encorpado, frutado e aveludado.',en:'Argentina · Malbec · Full-bodied, fruity and velvety.',es:'Argentina · Malbec · Con cuerpo, afrutado y aterciopelado.'} },
+  { name:'Alta Vista Premium Malbec',     price:199, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Argentina', grape:'Malbec | Cabernet',       pair:['bode','carne'],         desc:{pt:'Argentina · Malbec/Cabernet · Estruturado e persistente.',en:'Argentina · Malbec/Cabernet · Structured and persistent.',es:'Argentina · Malbec/Cabernet · Estructurado y persistente.'} },
+  { name:'Alta Vista Classic Malbec',     price:169, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Argentina', grape:'Malbec',                  pair:['bode','carne'],         desc:{pt:'Argentina · Malbec · Frutado, ameixa e especiarias.',en:'Argentina · Malbec · Fruity, plum and spices.',es:'Argentina · Malbec · Afrutado, ciruela y especias.'} },
+  { name:'Catena Malbec',                 price:369, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Argentina', grape:'Malbec',                  pair:['carne'],                desc:{pt:'Argentina · Malbec premium · Complexo e elegante.',en:'Argentina · Premium Malbec · Complex and elegant.',es:'Argentina · Malbec premium · Complejo y elegante.'} },
+  { name:'Crux Malbec',                   price:209, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Argentina', grape:'Malbec',                  pair:['bode','carne'],         desc:{pt:'Argentina · Malbec · Potente, taninos maduros.',en:'Argentina · Malbec · Powerful, ripe tannins.',es:'Argentina · Malbec · Potente, taninos maduros.'} },
+  { name:'Estancia Mendoza',              price:99,  icon:'🍷', type:'tinto',    sweetness:'suave', country:'Argentina', grape:'Merlot | Malbec',         pair:['bode','carne','frango'], desc:{pt:'Argentina · Merlot/Malbec · Suave e acessível. Ótimo para quem está começando no mundo do vinho.',en:'Argentina · Merlot/Malbec · Smooth and approachable. Great for wine beginners.',es:'Argentina · Merlot/Malbec · Suave y accesible. Ideal para quienes están empezando.'} },
+  { name:'Indomita Cabernet Sauvignon',   price:99,  icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Chile',     grape:'Cabernet Sauvignon',      pair:['bode','carne'],         desc:{pt:'Chile · Cabernet · Intenso, cerejas e cedro.',en:'Chile · Cabernet · Intense, cherries and cedar.',es:'Chile · Cabernet · Intenso, cerezas y cedro.'} },
+  { name:'Urban Sauvg Tinto',             price:129, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Argentina', grape:'Malbec',                  pair:['bode','carne'],         desc:{pt:'Argentina · Malbec · Direto e frutado.',en:'Argentina · Malbec · Straightforward and fruity.',es:'Argentina · Malbec · Directo y afrutado.'} },
+  { name:'Miluna Rosso Puglia',           price:149, icon:'🍷', type:'tinto',    sweetness:'suave', country:'Itália',    grape:'Sangiovese | Negroamaro', pair:['bode','carne','frango'], desc:{pt:'Itália · Sangiovese/Negroamaro · Rústico, saboroso e de fácil beber.',en:'Italy · Sangiovese/Negroamaro · Rustic, flavorful and easy-drinking.',es:'Italia · Sangiovese/Negroamaro · Rústico, sabroso y de fácil beber.'} },
+  { name:'Mario Geisse Reserva Carmenere',price:199, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Brasil',    grape:'Carmenere',               pair:['bode','carne'],         desc:{pt:'Brasil · Carmenere · Pimentão, frutas vermelhas e especiarias.',en:'Brazil · Carmenere · Bell pepper, red fruit and spices.',es:'Brasil · Carmenere · Pimiento, frutos rojos y especias.'} },
+  { name:'Esporão Pé Tinto',              price:129, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Portugal',  grape:'Blend',                   pair:['bode','carne'],         desc:{pt:'Portugal · Blend · Elegante, frutas escuras e tostado.',en:'Portugal · Blend · Elegant, dark fruits and toast.',es:'Portugal · Blend · Elegante, frutos oscuros y tostado.'} },
+  { name:'Bacalhôa Serras de Azeitão',    price:169, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Portugal',  grape:'Blend',                   pair:['bode','carne'],         desc:{pt:'Portugal · Blend · Encorpado, taninos presentes.',en:'Portugal · Blend · Full-bodied, present tannins.',es:'Portugal · Blend · Con cuerpo, taninos presentes.'} },
+  { name:'Cabriz Tinto',                  price:139, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Portugal',  grape:'Blend',                   pair:['bode','carne'],         desc:{pt:'Portugal · Blend · Equilibrado e persistente.',en:'Portugal · Blend · Balanced and persistent.',es:'Portugal · Blend · Equilibrado y persistente.'} },
   // BRANCOS
-  { name:'Esporão Pé Branco',          price:99,  icon:'🥂', type:'branco',   country:'Portugal',  grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Portugal · Blend · Fresco, cítrico e mineral.',en:'Portugal · Blend · Fresh, citrus and mineral.',es:'Portugal · Blend · Fresco, cítrico y mineral.'} },
-  { name:'Castelo de Pias Blanc',      price:79,  icon:'🥂', type:'branco',   country:'Portugal',  grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Portugal · Blend · Leve, floral e refrescante.',en:'Portugal · Blend · Light, floral and refreshing.',es:'Portugal · Blend · Ligero, floral y refrescante.'} },
-  { name:'Cousino Macul Sauvignon Blanc',price:129,icon:'🥂', type:'branco',  country:'Chile',     grape:'Sauvignon Blanc',    pair:['peixe','frango'],      desc:{pt:'Chile · Sauvignon Blanc · Herbáceo, maracujá e limão.',en:'Chile · Sauvignon Blanc · Herbaceous, passion fruit and lime.',es:'Chile · Sauvignon Blanc · Herbáceo, maracuyá y limón.'} },
-  { name:'Indomita Sauvignon Blanc',   price:89,  icon:'🥂', type:'branco',   country:'Chile',     grape:'Sauvignon Blanc',    pair:['peixe','frango'],      desc:{pt:'Chile · Sauvignon Blanc · Fresco, cítrico e herbáceo.',en:'Chile · Sauvignon Blanc · Fresh, citrus and herbaceous.',es:'Chile · Sauvignon Blanc · Fresco, cítrico y herbáceo.'} },
-  { name:'Cosecha Tarapacá Chardonnay',price:159, icon:'🥂', type:'branco',   country:'Chile',     grape:'Chardonnay',         pair:['peixe','frango'],      desc:{pt:'Chile · Chardonnay · Pêssego, baunilha e tostado leve.',en:'Chile · Chardonnay · Peach, vanilla and light toast.',es:'Chile · Chardonnay · Melocotón, vainilla y tostado leve.'} },
-  { name:'Urban Torrontés',            price:119, icon:'🥂', type:'branco',   country:'Argentina', grape:'Torrontés',          pair:['peixe','frango'],      desc:{pt:'Argentina · Torrontés · Floral, aromático, muscat.',en:'Argentina · Torrontés · Floral, aromatic, muscat notes.',es:'Argentina · Torrontés · Floral, aromático, moscatel.'} },
-  { name:'Freixenet Pinot Grigio DOC', price:149, icon:'🥂', type:'branco',   country:'Itália',    grape:'Pinot Grigio',       pair:['peixe','frango'],      desc:{pt:'Itália · Pinot Grigio · Delicado, maçã verde e pera.',en:'Italy · Pinot Grigio · Delicate, green apple and pear.',es:'Italia · Pinot Grigio · Delicado, manzana verde y pera.'} },
-  { name:'Miluna Puglia Bianco',       price:129, icon:'🥂', type:'branco',   country:'Itália',    grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Itália · Blend branco · Fresco e aromático.',en:'Italy · White blend · Fresh and aromatic.',es:'Italia · Blend blanco · Fresco y aromático.'} },
+  { name:'Esporão Pé Branco',             price:99,  icon:'🥂', type:'branco',   sweetness:'seco',  country:'Portugal',  grape:'Blend',                   pair:['peixe','frango'],       desc:{pt:'Portugal · Blend · Fresco, cítrico e mineral.',en:'Portugal · Blend · Fresh, citrus and mineral.',es:'Portugal · Blend · Fresco, cítrico y mineral.'} },
+  { name:'Castelo de Pias Blanc',         price:79,  icon:'🥂', type:'branco',   sweetness:'seco',  country:'Portugal',  grape:'Blend',                   pair:['peixe','frango'],       desc:{pt:'Portugal · Blend · Leve, floral e refrescante.',en:'Portugal · Blend · Light, floral and refreshing.',es:'Portugal · Blend · Ligero, floral y refrescante.'} },
+  { name:'Cousino Macul Sauvignon Blanc', price:129, icon:'🥂', type:'branco',   sweetness:'seco',  country:'Chile',     grape:'Sauvignon Blanc',         pair:['peixe','frango'],       desc:{pt:'Chile · Sauvignon Blanc · Herbáceo, maracujá e limão.',en:'Chile · Sauvignon Blanc · Herbaceous, passion fruit and lime.',es:'Chile · Sauvignon Blanc · Herbáceo, maracuyá y limón.'} },
+  { name:'Indomita Sauvignon Blanc',      price:89,  icon:'🥂', type:'branco',   sweetness:'seco',  country:'Chile',     grape:'Sauvignon Blanc',         pair:['peixe','frango'],       desc:{pt:'Chile · Sauvignon Blanc · Fresco, cítrico e herbáceo.',en:'Chile · Sauvignon Blanc · Fresh, citrus and herbaceous.',es:'Chile · Sauvignon Blanc · Fresco, cítrico y herbáceo.'} },
+  { name:'Cosecha Tarapacá Chardonnay',   price:159, icon:'🥂', type:'branco',   sweetness:'suave', country:'Chile',     grape:'Chardonnay',              pair:['peixe','frango'],       desc:{pt:'Chile · Chardonnay · Pêssego, baunilha e tostado leve. Encorpado e aromático.',en:'Chile · Chardonnay · Peach, vanilla and light toast. Full-bodied and aromatic.',es:'Chile · Chardonnay · Melocotón, vainilla y tostado leve. Con cuerpo y aromático.'} },
+  { name:'Urban Torrontés',               price:119, icon:'🥂', type:'branco',   sweetness:'suave', country:'Argentina', grape:'Torrontés',               pair:['peixe','frango'],       desc:{pt:'Argentina · Torrontés · Floral, muito aromático e levemente adocicado.',en:'Argentina · Torrontés · Floral, very aromatic and slightly sweet.',es:'Argentina · Torrontés · Floral, muy aromático y ligeramente dulce.'} },
+  { name:'Freixenet Pinot Grigio DOC',    price:149, icon:'🥂', type:'branco',   sweetness:'seco',  country:'Itália',    grape:'Pinot Grigio',            pair:['peixe','frango'],       desc:{pt:'Itália · Pinot Grigio · Delicado, maçã verde e pera.',en:'Italy · Pinot Grigio · Delicate, green apple and pear.',es:'Italia · Pinot Grigio · Delicado, manzana verde y pera.'} },
+  { name:'Miluna Puglia Bianco',          price:129, icon:'🥂', type:'branco',   sweetness:'seco',  country:'Itália',    grape:'Blend',                   pair:['peixe','frango'],       desc:{pt:'Itália · Blend branco · Fresco e aromático.',en:'Italy · White blend · Fresh and aromatic.',es:'Italia · Blend blanco · Fresco y aromático.'} },
   // ROSÉ
-  { name:'Mar Salgado Rosé',           price:109, icon:'🌸', type:'rose',     country:'Brasil',    grape:'Blend',              pair:['peixe','frango','carne'],desc:{pt:'Brasil · Blend rosé · Frutado, morango e floral.',en:'Brazil · Rosé blend · Fruity, strawberry and floral.',es:'Brasil · Blend rosé · Afrutado, fresa y floral.'} },
-  { name:'Macaw Frisante Rosé',        price:89,  icon:'🌸', type:'rose',     country:'Brasil',    grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Brasil · Frisante rosé · Leve, borbulhas e frutas vermelhas.',en:'Brazil · Sparkling rosé · Light, bubbles and red fruits.',es:'Brasil · Frisante rosé · Ligero, burbujas y frutos rojos.'} },
-  { name:'Freixenet Rosé',             price:149, icon:'🌸', type:'rose',     country:'Espanha',   grape:'Blend',              pair:['peixe','frango','carne'],desc:{pt:'Espanha · Blend rosé · Elegante, morango e pêssego.',en:'Spain · Rosé blend · Elegant, strawberry and peach.',es:'España · Blend rosé · Elegante, fresa y melocotón.'} },
+  { name:'Mar Salgado Rosé',              price:109, icon:'🌸', type:'rose',     sweetness:'suave', country:'Brasil',    grape:'Blend',                   pair:['peixe','frango','carne'],desc:{pt:'Brasil · Blend rosé · Frutado, morango e floral. Suave e muito agradável.',en:'Brazil · Rosé blend · Fruity, strawberry and floral. Smooth and very pleasant.',es:'Brasil · Blend rosé · Afrutado, fresa y floral. Suave y muy agradable.'} },
+  { name:'Macaw Frisante Rosé',           price:89,  icon:'🌸', type:'rose',     sweetness:'suave', country:'Brasil',    grape:'Blend',                   pair:['peixe','frango'],       desc:{pt:'Brasil · Frisante rosé · Leve, borbulhas e frutas vermelhas. Muito suave.',en:'Brazil · Sparkling rosé · Light, bubbles and red fruits. Very smooth.',es:'Brasil · Frisante rosé · Ligero, burbujas y frutos rojos. Muy suave.'} },
+  { name:'Freixenet Rosé',                price:149, icon:'🌸', type:'rose',     sweetness:'suave', country:'Espanha',   grape:'Blend',                   pair:['peixe','frango','carne'],desc:{pt:'Espanha · Blend rosé · Elegante, morango e pêssego.',en:'Spain · Rosé blend · Elegant, strawberry and peach.',es:'España · Blend rosé · Elegante, fresa y melocotón.'} },
   // VINHO VERDE
-  { name:'Coração Obra Prima Verde',   price:119, icon:'🍃', type:'verde',    country:'Portugal',  grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Portugal · Vinho Verde · Efervescente, cítrico e fresco.',en:'Portugal · Vinho Verde · Sparkling, citrus and fresh.',es:'Portugal · Vinho Verde · Efervescente, cítrico y fresco.'} },
+  { name:'Coração Obra Prima Verde',      price:119, icon:'🍃', type:'verde',    sweetness:'suave', country:'Portugal',  grape:'Blend',                   pair:['peixe','frango'],       desc:{pt:'Portugal · Vinho Verde · Efervescente, cítrico e levemente adocicado.',en:'Portugal · Vinho Verde · Sparkling, citrus and slightly sweet.',es:'Portugal · Vinho Verde · Efervescente, cítrico y ligeramente dulce.'} },
   // ESPUMANTE
-  { name:'Cave Geisse Rosé Brut',      price:199, icon:'🍾', type:'espumante',country:'Brasil',    grape:'Chardonnay | Pinot Noir',pair:['peixe','frango','carne'],desc:{pt:'Brasil · Espumante rosé brut · Elegante, pão e morango.',en:'Brazil · Rosé brut · Elegant, bread and strawberry.',es:'Brasil · Espumante rosé brut · Elegante, pan y fresa.'} },
-  { name:'Chandon Brut',               price:189, icon:'🍾', type:'espumante',country:'Brasil',    grape:'Chardonnay | Pinot Noir',pair:['peixe','frango'],      desc:{pt:'Brasil · Espumante brut · Clássico, cítrico e borbulhas finas.',en:'Brazil · Brut · Classic, citrus and fine bubbles.',es:'Brasil · Brut · Clásico, cítrico y burbujas finas.'} },
-  { name:'Seival by Miolo Brut',       price:110, icon:'🍾', type:'espumante',country:'Brasil',    grape:'Chardonnay | Pinot Noir',pair:['peixe','frango','carne'],desc:{pt:'Brasil · Brut · Frescor, elegância e custo-benefício.',en:'Brazil · Brut · Freshness, elegance and great value.',es:'Brasil · Brut · Frescura, elegancia y gran valor.'} },
-  { name:'Macaw Frisante Branco',      price:79,  icon:'🍾', type:'espumante',country:'Brasil',    grape:'Blend',              pair:['peixe','frango'],      desc:{pt:'Brasil · Frisante branco · Leve e refrescante.',en:'Brazil · Sparkling white · Light and refreshing.',es:'Brasil · Frisante blanco · Ligero y refrescante.'} },
+  { name:'Cave Geisse Rosé Brut',         price:199, icon:'🍾', type:'espumante',sweetness:'seco',  country:'Brasil',    grape:'Chardonnay | Pinot Noir', pair:['peixe','frango','carne'],desc:{pt:'Brasil · Espumante rosé brut · Elegante, pão e morango. Brut = seco.',en:'Brazil · Rosé brut · Elegant, bread and strawberry. Brut = dry.',es:'Brasil · Espumante rosé brut · Elegante, pan y fresa. Brut = seco.'} },
+  { name:'Chandon Brut',                  price:189, icon:'🍾', type:'espumante',sweetness:'seco',  country:'Brasil',    grape:'Chardonnay | Pinot Noir', pair:['peixe','frango'],       desc:{pt:'Brasil · Espumante brut · Clássico, cítrico e borbulhas finas. Brut = seco.',en:'Brazil · Brut · Classic, citrus and fine bubbles. Brut = dry.',es:'Brasil · Brut · Clásico, cítrico y burbujas finas. Brut = seco.'} },
+  { name:'Seival by Miolo Brut',          price:110, icon:'🍾', type:'espumante',sweetness:'seco',  country:'Brasil',    grape:'Chardonnay | Pinot Noir', pair:['peixe','frango','carne'],desc:{pt:'Brasil · Brut · Frescor, elegância e custo-benefício.',en:'Brazil · Brut · Freshness, elegance and great value.',es:'Brasil · Brut · Frescura, elegancia y gran valor.'} },
+  { name:'Macaw Frisante Branco',         price:79,  icon:'🍾', type:'espumante',sweetness:'suave', country:'Brasil',    grape:'Blend',                   pair:['peixe','frango'],       desc:{pt:'Brasil · Frisante branco · Leve, refrescante e levemente adocicado.',en:'Brazil · Sparkling white · Light, refreshing and slightly sweet.',es:'Brasil · Frisante blanco · Ligero, refrescante y ligeramente dulce.'} },
 ];
 
 function pickWines(protein, isCold, isHot) {
@@ -1347,13 +1592,32 @@ function resetApp() {
 }
 
 /* ── WINE FLOW ────────────────────────────────── */
-const wineState = { type: null, country: null };
+const wineState = { type: null, sweetness: null, country: null };
 
 function selectWineType(btn, type) {
   document.querySelectorAll('#screen-wine-type .wine-type-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   wineState.type = type;
   document.getElementById('btn-wt-next').disabled = false;
+  // populate sweetness screen labels for the chosen type
+  const L = T[state.lang];
+  document.getElementById('ws-title').textContent = L.wsSweetTitle;
+  document.getElementById('ws-hint').textContent  = L.wsSweetHint;
+  document.getElementById('ws-seco-label').textContent    = L.wsSecoLabel;
+  document.getElementById('ws-seco-desc').textContent     = L.wsSecoDesc;
+  document.getElementById('ws-suave-label').textContent   = L.wsSuaveLabel;
+  document.getElementById('ws-suave-desc').textContent    = L.wsSuaveDesc;
+  document.getElementById('ws-qualquer-label').textContent = L.wsQualquerLabel;
+  document.getElementById('ws-qualquer-desc').textContent  = L.wsQualquerDesc;
+  document.getElementById('btn-ws-next').textContent = L.btnNext || 'Próximo →';
+  document.getElementById('btn-ws-back').textContent = L.btnBack || '← Voltar';
+}
+
+function selectWineSweetness(btn, sweetness) {
+  document.querySelectorAll('#screen-wine-sweet .wine-type-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  wineState.sweetness = sweetness;
+  document.getElementById('btn-ws-next').disabled = false;
 }
 
 function selectWineCountry(btn, country) {
@@ -1372,11 +1636,18 @@ function buildWineSuggestion() {
   if (type === 'branco') pool = pool.filter(w => w.type === 'branco' || w.type === 'verde');
   else if (type) pool = pool.filter(w => w.type === type);
 
+  // Filter by sweetness
+  const { sweetness } = wineState;
+  if (sweetness && sweetness !== 'qualquer') {
+    const bySweetness = pool.filter(w => w.sweetness === sweetness);
+    if (bySweetness.length) pool = bySweetness;
+  }
+
   // Filter by country
   if (country && country !== 'qualquer') {
     const byCountry = pool.filter(w => w.country === country);
     if (byCountry.length) pool = byCountry;
-    // else keep type-only pool (graceful fallback)
+    // else keep sweetness-filtered pool (graceful fallback)
   }
 
   const picked = pool.slice(0, 2);
@@ -1414,9 +1685,10 @@ function showPetisco(yes) {
 }
 
 function resetWineFlow() {
-  wineState.type = null; wineState.country = null;
-  document.querySelectorAll('#screen-wine-type .wine-type-btn, #screen-wine-country .country-btn').forEach(b => b.classList.remove('selected'));
+  wineState.type = null; wineState.sweetness = null; wineState.country = null;
+  document.querySelectorAll('#screen-wine-type .wine-type-btn, #screen-wine-sweet .wine-type-btn, #screen-wine-country .country-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('btn-wt-next').disabled = true;
+  document.getElementById('btn-ws-next').disabled = true;
   document.getElementById('btn-wc-next').disabled = true;
   goTo('screen-welcome');
 }
@@ -1503,16 +1775,36 @@ function buildMenuContext() {
 
   lines.push('\n=== ENTRADAS ===');
   for (const [cat, items] of Object.entries(STARTERS)) {
-    const catName = { bode:'Bode', carne:'Carne', peixe:'Peixe/Frutos do Mar', frango:'Frango' }[cat];
+    const catName = { bode:'Bode', carne:'Carne', peixe:'Peixe/Frutos do Mar', frango:'Frango/Geral' }[cat];
     lines.push(`[${catName}]`);
     for (const d of items) {
       const desc = d.desc[lang] || d.desc.pt;
-      lines.push(`  • ${d.name} | R$${d.price}${d.champion ? ' [campeão]' : ''} | ${desc}`);
+      lines.push(`  • ${d.name} | R$${d.price}${d.champion ? ' [campeão]' : ''}${d.isnew ? ' [novo]' : ''} | ${desc}`);
     }
   }
 
+  lines.push('\n=== CALDOS ===');
+  for (const d of CALDOS) {
+    lines.push(`  • ${d.name} | R$${d.price}`);
+  }
+
+  lines.push('\n=== PETISCOS ===');
+  lines.push('[Invenções do Matuto]');
+  for (const d of PETISCOS.matuto) {
+    lines.push(`  • ${d.name} | R$${d.price}${d.champion ? ' [campeão]' : ''}${d.isnew ? ' [novo]' : ''} | ${d.desc[lang] || d.desc.pt}`);
+  }
+  lines.push('[Petiscos na Chapa]');
+  for (const d of PETISCOS.chapa) {
+    lines.push(`  • ${d.name} | R$${d.price}${d.champion ? ' [campeão]' : ''} | ${d.desc[lang] || d.desc.pt}`);
+  }
+
+  lines.push('\n=== PARA OS BODINHOS (crianças) ===');
+  for (const d of BODINHOS) {
+    lines.push(`  • ${d.name} | R$${d.price} | ${d.desc[lang] || d.desc.pt}`);
+  }
+
   lines.push('\n=== BEBIDAS ===');
-  const drinkCats = { chopp:'Chopp/Cerveja', drink:'Drinks Especiais', whisky:'Whisky', cachaca:'Cachaça', semAlcool:'Sem Álcool', gin:'Gin/Aperitivo' };
+  const drinkCats = { chopp:'Chopp', cerveja:'Cervejas', drink:'Drinks Especiais', whisky:'Whisky', cachaca:'Cachaça', semAlcool:'Sem Álcool', gin:'Gin/Refrescantes' };
   for (const [cat, items] of Object.entries(DRINKS)) {
     lines.push(`[${drinkCats[cat] || cat}]`);
     for (const d of items) {
@@ -1951,13 +2243,19 @@ function openMenuScreen() {
   const L = T[state.lang];
   document.getElementById('menu-topbar-title').textContent = L.menuTopbarTitle;
   document.getElementById('menu-back-btn').textContent = L.menuBack;
-  document.getElementById('tab-pratos-label').textContent   = L.tabPratos;
-  document.getElementById('tab-entradas-label').textContent = L.tabEntradas;
-  document.getElementById('tab-bebidas-label').textContent  = L.tabBebidas;
-  document.getElementById('tab-vinhos-label').textContent   = L.tabVinhos;
+  const tabMap = {
+    destaques: L.tabDestaques, bode: L.tabBode, carnes: L.tabCarnes, mar: L.tabMar, aves: L.tabAves,
+    entradas: L.tabEntradas, caldos: L.tabCaldos, petiscos: L.tabPetiscos,
+    saladas: L.tabSaladas, sobremesas: L.tabSobremesas, bodinhos: L.tabBodinhos,
+    bebidas: L.tabBebidas, vinhos: L.tabVinhos,
+  };
+  for (const [key, label] of Object.entries(tabMap)) {
+    const el = document.getElementById('tab-' + key + '-label');
+    if (el) el.textContent = label;
+  }
   document.querySelectorAll('.menu-tab').forEach((t,i) => t.classList.toggle('active', i===0));
-  currentMenuTab = 'pratos';
-  renderMenuTab('pratos');
+  currentMenuTab = 'destaques';
+  renderMenuTab('destaques');
 }
 
 function switchMenuTab(tab, el) {
@@ -1972,77 +2270,77 @@ function renderMenuTab(tab) {
   const body = document.getElementById('menu-body');
   body.innerHTML = '';
 
-  if (tab === 'pratos') {
-    const cats = [
-      { key:'bode',   label: L.menuCatBode },
-      { key:'carne',  label: L.menuCatCarne },
-      { key:'peixe',  label: L.menuCatPeixe },
-      { key:'frango', label: L.menuCatFrango },
-    ];
-    cats.forEach(cat => {
-      const sec = document.createElement('div');
-      sec.className = 'menu-section';
-      sec.innerHTML = `<div class="menu-section-title">${cat.label}</div>`;
-      (MENU[cat.key] || []).forEach(d => {
-        sec.appendChild(buildMenuItem(d, false));
-      });
-      body.appendChild(sec);
-    });
+  function addSection(label, items, isWine) {
+    if (!items || !items.length) return;
+    const sec = document.createElement('div');
+    sec.className = 'menu-section';
+    sec.innerHTML = `<div class="menu-section-title">${label}</div>`;
+    items.forEach(d => sec.appendChild(isWine ? buildWineMenuItem(d) : buildMenuItem(d, false)));
+    body.appendChild(sec);
+  }
+
+  if (tab === 'destaques') {
+    // collect all champion items
+    const champions = [];
+    for (const cat of Object.values(MENU)) champions.push(...cat.filter(d => d.champion));
+    for (const cat of Object.values(STARTERS)) champions.push(...cat.filter(d => d.champion));
+    for (const cat of Object.values(PETISCOS)) champions.push(...cat.filter(d => d.champion));
+    addSection('⭐ ' + L.tabDestaques, champions);
+    // new items
+    const novos = [];
+    for (const cat of Object.values(MENU)) novos.push(...cat.filter(d => d.isnew));
+    for (const cat of Object.values(DRINKS)) novos.push(...cat.filter(d => d.isnew));
+    if (novos.length) addSection('✨ Novidades', novos);
+
+  } else if (tab === 'bode') {
+    addSection(L.menuCatBode, MENU.bode);
+
+  } else if (tab === 'carnes') {
+    addSection(L.menuCatCarne, MENU.carne);
+
+  } else if (tab === 'mar') {
+    addSection(L.menuCatPeixe, MENU.peixe);
+
+  } else if (tab === 'aves') {
+    addSection(L.menuCatFrango, MENU.frango);
 
   } else if (tab === 'entradas') {
-    const cats = [
-      { key:'bode',   label: L.menuCatBode },
-      { key:'carne',  label: L.menuCatCarne },
-      { key:'peixe',  label: L.menuCatPeixe },
-      { key:'frango', label: L.menuCatFrango },
-    ];
-    cats.forEach(cat => {
-      const items = STARTERS[cat.key] || [];
-      if (!items.length) return;
-      const sec = document.createElement('div');
-      sec.className = 'menu-section';
-      sec.innerHTML = `<div class="menu-section-title">${cat.label}</div>`;
-      items.forEach(d => sec.appendChild(buildMenuItem(d, false)));
-      body.appendChild(sec);
-    });
+    addSection(L.menuCatBode,   STARTERS.bode);
+    addSection(L.menuCatCarne,  STARTERS.carne);
+    addSection(L.menuCatPeixe,  STARTERS.peixe);
+    addSection(L.menuCatFrango, STARTERS.frango);
+
+  } else if (tab === 'caldos') {
+    addSection('🫕 Caldos', CALDOS);
+
+  } else if (tab === 'petiscos') {
+    addSection(L.menuCatMatuto, PETISCOS.matuto);
+    addSection(L.menuCatChapa,  PETISCOS.chapa);
+
+  } else if (tab === 'saladas') {
+    addSection('🥗 Saladas', SALADAS);
+
+  } else if (tab === 'sobremesas') {
+    addSection('🍰 Sobremesas', SOBREMESAS);
+
+  } else if (tab === 'bodinhos') {
+    addSection('👶 Para os Bodinhos', BODINHOS);
 
   } else if (tab === 'bebidas') {
-    const catMap = {
-      chopp:      L.menuCatDrinkChopp,
-      drink:      L.menuCatDrinkDrink,
-      whisky:     L.menuCatDrinkWhisky,
-      cachaca:    L.menuCatDrinkCachaca,
-      semAlcool:  L.menuCatDrinkSemAlcool,
-      gin:        L.menuCatDrinkGin,
-    };
-    for (const [key, label] of Object.entries(catMap)) {
-      const items = DRINKS[key] || [];
-      if (!items.length) continue;
-      const sec = document.createElement('div');
-      sec.className = 'menu-section';
-      sec.innerHTML = `<div class="menu-section-title">${label}</div>`;
-      items.forEach(d => sec.appendChild(buildMenuItem(d, false)));
-      body.appendChild(sec);
-    }
+    addSection(L.menuCatDrinkChopp,    DRINKS.chopp);
+    addSection(L.menuCatDrinkCerveja,  DRINKS.cerveja);
+    addSection(L.menuCatDrinkDrink,    DRINKS.drink);
+    addSection(L.menuCatDrinkGin,      DRINKS.gin);
+    addSection(L.menuCatDrinkWhisky,   DRINKS.whisky);
+    addSection(L.menuCatDrinkCachaca,  DRINKS.cachaca);
+    addSection(L.menuCatDrinkSemAlcool,DRINKS.semAlcool);
 
   } else if (tab === 'vinhos') {
-    const typeMap = {
-      tinto:      L.menuWineTinto,
-      branco:     L.menuWineBranco,
-      rose:       L.menuWineRose,
-      espumante:  L.menuWineEspumante,
-      verde:      L.menuWineVerde,
-    };
+    const typeMap = { tinto:L.menuWineTinto, branco:L.menuWineBranco, rose:L.menuWineRose, espumante:L.menuWineEspumante, verde:L.menuWineVerde };
     const wByType = {};
     WINES.forEach(w => { if (!wByType[w.type]) wByType[w.type] = []; wByType[w.type].push(w); });
     for (const [type, label] of Object.entries(typeMap)) {
-      const items = wByType[type] || [];
-      if (!items.length) continue;
-      const sec = document.createElement('div');
-      sec.className = 'menu-section';
-      sec.innerHTML = `<div class="menu-section-title">${label}</div>`;
-      items.forEach(w => sec.appendChild(buildWineMenuItem(w)));
-      body.appendChild(sec);
+      addSection(label, wByType[type] || [], true);
     }
   }
 }
@@ -2069,12 +2367,17 @@ function buildMenuItem(d, _big) {
 function buildWineMenuItem(w) {
   const L = T[state.lang];
   const desc = w.desc?.[state.lang] || w.desc?.pt || '';
+  const sweetBadge = w.sweetness === 'seco'
+    ? `<span class="menu-badge-sec">🍷 Seco</span>`
+    : w.sweetness === 'suave'
+    ? `<span class="menu-badge-suave">🍬 Suave</span>`
+    : '';
   const el = document.createElement('div');
   el.className = 'menu-item menu-wine-item';
   el.innerHTML = `
-    <div class="menu-item-icon">🍷</div>
+    <div class="menu-item-icon">${w.icon || '🍷'}</div>
     <div class="menu-item-body">
-      <div class="menu-item-name">${w.name}</div>
+      <div class="menu-item-name">${w.name}${sweetBadge}</div>
       <div class="menu-wine-grape">${w.country} · ${w.grape}</div>
       <div class="menu-item-desc">${desc}</div>
       <div class="menu-wine-pair">🍽️ Harmoniza: ${w.pair.join(', ')}</div>
