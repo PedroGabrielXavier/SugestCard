@@ -219,6 +219,53 @@
     @keyframes typingDot { 0%,80%,100%{transform:scale(.55);opacity:.3} 40%{transform:scale(1);opacity:1} }
     .chat-error { align-self:flex-start; background:#fde8e8; color:#8b2020; border-radius:14px; padding:12px 16px; font-size:13px; display:flex; align-items:center; gap:10px; max-width:90%; }
     .chat-error-retry { background:var(--laranja); color:#fff; border:none; border-radius:999px; padding:7px 16px; font-size:12px; font-weight:800; cursor:pointer; flex-shrink:0; -webkit-tap-highlight-color:transparent; font-family:'Poppins',sans-serif; }
+
+    /* ── Cardápio CTA (welcome) ─────────────────── */
+    .menu-cta-card { display:flex; align-items:center; gap:14px; background:rgba(255,255,255,.09); border:1.5px solid rgba(255,255,255,.22); border-radius:16px; padding:14px 18px; width:100%; max-width:380px; cursor:pointer; text-align:left; transition:all .25s; -webkit-tap-highlight-color:transparent; animation: fadeUp .4s .6s both; margin-top:0; }
+    .menu-cta-card:hover { background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.4); transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.2); }
+    .menu-cta-card:active { transform:scale(.97); }
+    .menu-cta-icon { font-size:28px; flex-shrink:0; }
+    .menu-cta-body { flex:1; }
+    .menu-cta-title { font-size:14px; font-weight:700; color:#fff; }
+    .menu-cta-desc  { font-size:11px; color:rgba(255,255,255,.5); margin-top:3px; }
+    .menu-cta-arrow { font-size:20px; color:rgba(255,255,255,.4); flex-shrink:0; }
+
+    /* ── Tela Cardápio ──────────────────────────── */
+    #screen-menu { padding:0; align-items:stretch; }
+    .menu-topbar { display:flex; align-items:center; gap:12px; padding:14px 20px; background:rgba(0,0,0,.35); backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.1); position:sticky; top:0; z-index:10; }
+    .menu-topbar-back { background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.2); border-radius:999px; padding:7px 16px; font-size:13px; font-weight:600; color:#fff; cursor:pointer; -webkit-tap-highlight-color:transparent; font-family:'Poppins',sans-serif; transition:background .2s; flex-shrink:0; }
+    .menu-topbar-back:active { background:rgba(255,255,255,.22); }
+    .menu-topbar-title { flex:1; text-align:center; font-size:16px; font-weight:700; color:var(--amarelo); letter-spacing:-.2px; }
+    .menu-topbar-spacer { width:72px; flex-shrink:0; }
+
+    .menu-tabs { display:flex; gap:0; width:100%; background:rgba(0,0,0,.2); border-bottom:1px solid rgba(255,255,255,.08); overflow-x:auto; scrollbar-width:none; }
+    .menu-tabs::-webkit-scrollbar { display:none; }
+    .menu-tab { flex:1; min-width:70px; padding:12px 6px 10px; text-align:center; cursor:pointer; border:none; background:transparent; color:rgba(255,255,255,.5); font-size:11px; font-weight:600; font-family:'Poppins',sans-serif; transition:all .2s; border-bottom:2px solid transparent; -webkit-tap-highlight-color:transparent; white-space:nowrap; }
+    .menu-tab .tab-icon { font-size:18px; display:block; margin-bottom:3px; }
+    .menu-tab.active { color:var(--amarelo); border-bottom-color:var(--amarelo); background:rgba(232,168,62,.08); }
+    .menu-tab:active { background:rgba(255,255,255,.08); }
+
+    .menu-body { padding:16px 16px 36px; }
+    .menu-section { margin-bottom:22px; animation: fadeUp .35s cubic-bezier(.22,.68,0,1.2) both; }
+    .menu-section-title { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--amarelo); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid rgba(232,168,62,.2); }
+    .menu-section-title .msec-icon { font-size:20px; }
+
+    .menu-item { display:flex; align-items:flex-start; gap:12px; background:var(--creme); border-radius:14px; padding:14px; margin-bottom:10px; box-shadow:0 2px 10px rgba(92,42,14,.12); animation: slideLeft .3s cubic-bezier(.22,.68,0,1.2) both; transition: transform .2s, box-shadow .2s; }
+    .menu-item:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(92,42,14,.18); }
+    .menu-item-icon { font-size:30px; flex-shrink:0; filter:drop-shadow(0 2px 4px rgba(0,0,0,.12)); margin-top:1px; }
+    .menu-item-body { flex:1; min-width:0; }
+    .menu-item-name { font-size:14px; font-weight:700; color:var(--marrom); line-height:1.25; }
+    .menu-item-desc { font-size:11.5px; color:var(--muted); margin-top:4px; line-height:1.45; }
+    .menu-item-price { font-size:14px; font-weight:800; color:var(--verde); background:rgba(46,107,58,.1); border:1.5px solid rgba(46,107,58,.2); border-radius:999px; padding:4px 12px; flex-shrink:0; margin-top:2px; white-space:nowrap; align-self:flex-start; }
+    .menu-item:nth-child(1){animation-delay:.03s} .menu-item:nth-child(2){animation-delay:.07s} .menu-item:nth-child(3){animation-delay:.11s} .menu-item:nth-child(4){animation-delay:.15s} .menu-item:nth-child(5){animation-delay:.19s} .menu-item:nth-child(6){animation-delay:.23s} .menu-item:nth-child(7){animation-delay:.27s} .menu-item:nth-child(8){animation-delay:.31s}
+
+    .menu-badge-champ { display:inline-block; background:linear-gradient(135deg,var(--amarelo),#d4911e); color:var(--marrom); font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; padding:2px 7px; border-radius:999px; margin-left:5px; vertical-align:middle; }
+    .menu-badge-new   { display:inline-block; background:linear-gradient(135deg,#3B7A4A,#2a5c37); color:#fff; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; padding:2px 7px; border-radius:999px; margin-left:5px; vertical-align:middle; }
+    .menu-badge-reg   { display:inline-block; background:rgba(92,42,14,.12); color:var(--marrom); font-size:9px; font-weight:700; letter-spacing:.5px; padding:2px 7px; border-radius:999px; margin-left:5px; vertical-align:middle; }
+
+    .menu-wine-item { display:flex; align-items:flex-start; gap:12px; background:rgba(123,45,139,.08); border:1.5px solid rgba(123,45,139,.18); border-radius:14px; padding:14px; margin-bottom:10px; animation: slideLeft .3s cubic-bezier(.22,.68,0,1.2) both; }
+    .menu-wine-grape { font-size:10px; color:#7b2d8b; font-weight:600; margin-top:3px; }
+    .menu-wine-pair  { font-size:10px; color:var(--muted); margin-top:2px; }
   </style>
 </head>
 <body>
@@ -254,6 +301,14 @@
         <div class="wine-cta-desc"  id="wine-cta-desc"></div>
       </div>
       <span class="wine-cta-arrow">›</span>
+    </button>
+    <button class="menu-cta-card" onclick="openMenuScreen()">
+      <span class="menu-cta-icon">📋</span>
+      <div class="menu-cta-body">
+        <div class="menu-cta-title" id="menu-cta-title"></div>
+        <div class="menu-cta-desc"  id="menu-cta-desc"></div>
+      </div>
+      <span class="menu-cta-arrow">›</span>
     </button>
     <p class="footer-note" id="footer-welcome" style="margin-top:16px"></p>
   </div>
@@ -509,6 +564,22 @@
     <button class="btn-primary" id="btn-wine-restart" onclick="resetWineFlow()"></button>
   </div>
 
+  <!-- SCREEN CARDÁPIO COMPLETO -->
+  <div class="screen" id="screen-menu">
+    <div class="menu-topbar">
+      <button class="menu-topbar-back" onclick="goTo('screen-welcome')" id="menu-back-btn">← Voltar</button>
+      <div class="menu-topbar-title" id="menu-topbar-title">📋 Cardápio</div>
+      <div class="menu-topbar-spacer"></div>
+    </div>
+    <div class="menu-tabs" id="menu-tabs">
+      <button class="menu-tab active" onclick="switchMenuTab('pratos',this)"><span class="tab-icon">🍽️</span><span id="tab-pratos-label">Pratos</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('entradas',this)"><span class="tab-icon">🥟</span><span id="tab-entradas-label">Entradas</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('bebidas',this)"><span class="tab-icon">🍺</span><span id="tab-bebidas-label">Bebidas</span></button>
+      <button class="menu-tab" onclick="switchMenuTab('vinhos',this)"><span class="tab-icon">🍷</span><span id="tab-vinhos-label">Vinhos</span></button>
+    </div>
+    <div class="menu-body" id="menu-body"></div>
+  </div>
+
   <!-- SCREEN CHAT — Conversa com Bodinho IA -->
   <div class="screen" id="screen-chat">
     <div class="chat-header">
@@ -574,6 +645,13 @@ const T = {
     labelOtherOptions: cat => `🔎 Outras opções de ${cat}`,
     btnRestart:'Recomeçar sugestão 🔄',
     footerResult:'Sugestões do cardápio atual · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
+    menuCtaTitle:'Ver o Cardápio Completo', menuCtaDesc:'Pratos, bebidas, vinhos e valores',
+    menuTopbarTitle:'📋 Cardápio', menuBack:'← Voltar',
+    tabPratos:'Pratos', tabEntradas:'Entradas', tabBebidas:'Bebidas', tabVinhos:'Vinhos',
+    menuCatBode:'🐐 Bode', menuCatCarne:'🥩 Carne Vermelha', menuCatPeixe:'🐟 Peixe & Frutos do Mar', menuCatFrango:'🍗 Frango',
+    menuCatDrinkChopp:'🍺 Chopp & Cerveja', menuCatDrinkDrink:'🍹 Drinks Especiais', menuCatDrinkWhisky:'🥃 Whisky',
+    menuCatDrinkCachaca:'🌿 Cachaça & Regional', menuCatDrinkSemAlcool:'🥤 Sem Álcool', menuCatDrinkGin:'🍋 Gin & Aperitivo',
+    menuWineTinto:'🍷 Tintos', menuWineBranco:'🥂 Brancos', menuWineRose:'🌹 Rosés', menuWineEspumante:'✨ Espumantes', menuWineVerde:'🍃 Vinho Verde',
     chatError:'⚠️ Não consegui conectar ao Bodinho. Tenta de novo?', chatRetry:'Tentar novamente',
     badgeChampion:'⭐ Campeão', badgeNew:'Novo', badgeWine:'Vinho',
     rProtein:{ bode:'bode', carne:'carne vermelha', peixe:'fruto do mar', frango:'frango' },
@@ -653,6 +731,13 @@ const T = {
     labelOtherOptions: cat => `🔎 Other ${cat} options`,
     btnRestart:'Start over 🔄',
     footerResult:'Current menu suggestions · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
+    menuCtaTitle:'See the Full Menu', menuCtaDesc:'Dishes, drinks, wines and prices',
+    menuTopbarTitle:'📋 Menu', menuBack:'← Back',
+    tabPratos:'Dishes', tabEntradas:'Starters', tabBebidas:'Drinks', tabVinhos:'Wines',
+    menuCatBode:'🐐 Goat', menuCatCarne:'🥩 Red Meat', menuCatPeixe:'🐟 Fish & Seafood', menuCatFrango:'🍗 Chicken',
+    menuCatDrinkChopp:'🍺 Draft & Beer', menuCatDrinkDrink:'🍹 Special Drinks', menuCatDrinkWhisky:'🥃 Whisky',
+    menuCatDrinkCachaca:'🌿 Cachaça & Regional', menuCatDrinkSemAlcool:'🥤 Non-Alcoholic', menuCatDrinkGin:'🍋 Gin & Aperitif',
+    menuWineTinto:'🍷 Reds', menuWineBranco:'🥂 Whites', menuWineRose:'🌹 Rosés', menuWineEspumante:'✨ Sparkling', menuWineVerde:'🍃 Vinho Verde',
     chatError:'⚠️ Could not reach Bodinho. Try again?', chatRetry:'Try again',
     badgeChampion:'⭐ Best Seller', badgeNew:'New', badgeWine:'Wine',
     rProtein:{ bode:'goat', carne:'red meat', peixe:'seafood', frango:'chicken' },
@@ -732,6 +817,13 @@ const T = {
     labelOtherOptions: cat => `🔎 Otras opciones de ${cat}`,
     btnRestart:'Reiniciar sugerencia 🔄',
     footerResult:'Sugerencias del menú actual · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
+    menuCtaTitle:'Ver el Menú Completo', menuCtaDesc:'Platos, bebidas, vinos y precios',
+    menuTopbarTitle:'📋 Menú', menuBack:'← Volver',
+    tabPratos:'Platos', tabEntradas:'Entradas', tabBebidas:'Bebidas', tabVinhos:'Vinos',
+    menuCatBode:'🐐 Cabro', menuCatCarne:'🥩 Carne Roja', menuCatPeixe:'🐟 Pescado & Mariscos', menuCatFrango:'🍗 Pollo',
+    menuCatDrinkChopp:'🍺 Chopp & Cerveza', menuCatDrinkDrink:'🍹 Drinks Especiales', menuCatDrinkWhisky:'🥃 Whisky',
+    menuCatDrinkCachaca:'🌿 Cachaça & Regional', menuCatDrinkSemAlcool:'🥤 Sin Alcohol', menuCatDrinkGin:'🍋 Gin & Aperitivo',
+    menuWineTinto:'🍷 Tintos', menuWineBranco:'🥂 Blancos', menuWineRose:'🌹 Rosados', menuWineEspumante:'✨ Espumosos', menuWineVerde:'🍃 Vino Verde',
     chatError:'⚠️ No pude conectar con Bodinho. ¿Intentas de nuevo?', chatRetry:'Intentar de nuevo',
     badgeChampion:'⭐ Más Vendido', badgeNew:'Nuevo', badgeWine:'Vino',
     rProtein:{ bode:'cabro', carne:'carne roja', peixe:'mariscos', frango:'pollo' },
@@ -1042,6 +1134,7 @@ function applyTranslations() {
   s('btn-chat-back', L.btnBack);
   // Wine flow labels
   s('wine-cta-title', L.wineCta); s('wine-cta-desc', L.wineCtaDesc);
+  s('menu-cta-title', L.menuCtaTitle); s('menu-cta-desc', L.menuCtaDesc);
   s('wt-title', L.wtTitle); s('wt-hint', L.wtHint);
   s('wt-tinto-label', L.wtTintoLabel); s('wt-tinto-desc', L.wtTintoDesc);
   s('wt-branco-label', L.wtBrancoLabel); s('wt-branco-desc', L.wtBrancoDesc);
@@ -1813,6 +1906,146 @@ function clearChatState() {
 function resetChat() {
   clearChatState();
   goTo('screen-welcome');
+}
+
+/* ── CARDÁPIO COMPLETO ────────────────────────── */
+let currentMenuTab = 'pratos';
+
+function openMenuScreen() {
+  goTo('screen-menu');
+  const L = T[state.lang];
+  document.getElementById('menu-topbar-title').textContent = L.menuTopbarTitle;
+  document.getElementById('menu-back-btn').textContent = L.menuBack;
+  document.getElementById('tab-pratos-label').textContent   = L.tabPratos;
+  document.getElementById('tab-entradas-label').textContent = L.tabEntradas;
+  document.getElementById('tab-bebidas-label').textContent  = L.tabBebidas;
+  document.getElementById('tab-vinhos-label').textContent   = L.tabVinhos;
+  document.querySelectorAll('.menu-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  currentMenuTab = 'pratos';
+  renderMenuTab('pratos');
+}
+
+function switchMenuTab(tab, el) {
+  currentMenuTab = tab;
+  document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderMenuTab(tab);
+}
+
+function renderMenuTab(tab) {
+  const L = T[state.lang];
+  const body = document.getElementById('menu-body');
+  body.innerHTML = '';
+
+  if (tab === 'pratos') {
+    const cats = [
+      { key:'bode',   label: L.menuCatBode },
+      { key:'carne',  label: L.menuCatCarne },
+      { key:'peixe',  label: L.menuCatPeixe },
+      { key:'frango', label: L.menuCatFrango },
+    ];
+    cats.forEach(cat => {
+      const sec = document.createElement('div');
+      sec.className = 'menu-section';
+      sec.innerHTML = `<div class="menu-section-title">${cat.label}</div>`;
+      (MENU[cat.key] || []).forEach(d => {
+        sec.appendChild(buildMenuItem(d, false));
+      });
+      body.appendChild(sec);
+    });
+
+  } else if (tab === 'entradas') {
+    const cats = [
+      { key:'bode',   label: L.menuCatBode },
+      { key:'carne',  label: L.menuCatCarne },
+      { key:'peixe',  label: L.menuCatPeixe },
+      { key:'frango', label: L.menuCatFrango },
+    ];
+    cats.forEach(cat => {
+      const items = STARTERS[cat.key] || [];
+      if (!items.length) return;
+      const sec = document.createElement('div');
+      sec.className = 'menu-section';
+      sec.innerHTML = `<div class="menu-section-title">${cat.label}</div>`;
+      items.forEach(d => sec.appendChild(buildMenuItem(d, false)));
+      body.appendChild(sec);
+    });
+
+  } else if (tab === 'bebidas') {
+    const catMap = {
+      chopp:      L.menuCatDrinkChopp,
+      drink:      L.menuCatDrinkDrink,
+      whisky:     L.menuCatDrinkWhisky,
+      cachaca:    L.menuCatDrinkCachaca,
+      semAlcool:  L.menuCatDrinkSemAlcool,
+      gin:        L.menuCatDrinkGin,
+    };
+    for (const [key, label] of Object.entries(catMap)) {
+      const items = DRINKS[key] || [];
+      if (!items.length) continue;
+      const sec = document.createElement('div');
+      sec.className = 'menu-section';
+      sec.innerHTML = `<div class="menu-section-title">${label}</div>`;
+      items.forEach(d => sec.appendChild(buildMenuItem(d, false)));
+      body.appendChild(sec);
+    }
+
+  } else if (tab === 'vinhos') {
+    const typeMap = {
+      tinto:      L.menuWineTinto,
+      branco:     L.menuWineBranco,
+      rose:       L.menuWineRose,
+      espumante:  L.menuWineEspumante,
+      verde:      L.menuWineVerde,
+    };
+    const wByType = {};
+    WINES.forEach(w => { if (!wByType[w.type]) wByType[w.type] = []; wByType[w.type].push(w); });
+    for (const [type, label] of Object.entries(typeMap)) {
+      const items = wByType[type] || [];
+      if (!items.length) continue;
+      const sec = document.createElement('div');
+      sec.className = 'menu-section';
+      sec.innerHTML = `<div class="menu-section-title">${label}</div>`;
+      items.forEach(w => sec.appendChild(buildWineMenuItem(w)));
+      body.appendChild(sec);
+    }
+  }
+}
+
+function buildMenuItem(d, _big) {
+  const L = T[state.lang];
+  const desc = d.desc?.[state.lang] || d.desc?.pt || '';
+  const el = document.createElement('div');
+  el.className = 'menu-item';
+  let badges = '';
+  if (d.champion) badges += `<span class="menu-badge-champ">⭐ ${L.badgeChampion||'Campeão'}</span>`;
+  if (d.isnew)    badges += `<span class="menu-badge-new">✨ Novo</span>`;
+  if (d.regional) badges += `<span class="menu-badge-reg">🌵 Regional</span>`;
+  el.innerHTML = `
+    <div class="menu-item-icon">${d.icon || '🍽️'}</div>
+    <div class="menu-item-body">
+      <div class="menu-item-name">${d.name}${badges}</div>
+      <div class="menu-item-desc">${desc}</div>
+    </div>
+    <div class="menu-item-price">R$${d.price}</div>`;
+  return el;
+}
+
+function buildWineMenuItem(w) {
+  const L = T[state.lang];
+  const desc = w.desc?.[state.lang] || w.desc?.pt || '';
+  const el = document.createElement('div');
+  el.className = 'menu-item menu-wine-item';
+  el.innerHTML = `
+    <div class="menu-item-icon">🍷</div>
+    <div class="menu-item-body">
+      <div class="menu-item-name">${w.name}</div>
+      <div class="menu-wine-grape">${w.country} · ${w.grape}</div>
+      <div class="menu-item-desc">${desc}</div>
+      <div class="menu-wine-pair">🍽️ Harmoniza: ${w.pair.join(', ')}</div>
+    </div>
+    <div class="menu-item-price">R$${w.price}</div>`;
+  return el;
 }
 
 loadContext();
