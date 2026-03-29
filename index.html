@@ -717,6 +717,7 @@ const T = {
     btnNext:'Próximo →', btnBack:'← Voltar',
     chatError:'⚠️ Não consegui conectar ao Bodinho. Tenta de novo?', chatRetry:'Tentar novamente',
     badgeChampion:'⭐ Campeão', badgeNew:'Novo', badgeWine:'Vinho',
+    pairLabel:'Harmoniza com',
     rProtein:{ bode:'bode', carne:'carne vermelha', peixe:'fruto do mar', frango:'frango' },
     rDrink:{ chopp:'chopp', drink:'drink especial', whisky:'whisky', cachaca:'cachaça', semAlcool:'sem álcool', vinho:'vinho', gin:'gin/aperitivo' },
     rBase:(p,d) => `Você pediu <strong>${p}</strong> com <strong>${d}</strong>. `,
@@ -811,6 +812,7 @@ const T = {
     btnNext:'Next →', btnBack:'← Back',
     chatError:'⚠️ Could not reach Bodinho. Try again?', chatRetry:'Try again',
     badgeChampion:'⭐ Best Seller', badgeNew:'New', badgeWine:'Wine',
+    pairLabel:'Pairs with',
     rProtein:{ bode:'goat', carne:'red meat', peixe:'seafood', frango:'chicken' },
     rDrink:{ chopp:'draft beer', drink:'cocktail', whisky:'whisky', cachaca:'cachaça', semAlcool:'non-alcoholic', vinho:'wine', gin:'gin/aperitif' },
     rBase:(p,d) => `You chose <strong>${p}</strong> with <strong>${d}</strong>. `,
@@ -905,6 +907,7 @@ const T = {
     btnNext:'Siguiente →', btnBack:'← Volver',
     chatError:'⚠️ No pude conectar con Bodinho. ¿Intentas de nuevo?', chatRetry:'Intentar de nuevo',
     badgeChampion:'⭐ Más Vendido', badgeNew:'Nuevo', badgeWine:'Vino',
+    pairLabel:'Marida con',
     rProtein:{ bode:'cabro', carne:'carne roja', peixe:'mariscos', frango:'pollo' },
     rDrink:{ chopp:'cerveza', drink:'cóctel especial', whisky:'whisky', cachaca:'cachaça', semAlcool:'sin alcohol', vinho:'vino', gin:'gin/aperitivo' },
     rBase:(p,d) => `Elegiste <strong>${p}</strong> con <strong>${d}</strong>. `,
@@ -2380,7 +2383,7 @@ function buildWineMenuItem(w) {
       <div class="menu-item-name">${w.name}${sweetBadge}</div>
       <div class="menu-wine-grape">${w.country} · ${w.grape}</div>
       <div class="menu-item-desc">${desc}</div>
-      <div class="menu-wine-pair">🍽️ Harmoniza: ${w.pair.join(', ')}</div>
+      <div class="menu-wine-pair">🍽️ ${L.pairLabel||'Harmoniza'}: ${w.pair.map(p => L.rProtein[p] || p).join(', ')}</div>
     </div>
     <div class="menu-item-price">R$${w.price}</div>`;
   return el;
