@@ -2158,7 +2158,7 @@ function handleRecommendation(data) {
     // pax >= 3: mostra tudo
     console.log('[handleRecommendation] outras opcoes category:', category, '| pax:', pax, '| total:', others.length);
     if (others.length > 0) {
-      const catLabel = { bode:'Bode', carne:'Carne Vermelha', peixe:'Peixe/Frutos do Mar', frango:'Frango' }[category] || category;
+      const catLabel = (L.rProtein && L.rProtein[category]) || category;
       s('label-other-options', L.labelOtherOptions(catLabel));
       document.getElementById('result-other-dishes').innerHTML = others.map(d => renderItem(d, false)).join('');
       cardOther.style.display = 'block';
