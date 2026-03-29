@@ -928,6 +928,7 @@ const STORIES = {
 /* ── MENU DATA ────────────────────────────────── */
 const MENU = {
   bode: [
+    { name:'Buchada de Bode',   price:69,  icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Receita exclusiva da Dona Maria, feita com amor e carinho. Miúdos temperados e cozidos lentamente no bucho do bode. Prato de alma nordestina. Executivo.',en:'Exclusive recipe by Dona Maria, made with love and care. Slow-cooked offal inside goat tripe. A true Northeastern soul dish. Executive.',es:'Receta exclusiva de Doña Maria, hecha con amor y cariño. Menudencias cocinadas lentamente dentro del buche de cabro. Plato del alma norteña. Ejecutivo.'}, champion:true },
     { name:'Picanha de Bode',   price:154, icon:'🐐', storyId:'bode_sertao',  regional:false, desc:{pt:'Na chapa com queijo coalho e cebolas douradas. Feijão, arroz, macaxeira frita.',en:'On the griddle with coalho cheese and golden onions. Beans, rice, fried cassava.',es:'A la plancha con queso coalho y cebollas doradas. Frijoles, arroz, yuca frita.'}, champion:true },
     { name:'Bode na Nata',      price:69,  icon:'🐐', storyId:'bode_sertao',  regional:false, desc:{pt:'Fatias na brasa cobertas com creme de nata da casa. Executivo.',en:'Grilled slices topped with house cream sauce. Executive.',es:'Rodajas a la brasa cubiertas con crema de la casa. Ejecutivo.'}, champion:true },
     { name:'Chã de Bode',       price:154, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Na chapa com queijo coalho e cebolas douradas.',en:'On the griddle with coalho cheese and golden onions.',es:'A la plancha con queso coalho y cebollas doradas.'} },
@@ -1560,6 +1561,13 @@ PASSO 1 — Boas-vindas + proteína:
 - Boas-vindas curtas e calorosas, depois pergunte SÓ a proteína
 - Opções: "🐐 Bode", "🥩 Carne", "🐟 Peixe/Frutos do mar", "🍗 Frango"
 - Se for happy hour, mencione animado aqui
+
+PASSO 1B — Somente se escolheu BODE (pule para PASSO 2 se for outra proteína):
+- Fale com entusiasmo da Buchada de Bode da Dona Maria: receita exclusiva, feita com amor e carinho, prato de alma nordestina raiz, um clássico da casa que quem experimenta nunca esquece
+- Pergunte se quer a Buchada ou prefere outro corte de bode
+- Opções: "Quero a Buchada da Dona Maria! 🤤", "Prefiro outro corte 🐐"
+- Se escolher Buchada → siga para PASSO 2 e use "Buchada de Bode" nos dishes da recomendação
+- Se preferir outro corte → siga para PASSO 2 e sugira outros cortes (Picanha de Bode, Bode na Nata, Chã, Costela, Mistão...)
 
 PASSO 2 — Quantas pessoas?:
 - Pergunte APENAS quantas pessoas vêm — frase curta
