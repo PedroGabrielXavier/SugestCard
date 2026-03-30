@@ -2312,7 +2312,6 @@ function handleRecommendation(data) {
 
   // Outras opções da mesma categoria, filtradas por pax
   const category = data.category;
-  const pax = parseInt(data.pax) || 0;
   const cardOther = document.getElementById('card-other-options');
   if (category && MENU[category]) {
     const suggestedNorm = (data.dishes || []).map(normalize);
