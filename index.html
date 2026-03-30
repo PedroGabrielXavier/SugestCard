@@ -2273,7 +2273,12 @@ function handleRecommendation(data) {
 
   const pax = parseInt(data.pax) || 1;
 
-  const uniqueDishes = [...new Set(data.dishes || [])];
+  // Hard rule: if alone + Claude picked large Buchada, swap to individual (R$79)
+  const dishesAdjusted = (data.dishes || []).map(name =>
+    (pax === 1 && name === 'Buchada de Bode') ? 'Buchada' : name
+  );
+
+  const uniqueDishes = [...new Set(dishesAdjusted)];
   const dishItems = uniqueDishes.map(n => { const item = findItem(n); console.log('[handleRecommendation] dish', JSON.stringify(n), '->', item ? item.name : 'NAO ENCONTRADO'); return item; }).filter(Boolean);
   console.log('[handleRecommendation] pratos resolvidos:', dishItems.length, 'de', (data.dishes||[]).length);
   s('label-main-dish', L.labelMainDish);
