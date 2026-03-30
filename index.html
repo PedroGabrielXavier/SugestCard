@@ -293,7 +293,7 @@
         <div class="logo-icon">🐐</div>
       </div>
       <div class="logo-name">bodinho<span>sugere</span></div>
-      <div class="logo-sub">Bode do Nô · Boa Viagem</div>
+      <div class="logo-sub" id="unit-label">Bode do Nô · Boa Viagem</div>
     </div>
     <div class="context-bar">
       <div class="ctx-pill"><span>⏰</span><span id="ctx-time">--:--</span></div>
@@ -644,6 +644,7 @@
       <button class="menu-tab" onclick="switchMenuTab('bodinhos',this)"><span class="tab-icon">👶</span><span id="tab-bodinhos-label">Bodinhos</span></button>
       <button class="menu-tab" onclick="switchMenuTab('bebidas',this)"><span class="tab-icon">🍺</span><span id="tab-bebidas-label">Bebidas</span></button>
       <button class="menu-tab" onclick="switchMenuTab('vinhos',this)"><span class="tab-icon">🍷</span><span id="tab-vinhos-label">Vinhos</span></button>
+      <button class="menu-tab" id="menu-tab-pizza" style="display:none" onclick="switchMenuTab('pizza',this)"><span class="tab-icon">🍕</span><span id="tab-pizza-label">Pizza</span></button>
     </div>
     <div class="menu-body" id="menu-body"></div>
   </div>
@@ -1297,17 +1298,97 @@ const WINES = [
   { name:'Macaw Frisante Branco',         price:79,  icon:'🍾', type:'espumante',sweetness:'suave', country:'Brasil',    grape:'Blend',                   pair:['peixe','frango'],       desc:{pt:'Brasil · Frisante branco · Leve, refrescante e levemente adocicado.',en:'Brazil · Sparkling white · Light, refreshing and slightly sweet.',es:'Brasil · Frisante blanco · Ligero, refrescante y ligeramente dulce.'} },
 ];
 
+/* ── WINES — outras unidades (carta menor) ────── */
+const WINES_OUTRAS = [
+  { name:'Alamos Malbec',                  price:219, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Argentina', grape:'Malbec',              pair:['bode','carne'],         desc:{pt:'Argentina · Malbec · Encorpado, frutado e aveludado.',en:'Argentina · Malbec · Full-bodied, fruity and velvety.',es:'Argentina · Malbec · Con cuerpo, afrutado y aterciopelado.'} },
+  { name:'Alta Vista Classic Malbec',      price:169, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Argentina', grape:'Malbec',              pair:['bode','carne'],         desc:{pt:'Argentina · Malbec · Frutado, ameixa e especiarias.',en:'Argentina · Malbec · Fruity, plum and spices.',es:'Argentina · Malbec · Afrutado, ciruela y especias.'} },
+  { name:'DV Catena Malbec',               price:499, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Argentina', grape:'Malbec',              pair:['carne'],                desc:{pt:'Argentina · Malbec premium · Complexo e elegante.',en:'Argentina · Premium Malbec · Complex and elegant.',es:'Argentina · Malbec premium · Complejo y elegante.'} },
+  { name:'Estancia Mendoza',               price:99,  icon:'🍷', type:'tinto',    sweetness:'suave', country:'Argentina', grape:'Malbec | Merlot',     pair:['bode','carne','frango'], desc:{pt:'Argentina · Malbec/Merlot · Suave e acessível, ótimo para iniciantes.',en:'Argentina · Malbec/Merlot · Smooth and approachable.',es:'Argentina · Malbec/Merlot · Suave y accesible.'} },
+  { name:'Indomita Cabernet Sauvignon',    price:99,  icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Chile',     grape:'Cabernet Sauvignon',  pair:['bode','carne'],         desc:{pt:'Chile · Cabernet · Intenso, cerejas e cedro.',en:'Chile · Cabernet · Intense, cherries and cedar.',es:'Chile · Cabernet · Intenso, cerezas y cedro.'} },
+  { name:'Urban Sauvg Tinto',              price:129, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Argentina', grape:'Malbec',              pair:['bode','carne'],         desc:{pt:'Argentina · Malbec · Direto e frutado.',en:'Argentina · Malbec · Straightforward and fruity.',es:'Argentina · Malbec · Directo y afrutado.'} },
+  { name:'Mario Geisse Reserva Carmenere', price:199, icon:'🍷', type:'tinto',    sweetness:'seco',  country:'Brasil',    grape:'Carmenere',           pair:['bode','carne'],         desc:{pt:'Brasil · Carmenere · Pimentão, frutas vermelhas e especiarias.',en:'Brazil · Carmenere · Bell pepper, red fruit and spices.',es:'Brasil · Carmenere · Pimiento, frutos rojos y especias.'} },
+  { name:'Estancia Mendoza Chardonnay',    price:89,  icon:'🥂', type:'branco',   sweetness:'suave', country:'Argentina', grape:'Chardonnay | Chenin', pair:['peixe','frango'],       desc:{pt:'Argentina · Chardonnay/Chenin · Leve, floral e fácil de beber.',en:'Argentina · Chardonnay/Chenin · Light, floral and easy-drinking.',es:'Argentina · Chardonnay/Chenin · Ligero, floral y fácil de beber.'} },
+  { name:'Urban Torrontés',                price:119, icon:'🥂', type:'branco',   sweetness:'suave', country:'Argentina', grape:'Torrontés',           pair:['peixe','frango'],       desc:{pt:'Argentina · Torrontés · Floral, aromático e levemente adocicado.',en:'Argentina · Torrontés · Floral, aromatic and slightly sweet.',es:'Argentina · Torrontés · Floral, aromático y ligeramente dulce.'} },
+  { name:'Cousino Macul Sauvignon Blanc',  price:129, icon:'🥂', type:'branco',   sweetness:'seco',  country:'Chile',     grape:'Sauvignon Blanc',     pair:['peixe','frango'],       desc:{pt:'Chile · Sauvignon Blanc · Herbáceo, maracujá e limão.',en:'Chile · Sauvignon Blanc · Herbaceous, passion fruit and lime.',es:'Chile · Sauvignon Blanc · Herbáceo, maracuyá y limón.'} },
+  { name:'Esporão Pé Branco',              price:99,  icon:'🥂', type:'branco',   sweetness:'seco',  country:'Portugal',  grape:'Blend',               pair:['peixe','frango'],       desc:{pt:'Portugal · Blend · Fresco, cítrico e mineral.',en:'Portugal · Blend · Fresh, citrus and mineral.',es:'Portugal · Blend · Fresco, cítrico y mineral.'} },
+  { name:'Castelo de Pias Blanc',          price:79,  icon:'🥂', type:'branco',   sweetness:'seco',  country:'Portugal',  grape:'Blend',               pair:['peixe','frango'],       desc:{pt:'Portugal · Blend · Leve, floral e refrescante.',en:'Portugal · Blend · Light, floral and refreshing.',es:'Portugal · Blend · Ligero, floral y refrescante.'} },
+  { name:'Macaw Frisante Rosé',            price:89,  icon:'🌸', type:'rose',     sweetness:'suave', country:'Brasil',    grape:'Moscatel',            pair:['peixe','frango'],       desc:{pt:'Brasil · Frisante rosé · Leve, borbulhas e frutas vermelhas.',en:'Brazil · Sparkling rosé · Light, bubbles and red fruits.',es:'Brasil · Frisante rosé · Ligero, burbujas y frutos rojos.'} },
+  { name:'Freixenet Rosé',                 price:149, icon:'🌸', type:'rose',     sweetness:'suave', country:'Espanha',   grape:'Blend',               pair:['peixe','frango','carne'],desc:{pt:'Espanha · Blend rosé · Elegante, morango e pêssego.',en:'Spain · Rosé blend · Elegant, strawberry and peach.',es:'España · Blend rosé · Elegante, fresa y melocotón.'} },
+  { name:'Macaw Frisante Branco',          price:79,  icon:'🍾', type:'espumante', sweetness:'suave', country:'Brasil',   grape:'Moscatel',            pair:['peixe','frango'],       desc:{pt:'Brasil · Frisante branco · Leve, refrescante e levemente adocicado.',en:'Brazil · Sparkling white · Light, refreshing and slightly sweet.',es:'Brasil · Frisante blanco · Ligero, refrescante y ligeramente dulce.'} },
+  { name:'Seival by Miolo Brut',           price:110, icon:'🍾', type:'espumante', sweetness:'seco',  country:'Brasil',   grape:'Chardonnay | Pinot Noir', pair:['peixe','frango','carne'], desc:{pt:'Brasil · Brut · Frescor, elegância e custo-benefício.',en:'Brazil · Brut · Freshness, elegance and great value.',es:'Brasil · Brut · Frescura, elegancia y gran valor.'} },
+];
+
+/* ── PIZZA — unidades com @ITALIANOPIZZE ──────── */
+const PIZZA = {
+  tradicionais: [
+    { name:'Variedade',         price:79, icon:'🍕', desc:{pt:'4 sabores: ¼ Barbecue, ¼ Nordestina, ¼ Peperoni Gourmet, ¼ Bode Especial.',en:'4 flavors: ¼ BBQ, ¼ Nordestina, ¼ Gourmet Pepperoni, ¼ Bode Especial.',es:'4 sabores en una pizza.'} },
+    { name:'Calabresa',         price:69, icon:'🍕', desc:{pt:'Molho italiano, mussarela importada, calabresa curada, cebola roxa.',en:'Italian sauce, imported mozzarella, cured sausage, red onion.',es:'Salsa italiana, mozzarella importada, chorizo curado, cebolla morada.'} },
+    { name:'Mussarela',         price:69, icon:'🍕', desc:{pt:'Molho de tomate italiano e mussarela importada.',en:'Italian tomato sauce and imported mozzarella.',es:'Salsa de tomate italiano y mozzarella importada.'} },
+    { name:'4 Queijos',         price:79, icon:'🍕', desc:{pt:'Mussarela importada, gorgonzola, catupiry, parmesão.',en:'Imported mozzarella, gorgonzola, catupiry, parmesan.',es:'Mozzarella importada, gorgonzola, catupiry, parmesano.'} },
+    { name:'Frango Catupiry',   price:69, icon:'🍕', desc:{pt:'Molho italiano, mussarela, frango e catupiry.',en:'Italian sauce, mozzarella, chicken and catupiry.',es:'Salsa italiana, mozzarella, pollo y catupiry.'} },
+    { name:'Portuguesa',        price:69, icon:'🍕', desc:{pt:'Molho italiano, mussarela, presunto, ovos, cebola, azeitona.',en:'Italian sauce, mozzarella, ham, eggs, onion, olive.',es:'Salsa italiana, mozzarella, jamón, huevos, cebolla, aceitunas.'} },
+    { name:'Caprese',           price:79, icon:'🍕', desc:{pt:'Molho italiano, mussarela, parmesão importado, tomate fresco, pesto e manjericão.',en:'Italian sauce, mozzarella, imported parmesan, fresh tomato, pesto and basil.',es:'Salsa italiana, mozzarella, parmesano importado, tomate fresco, pesto y albahaca.'} },
+    { name:'Pepperoni',         price:74, icon:'🍕', desc:{pt:'Mussarela importada, molho de tomate e pepperoni.',en:'Imported mozzarella, tomato sauce and pepperoni.',es:'Mozzarella importada, salsa de tomate y pepperoni.'} },
+    { name:'Margherita',        price:67, icon:'🍕', desc:{pt:'Molho italiano, mussarela, tomate em rodela e manjericão.',en:'Italian sauce, mozzarella, sliced tomato and basil.',es:'Salsa italiana, mozzarella, tomate en rodajas y albahaca.'} },
+    { name:'Camarão Catupiry',  price:82, icon:'🍕', desc:{pt:'Molho italiano, mussarela, camarão e catupiry.',en:'Italian sauce, mozzarella, shrimp and catupiry.',es:'Salsa italiana, mozzarella, camarón y catupiry.'} },
+  ],
+  especiais: [
+    { name:'Pepperoni Gourmet',  price:79, icon:'🍕', desc:{pt:'Mussarela, molho italiano, pepperoni e pesto genovese.',en:'Mozzarella, Italian sauce, pepperoni and genovese pesto.',es:'Mozzarella, salsa italiana, pepperoni y pesto genovese.'} },
+    { name:'Marguerita Gourmet', price:74, icon:'🍕', desc:{pt:'Mussarela de búfala, tomate cereja, parmesão, pesto genovese e amêndoas.',en:'Buffalo mozzarella, cherry tomato, parmesan, genovese pesto and almonds.',es:'Mozzarella de búfala, tomate cherry, parmesano, pesto genovese y almendras.'} },
+    { name:'Bode Especial',      price:69, icon:'🍕', desc:{pt:'Mussarela, tomates frescos, catupiry, espinafre, provolone, bacon crocante e borda de linguiça de bode.',en:'Mozzarella, fresh tomatoes, catupiry, spinach, provolone, crispy bacon and goat sausage crust.',es:'Mozzarella, tomates frescos, catupiry, espinaca, provolone, bacon crujiente y borde de salchicha de cabro.'} },
+    { name:'Bode do Nô',         price:64, icon:'🍕', desc:{pt:'Mussarela, bode desfiado, molho chimichurri e nata.',en:'Mozzarella, shredded goat, chimichurri sauce and cream.',es:'Mozzarella, cabro desmenuzado, salsa chimichurri y crema.'} },
+    { name:'Barbecue',           price:79, icon:'🍕', desc:{pt:'Mussarela, costela suína desfiada, cheddar, cebola roxa, molho barbecue e bacon.',en:'Mozzarella, pulled pork ribs, cheddar, red onion, BBQ sauce and bacon.',es:'Mozzarella, costillas de cerdo desmenuzadas, cheddar, cebolla morada, salsa BBQ y bacon.'} },
+    { name:'Nordestina',         price:69, icon:'🍕', desc:{pt:'Mussarela, charque desfiada, cebola roxa, queijo coalho, pimenta biquinho e nata.',en:'Mozzarella, shredded dried beef, red onion, coalho cheese, biquinho pepper and cream.',es:'Mozzarella, carne seca desmenuzada, cebolla morada, queso coalho, pimiento y crema.'} },
+    { name:'Carne de Sol',       price:69, icon:'🍕', desc:{pt:'Mussarela, carne do sol desfiada, cebola roxa caramelizada e queijo de cabra.',en:'Mozzarella, shredded sun-dried beef, caramelized red onion and goat cheese.',es:'Mozzarella, carne de sol desmenuzada, cebolla roja caramelizada y queso de cabra.'} },
+    { name:'Calzone',            price:69, icon:'🍕', desc:{pt:'Mussarela, creme de ricota, salame italiano, parmesão e manjericão.',en:'Mozzarella, ricotta cream, Italian salami, parmesan and basil.',es:'Mozzarella, crema de ricotta, salami italiano, parmesano y albahaca.'} },
+  ],
+  individuais: [
+    { name:'4 Queijos (25cm)',         price:49, icon:'🍕', desc:{pt:'Individual 25cm · Mussarela, gorgonzola, catupiry e parmesão.',en:'Individual 25cm · Mozzarella, gorgonzola, catupiry and parmesan.',es:'Individual 25cm · Mozzarella, gorgonzola, catupiry y parmesano.'} },
+    { name:'Portuguesa (25cm)',        price:49, icon:'🍕', desc:{pt:'Individual 25cm · Molho italiano, mussarela, presunto, ovos, cebola.',en:'Individual 25cm · Italian sauce, mozzarella, ham, eggs, onion.',es:'Individual 25cm · Salsa italiana, mozzarella, jamón, huevos, cebolla.'} },
+    { name:'Pepperoni (25cm)',         price:49, icon:'🍕', desc:{pt:'Individual 25cm · Mussarela e pepperoni.',en:'Individual 25cm · Mozzarella and pepperoni.',es:'Individual 25cm · Mozzarella y pepperoni.'} },
+    { name:'Frango Catupiry (25cm)',   price:49, icon:'🍕', desc:{pt:'Individual 25cm · Mussarela, frango e catupiry.',en:'Individual 25cm · Mozzarella, chicken and catupiry.',es:'Individual 25cm · Mozzarella, pollo y catupiry.'} },
+    { name:'Mussarela (25cm)',         price:46, icon:'🍕', desc:{pt:'Individual 25cm · Molho italiano e mussarela.',en:'Individual 25cm · Italian sauce and mozzarella.',es:'Individual 25cm · Salsa italiana y mozzarella.'} },
+    { name:'Calabresa (25cm)',         price:52, icon:'🍕', desc:{pt:'Individual 25cm · Mussarela e calabresa curada.',en:'Individual 25cm · Mozzarella and cured sausage.',es:'Individual 25cm · Mozzarella y chorizo curado.'} },
+    { name:'Nordestina (25cm)',        price:55, icon:'🍕', desc:{pt:'Individual 25cm · Mussarela, charque, cebola roxa, queijo coalho.',en:'Individual 25cm · Mozzarella, dried beef, red onion, coalho cheese.',es:'Individual 25cm · Mozzarella, carne seca, cebolla morada.'} },
+    { name:'Carne de Sol (25cm)',      price:55, icon:'🍕', desc:{pt:'Individual 25cm · Mussarela, carne do sol e cebola caramelizada.',en:'Individual 25cm · Mozzarella, sun-dried beef and caramelized onion.',es:'Individual 25cm · Mozzarella, carne de sol y cebolla caramelizada.'} },
+    { name:'Camarão Catupiry (25cm)', price:55, icon:'🍕', desc:{pt:'Individual 25cm · Mussarela, camarão e catupiry.',en:'Individual 25cm · Mozzarella, shrimp and catupiry.',es:'Individual 25cm · Mozzarella, camarón y catupiry.'} },
+    { name:'Barbecue (25cm)',          price:55, icon:'🍕', desc:{pt:'Individual 25cm · Mussarela, costela desfiada, cheddar e molho BBQ.',en:'Individual 25cm · Mozzarella, pulled ribs, cheddar and BBQ sauce.',es:'Individual 25cm · Mozzarella, costillas desmenuzadas, cheddar y salsa BBQ.'} },
+    { name:'Pepperoni Gourmet (25cm)', price:50, icon:'🍕', desc:{pt:'Individual 25cm · Pepperoni e pesto genovese.',en:'Individual 25cm · Pepperoni and genovese pesto.',es:'Individual 25cm · Pepperoni y pesto genovese.'} },
+    { name:'Marguerita Gourmet (25cm)',price:49, icon:'🍕', desc:{pt:'Individual 25cm · Mussarela de búfala, tomate cereja, pesto e amêndoas.',en:'Individual 25cm · Buffalo mozzarella, cherry tomato, pesto and almonds.',es:'Individual 25cm · Mozzarella de búfala, tomate cherry, pesto y almendras.'} },
+  ],
+  doces: [
+    { name:'Delícia ao Doce de Leite (25cm)', price:45, icon:'🍕', desc:{pt:'Mussarela, doce de leite, amêndoas e chocolate branco.',en:'Mozzarella, dulce de leche, almonds and white chocolate.',es:'Mozzarella, dulce de leche, almendras y chocolate blanco.'} },
+    { name:'Cartola (25cm)',                  price:45, icon:'🍕', desc:{pt:'Mussarela, banana frita com açúcar e canela, doce de leite e farofa de chocolate.',en:'Mozzarella, fried banana with sugar and cinnamon, dulce de leche and chocolate crumbs.',es:'Mozzarella, banana frita con azúcar y canela, dulce de leche y farofa de chocolate.'} },
+    { name:'Calzone de Nutella (25cm)',        price:50, icon:'🍕', desc:{pt:'Calzone recheado com Nutella, creme de chocolate e açúcar de confeiteiro.',en:'Calzone filled with Nutella, chocolate cream and powdered sugar.',es:'Calzone relleno con Nutella, crema de chocolate y azúcar glass.'} },
+    { name:'Brownie (25cm)',                   price:50, icon:'🍕', desc:{pt:'Mussarela, Nutella com ganache de chocolate amargo e brownie da casa.',en:'Mozzarella, Nutella with dark chocolate ganache and house brownie.',es:'Mozzarella, Nutella con ganache de chocolate amargo y brownie de la casa.'} },
+  ],
+};
+
+/* ── UNITS CONFIG ────────────────────────────── */
+const UNITS = {
+  boaviagem:  { name:'Boa Viagem',  address:'Rua Dr. João Guilherme Pontes Sobrinho, 245', hours:'Dom–Qui 11h–01h · Sex–Sáb 11h–02h', phone:'558134288889', hasPizza:false, isShopping:false, wines:'bv'   },
+  olinda:     { name:'Olinda',      address:'Av. Min. Marcos Freire, 407 - Bairro Novo',   hours:'Dom–Qui 11h–00h · Sex–Sáb 11h–01h', phone:'558134288889', hasPizza:true,  isShopping:false, wines:'outras' },
+  afogados:   { name:'Afogados',    address:'Rua São Miguel, 1401',                         hours:'Dom–Qui 11h–23h · Sex–Sáb 11h–00h', phone:'558134288889', hasPizza:true,  isShopping:false, wines:'outras' },
+  guararapes: { name:'Guararapes',  address:'Shopping Guararapes · Av. Barreto de Menezes, 800 - Piedade, Jaboatão', hours:'Dom–Qui 11h–23h · Sex–Sáb 11h–00h', phone:'558134288889', hasPizza:true, isShopping:true, wines:'outras' },
+  tacaruna:   { name:'Tacaruna',    address:'Shopping Tacaruna · Av. Gov. Agamenon Magalhães, 153 - Santo Amaro',    hours:'Dom 11h–21h · Seg–Qui 11h–22h · Sex–Sáb 11h–23h', phone:'558134288889', hasPizza:true, isShopping:true, wines:'outras' },
+};
+
+function getActiveWines() {
+  return (state.unit && state.unit.wines === 'outras') ? WINES_OUTRAS : WINES;
+}
+
 function pickWines(protein, isCold, isHot) {
   const L = T[state.lang];
-  let pool = WINES.filter(w => w.pair.includes(protein));
+  const wineList = getActiveWines();
+  let pool = wineList.filter(w => w.pair.includes(protein));
   // Climate override: hot day with red meat? add rosé option
   if (isHot && (protein === 'bode' || protein === 'carne')) {
-    const roses = WINES.filter(w => w.type === 'rose' && !pool.find(p => p.name === w.name));
+    const roses = wineList.filter(w => w.type === 'rose' && !pool.find(p => p.name === w.name));
     pool = [...pool, ...roses];
   }
   // Cold night with fish? allow light red
   if (isCold && protein === 'peixe') {
-    const light = WINES.filter(w => w.type === 'tinto' && w.country === 'Itália' && !pool.find(p => p.name === w.name));
+    const light = wineList.filter(w => w.type === 'tinto' && w.country === 'Itália' && !pool.find(p => p.name === w.name));
     pool = [...pool, ...light];
   }
   // Prefer type by temperature
@@ -1327,6 +1408,13 @@ function pickWines(protein, isCold, isHot) {
     wineType: L['w' + w.type.charAt(0).toUpperCase() + w.type.slice(1)] || w.type,
   }));
 }
+
+/* ── UNIT DETECTION ────────────────────────────── */
+(function detectUnit() {
+  const key = new URLSearchParams(window.location.search).get('unit') || 'boaviagem';
+  state.unit = UNITS[key] || UNITS.boaviagem;
+  state.unitKey = key in UNITS ? key : 'boaviagem';
+})();
 
 /* ── CONTEXT ──────────────────────────────────── */
 async function loadContext() {
@@ -1386,6 +1474,7 @@ function applyTranslations() {
   s('welcome-sub', buildWelcomeSub());
   s('btn-start', L.btnStart);
   s('footer-welcome', L.footerWelcome);
+  if (state.unit) s('unit-label', 'Bode do Nô · ' + state.unit.name);
   s('title-protein', L.titleProtein); s('hint-protein', L.hintProtein);
   s('opt-bode-label', L.bodeLabel);   s('opt-bode-desc', L.bodeDesc);
   s('opt-carne-label', L.carneLabel); s('opt-carne-desc', L.carneDesc);
@@ -1656,7 +1745,7 @@ function buildWineSuggestion() {
   const { type, country } = wineState;
 
   // Filter wines by type (branco includes verde)
-  let pool = [...WINES];
+  let pool = [...getActiveWines()];
   if (type === 'branco') pool = pool.filter(w => w.type === 'branco' || w.type === 'verde');
   else if (type) pool = pool.filter(w => w.type === type);
 
@@ -1840,12 +1929,20 @@ function buildMenuContext() {
   lines.push('\n=== CARTA DE VINHOS ===');
   const wineTypeNames = { tinto:'Tinto', branco:'Branco', rose:'Rosé', espumante:'Espumante', verde:'Vinho Verde' };
   const wByType = {};
-  for (const w of WINES) { if (!wByType[w.type]) wByType[w.type] = []; wByType[w.type].push(w); }
+  for (const w of getActiveWines()) { if (!wByType[w.type]) wByType[w.type] = []; wByType[w.type].push(w); }
   for (const [type, wines] of Object.entries(wByType)) {
     lines.push(`[${wineTypeNames[type] || type}]`);
     for (const w of wines) {
       lines.push(`  • ${w.name} | R$${w.price} | ${w.country} · ${w.grape} | harmoniza: ${w.pair.join('/')}`);
     }
+  }
+
+  if (state.unit && state.unit.hasPizza) {
+    lines.push('\n=== PIZZA (@ITALIANOPIZZE) ===');
+    lines.push('[Tradicionais 37cm] Margherita R$67 | Mussarela R$69 | Calabresa R$69 | Frango Catupiry R$69 | Portuguesa R$69 | Nordestina R$69 | Pepperoni R$74 | Caprese R$79 | 4 Queijos R$79 | Variedade R$79 | Camarão Catupiry R$82');
+    lines.push('[Especiais 37cm] Bode do Nô R$64 | Carne de Sol R$69 | Calzone R$69 | Bode Especial R$69 | Marguerita Gourmet R$74 | Pepperoni Gourmet R$79 | Barbecue R$79 | Nordestina R$69');
+    lines.push('[Individuais 25cm] Mussarela R$46 | Frango Catupiry R$49 | 4 Queijos R$49 | Portuguesa R$49 | Pepperoni R$49 | Calabresa R$52 | Barbecue R$55 | Nordestina R$55 | Carne de Sol R$55 | Camarão Catupiry R$55');
+    lines.push('[Doces 25cm] Cartola R$45 | Delícia ao Doce de Leite R$45 | Calzone de Nutella R$50 | Brownie R$50');
   }
 
   // Inclui happy hour se estiver no horário
@@ -1905,8 +2002,10 @@ function buildSystemPrompt() {
 
   return `CRITICAL LANGUAGE RULE: You MUST respond EXCLUSIVELY in ${langFull}. Every single word of your response — the "message" field AND the "options" array — must be in ${langFull}. NEVER use Portuguese unless the language is set to Portuguese. This rule overrides everything else.
 
-You are Bodinho, the friendly and welcoming mascot of the restaurant "Bode do Nô Boa Viagem" in Recife, PE, Brazil.
+You are Bodinho, the friendly and welcoming mascot of the restaurant "Bode do Nô ${state.unit ? state.unit.name : 'Boa Viagem'}" in Recife, PE, Brazil.
 ALL your responses must be written in ${langFull} — no exceptions.
+${state.unit && state.unit.isShopping ? 'This unit is located inside a Shopping Mall.' : ''}
+${state.unit && state.unit.hasPizza ? 'This unit also serves pizza (in partnership with @ITALIANOPIZZE) — mention it if the customer seems interested in something different.' : ''}
 
 CURRENT CONTEXT:
 - ${timeCtx}
@@ -2306,6 +2405,8 @@ function openMenuScreen() {
     const el = document.getElementById('tab-' + key + '-label');
     if (el) el.textContent = label;
   }
+  const pizzaTab = document.getElementById('menu-tab-pizza');
+  if (pizzaTab) pizzaTab.style.display = (state.unit && state.unit.hasPizza) ? '' : 'none';
   document.querySelectorAll('.menu-tab').forEach((t,i) => t.classList.toggle('active', i===0));
   currentMenuTab = 'destaques';
   renderMenuTab('destaques');
@@ -2391,10 +2492,16 @@ function renderMenuTab(tab) {
   } else if (tab === 'vinhos') {
     const typeMap = { tinto:L.menuWineTinto, branco:L.menuWineBranco, rose:L.menuWineRose, espumante:L.menuWineEspumante, verde:L.menuWineVerde };
     const wByType = {};
-    WINES.forEach(w => { if (!wByType[w.type]) wByType[w.type] = []; wByType[w.type].push(w); });
+    getActiveWines().forEach(w => { if (!wByType[w.type]) wByType[w.type] = []; wByType[w.type].push(w); });
     for (const [type, label] of Object.entries(typeMap)) {
       addSection(label, wByType[type] || [], true);
     }
+
+  } else if (tab === 'pizza') {
+    addSection('🍕 Tradicionais (37cm)', PIZZA.tradicionais);
+    addSection('⭐ Especiais (37cm)',     PIZZA.especiais);
+    addSection('👤 Individuais (25cm)',   PIZZA.individuais);
+    addSection('🍫 Pizzas Doces',         PIZZA.doces);
   }
 }
 
