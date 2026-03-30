@@ -2055,10 +2055,10 @@ FINAL RECOMMENDATION RULES:
 - VARIETY: Do NOT always suggest the same dish. Explore the full list — there are great dishes beyond the champions
 - DRINKS: always pick from the menu. If the customer wants water or something simple → use "Suco Natural". Non-alcoholic → "Bodrink" or "Suco Natural". NEVER put "Água" as it is not on the menu
 - During happy hour: prefer HH menu items when possible
-- PAX (number of people): use to choose dish size
-  • 1 person → prefer dishes tagged [executivo-individual]
-  • 2 people → executive or medium dishes (R$69–R$155)
-  • 3+ people → large/sharing dishes [grande/pra-compartilhar] or multiple
+- PAX (number of people): this is a HARD RULE — you MUST follow it strictly:
+  • 1 person → YOU MUST ONLY suggest dishes tagged [executivo-individual] (R$49–R$79). NEVER suggest dishes above R$100 for 1 person. These are individual portions.
+  • 2 people → suggest executive or medium dishes (R$69–R$155). One dish per person or a sharing dish.
+  • 3+ people → suggest large/sharing dishes [grande/pra-compartilhar] (R$150+) or multiple dishes.
 - "dishes" NEVER repeat the same dish — each item must be UNIQUE
 - "starter" is optional — omit if not suggesting one
 - "drinks" must have 1 or 2 items, ALWAYS from the menu
@@ -2270,7 +2270,26 @@ function handleRecommendation(data) {
   document.getElementById('result-context-line').textContent =
     state.temp !== null ? L.resultContextWeather(state.temp) : L.resultContextDefault;
 
-  const uniqueDishes = [...new Set(data.dishes || [])];
+  const pax = parseInt(data.pax) || 1;
+
+  // Client-side safety: if pax=1 and Claude suggested a large dish (>R$100), swap it for an executive dish
+  let dishNames = [...new Set(data.dishes || [])];
+  if (pax === 1) {
+    const category = data.category || 'bode';
+    const catItems = MENU[category] || [];
+    const execPool = catItems.filter(d => /executivo/i.test(d.desc?.pt || ''));
+    dishNames = dishNames.map(name => {
+      const item = findItem(name);
+      if (item && item.price > 100 && execPool.length) {
+        const fallback = execPool[Math.floor(Math.random() * execPool.length)];
+        console.log('[handleRecommendation] pax=1 swap:', name, '->', fallback.name);
+        return fallback.name;
+      }
+      return name;
+    });
+  }
+
+  const uniqueDishes = [...new Set(dishNames)];
   const dishItems = uniqueDishes.map(n => { const item = findItem(n); console.log('[handleRecommendation] dish', JSON.stringify(n), '->', item ? item.name : 'NAO ENCONTRADO'); return item; }).filter(Boolean);
   console.log('[handleRecommendation] pratos resolvidos:', dishItems.length, 'de', (data.dishes||[]).length);
   s('label-main-dish', L.labelMainDish);
