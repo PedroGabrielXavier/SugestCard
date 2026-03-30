@@ -1025,6 +1025,7 @@ const STORIES = {
 const MENU = {
   bode: [
     { name:'Buchada de Bode',   price:129, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Tradicional buchada de bode. Receita exclusiva da Dona Maria, feita com amor desde 1991. Acompanha: pirão de buchada, legumes e arroz branco.',en:'Traditional goat buchada. Exclusive recipe by Dona Maria, made with love since 1991. Comes with: buchada pirão, vegetables and white rice.',es:'Tradicional buchada de cabro. Receta exclusiva de Doña Maria, hecha con amor desde 1991. Incluye: pirão de buchada, vegetales y arroz blanco.'}, champion:true },
+    { name:'Buchada',           price:79,  icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'A mesma Buchada da Dona Maria em porção individual. Acompanha: pirão de buchada, arroz branco e legumes. Executivo.',en:'Dona Maria\'s Buchada in individual portion. Comes with: buchada pirão, white rice and vegetables. Executive.',es:'Buchada de Doña Maria en porción individual. Incluye: pirão de buchada, arroz blanco y vegetales. Ejecutivo.'}, champion:true },
     { name:'Picanha de Bode',   price:154, icon:'🐐', storyId:'bode_sertao',  regional:false, desc:{pt:'Na chapa com queijo coalho e cebolas douradas. Feijão, arroz, macaxeira frita.',en:'On the griddle with coalho cheese and golden onions. Beans, rice, fried cassava.',es:'A la plancha con queso coalho y cebollas doradas. Frijoles, arroz, yuca frita.'}, champion:true },
     { name:'Bode na Nata',      price:69,  icon:'🐐', storyId:'bode_sertao',  regional:false, desc:{pt:'Fatias na brasa cobertas com creme de nata da casa. Executivo.',en:'Grilled slices topped with house cream sauce. Executive.',es:'Rodajas a la brasa cubiertas con crema de la casa. Ejecutivo.'}, champion:true },
     { name:'Chã de Bode',       price:154, icon:'🐐', storyId:'bode_sertao',  regional:true,  desc:{pt:'Na chapa com queijo coalho e cebolas douradas.',en:'On the griddle with coalho cheese and golden onions.',es:'A la plancha con queso coalho y cebollas doradas.'} },
@@ -2028,7 +2029,7 @@ STEP 1B — Only if the customer chose GOAT (skip to STEP 2 for other proteins):
 - Talk enthusiastically about Dona Maria's Buchada de Bode: exclusive recipe, made with love, a true northeastern soul dish, a house classic that no one forgets
 - Ask if they want the Buchada or prefer another goat cut
 - Options MUST be exactly: ${fmtOpts(O.buchada)}
-- If they choose Buchada → proceed to STEP 2 and include "Buchada de Bode" in the dishes recommendation
+- If they choose Buchada → proceed to STEP 2. Then in the final recommendation: if pax=1 use "Buchada" (individual R$79 executivo); if pax≥2 use "Buchada de Bode" (R$129 full portion)
 - If they prefer another cut → proceed to STEP 2 and suggest other cuts (Picanha de Bode, Bode na Nata, Chã, Costela, Mistão...)
 
 STEP 2 — How many people?:
@@ -2056,7 +2057,7 @@ FINAL RECOMMENDATION RULES:
 - DRINKS: always pick from the menu. If the customer wants water or something simple → use "Suco Natural". Non-alcoholic → "Bodrink" or "Suco Natural". NEVER put "Água" as it is not on the menu
 - During happy hour: prefer HH menu items when possible
 - PAX (number of people): this is a HARD RULE — you MUST follow it strictly:
-  • 1 person → YOU MUST ONLY suggest dishes tagged [executivo-individual] (R$49–R$79), OR "Buchada de Bode" (which is always individual). NEVER suggest large/sharing dishes (R$150+) for 1 person.
+  • 1 person → YOU MUST ONLY suggest dishes tagged [executivo-individual] (R$49–R$79). If the customer wants Buchada, use "Buchada" (R$79 individual), NOT "Buchada de Bode" (R$129 which serves 2-3). NEVER suggest dishes above R$100 for 1 person.
   • 2 people → suggest executive or medium dishes (R$69–R$155). One dish per person or a sharing dish.
   • 3+ people → suggest large/sharing dishes [grande/pra-compartilhar] (R$150+) or multiple dishes.
 - "dishes" NEVER repeat the same dish — each item must be UNIQUE
