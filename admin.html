@@ -208,6 +208,8 @@
       <a onclick="goTo('drinks')">🍹 Bebidas</a>
       <a onclick="goTo('wines')">🍷 Vinhos — Boa Viagem</a>
       <a onclick="goTo('wines_outras')">🍷 Vinhos — Outras</a>
+      <div class="section-group">Promoções</div>
+      <a onclick="goTo('happyhour')">🍺 Happy Hour</a>
       <div class="section-group">Sistema</div>
       <a onclick="goTo('custos')">📊 Custos de API</a>
       <a onclick="goTo('config')">⚙️ Configurações</a>
@@ -376,6 +378,7 @@ const SEC_CONFIG = {
   drinks:      { label:'Bebidas',           type:'nested', tabs:{chopp:'🍺 Chopp',cerveja:'🍻 Cerveja',drink:'🍸 Drinks',whisky:'🥃 Whisky',cachaca:'🥃 Cachaça',semAlcool:'🥤 Sem Álcool',gin:'🍋 Gin'} },
   wines:       { label:'Vinhos — Boa Viagem',type:'flat', isWine:true },
   wines_outras:{ label:'Vinhos — Outras',   type:'flat', isWine:true },
+  happyhour:   { label:'Happy Hour',         type:'happyhour' },
   config:      { label:'Configurações',     type:'config' },
   custos:      { label:'Custos de API',     type:'custos' },
 };
@@ -465,12 +468,15 @@ function goTo(secKey) {
   document.getElementById('section-title').textContent = cfg.label;
 
   const btnAdd = document.getElementById('btn-add');
-  btnAdd.style.display = (cfg.type === 'config' || cfg.type === 'custos') ? 'none' : 'block';
+  btnAdd.style.display = (cfg.type === 'config' || cfg.type === 'custos' || cfg.type === 'happyhour') ? 'none' : 'block';
 
   if (cfg.type === 'nested') {
     const firstTab = Object.keys(cfg.tabs)[0];
     currentTab = firstTab;
     renderSection();
+  } else if (cfg.type === 'happyhour') {
+    currentTab = null;
+    renderHappyHour();
   } else if (cfg.type === 'config') {
     currentTab = null;
     renderConfig();
@@ -770,7 +776,7 @@ function resetStats() {
   renderCustos();
 }
 
-function renderConfig() {
+function renderHappyHour() {
   const cfg = data.config || {};
   const content = document.getElementById('section-content');
   document.getElementById('section-count').textContent = '';
@@ -778,7 +784,7 @@ function renderConfig() {
   content.innerHTML = `
     <div class="config-section">
       <div class="config-card">
-        <h3>Happy Hour</h3>
+        <h3>🍺 Happy Hour</h3>
         <div class="config-row">
           <label>Ativo</label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
@@ -813,7 +819,16 @@ function renderConfig() {
           <span class="config-saved" id="cfg-saved">✓ Salvo!</span>
         </div>
       </div>
+    </div>`;
+}
 
+function renderConfig() {
+  const cfg = data.config || {};
+  const content = document.getElementById('section-content');
+  document.getElementById('section-count').textContent = '';
+
+  content.innerHTML = `
+    <div class="config-section">
       <div class="config-card">
         <h3>🔑 Alterar Senha</h3>
         <div class="config-row">
