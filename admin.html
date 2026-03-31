@@ -170,7 +170,40 @@
     ::-webkit-scrollbar{width:6px}
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:#2d3149;border-radius:3px}
+  
+    /* ── PDF Import ──────────────────────────────────────────── */
+    .pdf-section{padding:28px}
+    .pdf-drop-zone{border:2px dashed var(--border);border-radius:14px;padding:48px 28px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:24px}
+    .pdf-drop-zone:hover,.pdf-drop-zone.drag-over{border-color:var(--accent);background:rgba(124,111,247,.06)}
+    .pdf-drop-icon{font-size:40px;margin-bottom:12px}
+    .pdf-drop-text{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px}
+    .pdf-drop-sub{font-size:12px;color:var(--muted)}
+    .pdf-progress{display:none;text-align:center;padding:40px}
+    .pdf-progress .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .pdf-progress p{color:var(--muted);font-size:13px;margin-top:8px}
+    .pdf-preview{display:none}
+    .pdf-preview-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .pdf-preview-title{font-size:14px;font-weight:700}
+    .pdf-preview-count{font-size:12px;color:var(--muted)}
+    .pdf-item-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;max-height:440px;overflow-y:auto;padding-right:4px}
+    .pdf-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:12px;transition:border-color .15s}
+    .pdf-item:has(input:checked){border-color:rgba(124,111,247,.4)}
+    .pdf-item input[type=checkbox]{margin-top:2px;accent-color:var(--accent);flex-shrink:0;width:16px;height:16px;cursor:pointer}
+    .pdf-item-body{flex:1;min-width:0}
+    .pdf-item-name{font-size:13px;font-weight:600;color:var(--text)}
+    .pdf-item-meta{font-size:11px;color:var(--muted);margin-top:3px}
+    .pdf-item-tag{display:inline-block;background:rgba(124,111,247,.15);color:var(--accent);border-radius:4px;padding:1px 6px;font-size:10px;margin-right:4px}
+    .pdf-item-price{font-size:13px;font-weight:700;color:#8ce8ac;flex-shrink:0;white-space:nowrap}
+    .pdf-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn-pdf-import{background:var(--success);color:#fff;border:none;border-radius:9px;padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer}
+    .btn-pdf-import:hover{opacity:.85}
+    .btn-pdf-reset{background:none;border:1px solid var(--border);color:var(--muted);border-radius:9px;padding:10px 16px;font-size:13px;cursor:pointer}
+    .btn-pdf-reset:hover{color:var(--text);border-color:var(--text)}
+    .pdf-select-all{font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline;background:none;border:none;padding:0}
+    .pdf-error{background:rgba(232,76,61,.1);border:1px solid rgba(232,76,61,.3);border-radius:10px;padding:16px 20px;color:var(--danger);font-size:13px;display:none;margin-bottom:16px}
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
 
@@ -211,6 +244,7 @@
       <div class="section-group">Promoções</div>
       <a onclick="goTo('happyhour')">🍺 Happy Hour</a>
       <div class="section-group">Sistema</div>
+      <a onclick="goTo('importarplanilha')">📊 Importar Planilha</a>
       <a onclick="goTo('custos')">📊 Custos de API</a>
       <a onclick="goTo('config')">⚙️ Configurações</a>
     </div>
@@ -379,6 +413,7 @@ const SEC_CONFIG = {
   wines:       { label:'Vinhos — Boa Viagem',type:'flat', isWine:true },
   wines_outras:{ label:'Vinhos — Outras',   type:'flat', isWine:true },
   happyhour:   { label:'Happy Hour',         type:'happyhour' },
+  importarplanilha: { label:'Importar Planilha', type:'planilha' },
   config:      { label:'Configurações',     type:'config' },
   custos:      { label:'Custos de API',     type:'custos' },
 };
@@ -468,12 +503,18 @@ function goTo(secKey) {
   document.getElementById('section-title').textContent = cfg.label;
 
   const btnAdd = document.getElementById('btn-add');
-  btnAdd.style.display = (cfg.type === 'config' || cfg.type === 'custos' || cfg.type === 'happyhour') ? 'none' : 'block';
+  btnAdd.style.display = (cfg.type === 'config' || cfg.type === 'custos' || cfg.type === 'happyhour' || cfg.type === 'pdf') ? 'none' : 'block';
 
   if (cfg.type === 'nested') {
     const firstTab = Object.keys(cfg.tabs)[0];
     currentTab = firstTab;
     renderSection();
+  } else if (cfg.type === 'pdf') {
+    currentTab = null;
+    renderPDF();
+  } else if (cfg.type === 'planilha') {
+    currentTab = null;
+    renderPlanilha();
   } else if (cfg.type === 'happyhour') {
     currentTab = null;
     renderHappyHour();
@@ -774,6 +815,120 @@ function resetStats() {
   try { localStorage.setItem(STATS_KEY, JSON.stringify(fresh)); } catch(e) {}
   toast('Estatísticas zeradas', 'ok');
   renderCustos();
+}
+
+
+// === IMPORTAR PLANILHA ===
+const UNIDADES=[{key:"boaviagem",label:"Boa Viagem"},{key:"olinda",label:"Olinda"},{key:"afogados",label:"Afogados"},{key:"guararapes",label:"Guararapes"},{key:"tacaruna",label:"Tacaruna"}];
+const SECOES=[{key:"menu",label:"Pratos Principais",tabs:["bode","carne","peixe","frango"]},{key:"starters",label:"Entradas",tabs:["bode","carne","peixe","frango"]},{key:"caldos",label:"Caldos",tabs:[]},{key:"petiscos",label:"Petiscos",tabs:["matuto","chapa"]},{key:"saladas",label:"Saladas",tabs:[]},{key:"sobremesas",label:"Sobremesas",tabs:[]},{key:"bodinhos",label:"Bodinhos",tabs:[]},{key:"drinks",label:"Bebidas",tabs:["chopp","cerveja","drink","whisky","cachaca","semAlcool","gin"]},{key:"wines",label:"Vinhos BV",tabs:[]},{key:"wines_outras",label:"Vinhos Outras",tabs:[]}];
+function renderPlanilha(){
+  const cont=document.getElementById("section-content");
+  document.getElementById("section-count").textContent="";
+  const unitOpts=UNIDADES.map(u=>"<option value=\""+u.key+"\">"+u.label+"</option>").join("");
+  const secOpts=SECOES.map(s=>"<option value=\""+s.key+"\">"+s.label+"</option>").join("");
+  cont.innerHTML="<div class=\"pl-section\"><div class=\"pl-card\">"
+    +"<h3>&#x1F4CA; Importar Planilha de Card&aacute;pio</h3>"
+    +"<div class=\"pl-error\" id=\"pl-error\"></div>"
+    +"<div class=\"pl-row\">"
+    +"<div class=\"pl-group\"><label>Unidade</label><select id=\"pl-unit\">"+unitOpts+"</select></div>"
+    +"<div class=\"pl-group\"><label>Categoria</label><select id=\"pl-section\" onchange=\"updatePlTabs()\">"+secOpts+"</select></div>"
+    +"<div class=\"pl-group\" id=\"pl-tab-group\" style=\"display:none\"><label>Sub-categoria</label><select id=\"pl-tab\"></select></div>"
+    +"</div>"
+    +"<div class=\"pl-drop-zone\" id=\"pl-drop-zone\">"
+    +"<div class=\"pl-drop-icon\">&#x1F4C2;</div>"
+    +"<div class=\"pl-drop-text\">Clique ou arraste a planilha aqui</div>"
+    +"<div class=\"pl-drop-sub\">Aceita .xlsx .xls .csv &middot; Colunas: <strong>nome</strong> e <strong>preco</strong></div>"
+    +"<input type=\"file\" id=\"pl-file-input\" accept=\".xlsx,.xls,.csv\" style=\"display:none\" onchange=\"handlePlFile(this.files[0])\">"
+    +"</div>"
+    +"<p class=\"pl-hint\">&#x1F4A1; Coluna A = nome &nbsp;|&nbsp; Coluna B = preco &nbsp;|&nbsp; Cabe&ccedil;alho na linha 1</p>"
+    +"<div class=\"pl-progress\" id=\"pl-progress\" style=\"display:none\">Lendo planilha...</div>"
+    +"<div class=\"pl-preview\" id=\"pl-preview\" style=\"display:none\">"
+    +"<div class=\"pl-preview-header\"><span class=\"pl-preview-title\">Itens encontrados</span><span class=\"pl-preview-count\" id=\"pl-count\"></span></div>"
+    +"<div class=\"pl-item-list\" id=\"pl-item-list\"></div>"
+    +"<div class=\"pl-actions\">"
+    +"<button class=\"btn-pl-import\" onclick=\"importPlItems()\">&#x2713; Importar selecionados</button>"
+    +"<button class=\"btn-pl-reset\" onclick=\"renderPlanilha()\">&#x21A9; Nova planilha</button>"
+    +"<button class=\"pl-select-all\" onclick=\"plToggleAll()\">Selecionar tudo</button>"
+    +"</div></div></div></div>";
+  document.getElementById("pl-drop-zone").addEventListener("click",()=>document.getElementById("pl-file-input").click());
+  initPlDrop();updatePlTabs();
+}
+function updatePlTabs(){
+  const secKey=document.getElementById("pl-section").value;
+  const secao=SECOES.find(s=>s.key===secKey);
+  const tabGroup=document.getElementById("pl-tab-group");
+  const tabSel=document.getElementById("pl-tab");
+  const TL={bode:"Bode",carne:"Carne",peixe:"Peixe",frango:"Frango",matuto:"Matuto",chapa:"Chapa",chopp:"Chopp",cerveja:"Cerveja",drink:"Drinks",whisky:"Whisky",cachaca:"Cachaca",semAlcool:"Sem Alcool",gin:"Gin"};
+  if(secao&&secao.tabs.length){tabSel.innerHTML=secao.tabs.map(t=>"<option value=\""+t+"\">"+(TL[t]||t)+"</option>").join("");tabGroup.style.display="";}
+  else{tabGroup.style.display="none";}
+}
+function initPlDrop(){
+  const zone=document.getElementById("pl-drop-zone");if(!zone)return;
+  zone.addEventListener("dragover",e=>{e.preventDefault();zone.classList.add("drag-over");});
+  zone.addEventListener("dragleave",()=>zone.classList.remove("drag-over"));
+  zone.addEventListener("drop",e=>{e.preventDefault();zone.classList.remove("drag-over");const f=e.dataTransfer.files[0];if(f)handlePlFile(f);else showPlError("Arquivo invalido.");});
+}
+function showPlError(msg){const el=document.getElementById("pl-error");if(el){el.textContent=msg;el.style.display="block";}}
+function handlePlFile(file){
+  if(!file)return;
+  const errEl=document.getElementById("pl-error");if(errEl)errEl.style.display="none";
+  document.getElementById("pl-progress").style.display="block";
+  document.getElementById("pl-preview").style.display="none";
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:"array"});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{defval:""});
+      document.getElementById("pl-progress").style.display="none";
+      if(!rows.length){showPlError("Planilha vazia.");return;}
+      renderPlPreview(rows);
+    }catch(err){document.getElementById("pl-progress").style.display="none";showPlError("Erro: "+err.message);}
+  };
+  reader.readAsArrayBuffer(file);
+}
+function normKey(s){return String(s).toLowerCase().normalize("NFD").replace(/\u0300-\u036f/g,"").replace(/[^a-z0-9]/g,"");}
+function findCol(row,candidates){const keys=Object.keys(row);for(const c of candidates){const m=keys.find(k=>normKey(k)===c);if(m!==undefined)return row[m];}return "";}
+function renderPlPreview(rows){
+  const items=rows.map(r=>{
+    const name=String(findCol(r,["nome","name","produto","item","descricao"])||"").trim();
+    const raw=findCol(r,["preco","price","valor","value","custo"])||"";
+    const price=parseFloat(String(raw).replace(/[^0-9.,]/g,"").replace(",","."))||0;
+    return{name,price};
+  }).filter(i=>i.name);
+  if(!items.length){showPlError("Nenhum item. Verifique cabecalhos: nome, preco.");return;}
+  const list=document.getElementById("pl-item-list");
+  document.getElementById("pl-count").textContent=items.length+" item"+(items.length!==1?"s":"");
+  list.innerHTML=items.map((item,i)=>
+    "<div class=\"pl-item\"><input type=\"checkbox\" id=\"pl-cb-"+i+"\" checked data-idx=\""+i+"\"><span class=\"pl-item-name\">"+esc(item.name)+"</span><span class=\"pl-item-price\">"+(item.price>0?"R$"+item.price.toFixed(2).replace(".",","):"&mdash;")+"</span></div>"
+  ).join("");
+  list.dataset.items=JSON.stringify(items);
+  document.getElementById("pl-preview").style.display="block";
+}
+function plToggleAll(){const cbs=document.querySelectorAll("#pl-item-list input[type=checkbox]");const all=Array.from(cbs).every(c=>c.checked);cbs.forEach(c=>c.checked=!all);}
+function importPlItems(){
+  const list=document.getElementById("pl-item-list");if(!list)return;
+  const allItems=JSON.parse(list.dataset.items||"[]");
+  const cbs=list.querySelectorAll("input[type=checkbox]");const selected=[];
+  cbs.forEach(cb=>{if(cb.checked)selected.push(allItems[parseInt(cb.dataset.idx)]);});
+  if(!selected.length){toast("Selecione ao menos um item","err");return;}
+  const secKey=document.getElementById("pl-section").value;
+  const tabEl=document.getElementById("pl-tab");const tabKey=tabEl?tabEl.value:null;
+  const secao=SECOES.find(s=>s.key===secKey);const hasTab=secao&&secao.tabs.length>0;
+  let added=0;
+  selected.forEach(item=>{
+    const newItem={name:item.name,desc:"",price:item.price,icon:"",available:true};
+    const target=hasTab?data[secKey][tabKey]:data[secKey];
+    if(Array.isArray(target)){target.push(newItem);added++;}
+  });
+  if(added>0){
+    saveData();
+    const un=UNIDADES.find(u=>u.key===document.getElementById("pl-unit").value);
+    const sec=SECOES.find(s=>s.key===secKey);
+    toast(added+" item(s) importado(s) - "+(un?un.label:"")+(sec?" / "+sec.label:""),"ok");
+    document.getElementById("pl-preview").style.display="none";
+    document.getElementById("pl-file-input").value="";
+  }else{toast("Nenhum item compativel com a categoria selecionada","err");}
 }
 
 function renderHappyHour() {
