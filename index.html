@@ -3,22 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>BodinhaSugere 🐐</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐐</text></svg>" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <title>Bodin Sugere 🐐</title>
+  <link rel="icon"             type="image/png" sizes="96x96"   href="/favicon-96x96.png">
+  <link rel="apple-touch-icon" sizes="180x180"                  href="/apple-touch-icon.png">
+  <link rel="manifest"                                          href="/site.webmanifest">
   <style>
+    @font-face { font-family:'Brother1816'; src:url('/fonts/BROTHER1816-BOOK.TTF') format('truetype'); font-weight:400; font-style:normal; font-display:swap; }
+    @font-face { font-family:'Brother1816'; src:url('/fonts/BROTHER1816-MEDIUM.TTF') format('truetype'); font-weight:500; font-style:normal; font-display:swap; }
+    @font-face { font-family:'Brother1816'; src:url('/fonts/BROTHER1816-BOLD.TTF') format('truetype'); font-weight:700; font-style:normal; font-display:swap; }
+    @font-face { font-family:'Brother1816'; src:url('/fonts/BROTHER1816-EXTRABOLD.TTF') format('truetype'); font-weight:800; font-style:normal; font-display:swap; }
+    @font-face { font-family:'Brother1816Printed'; src:url('/fonts/BROTHER1816PRINTED-REGULAR.TTF') format('truetype'); font-weight:400; font-style:normal; font-display:swap; }
+    @font-face { font-family:'Rumplakat'; src:url('/fonts/RumPlakat-Regular.otf') format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+    /* Desativa glifos alternativos/contextuais da Rumplakat */
+    .logo-name, .section-title, .welcome-msg, .welcome-slogan, .suggest-header h2,
+    .suggest-item-name, .chat-header-name,
+    .menu-topbar-title, .menu-section-title, .menu-landing-title {
+      font-family: 'Rumplakat', sans-serif !important;
+      font-weight: 400 !important;
+      font-feature-settings: "calt" 0, "liga" 0, "dlig" 0, "salt" 0, "ss01" 0, "ss02" 0, "ss03" 0 !important;
+      font-variant-ligatures: none !important;
+      font-variant-alternates: normal !important;
+      font-variant: normal !important;
+      letter-spacing: 0 !important;
+      text-transform: none !important;
+      text-shadow: none !important;
+      font-style: normal !important;
+    }
+
+    /* Brother 1816 Bold (Subtitles/Labels/Buttons) */
+    .opt-label, .pax-label, .big-label, .btn-primary, .btn-quick, 
+    .wine-cta-title, .menu-cta-title, .menu-choice-title, 
+    .menu-item-name, .rating-question, .rating-send-btn, .social-btn,
+    .menu-tab.active, .wine-type-btn .wt-label {
+      font-family: 'Brother1816', sans-serif;
+      font-weight: 700;
+    }
+
+    /* Brother 1816 Book (Texts) */
+    html, body, .welcome-sub, .suggest-header p, .suggest-item-desc, 
+    .reasoning-box, .story-card, .chat-bubble, .menu-cta-desc, 
+    .menu-item-desc, .footer-note, .section-hint {
+      font-family: 'Brother1816', sans-serif;
+      font-weight: 400;
+    }
+
+    /* Brother 1816 Medium (Small Texts) */
+    .opt-desc, .pax-desc, .big-desc, .ctx-pill, .cc-label, 
+    .petisco-question, .chat-header-status, .menu-tab, 
+    .menu-wine-grape, .menu-wine-pair, .wine-cta-desc, .wine-type-btn .wt-desc {
+      font-family: 'Brother1816', sans-serif;
+      font-weight: 500;
+    }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --marrom:  #5C2A0E; --laranja: #C95C1E; --amarelo: #E8A83E;
-      --creme:   #FDF3E3; --off:     #F5E9D5; --verde:   #2E6B3A;
-      --text:    #2D1A0A; --muted:   #8B6240; --radius:  18px;
-      --shadow:  0 8px 32px rgba(92,42,14,.22);
+      /* Paleta Bode do Nô — Oficial */
+      --bege-palha:    #E8DDD9;
+      --marrom-cangaco:#AB9580;
+      --preto-sertao:  #160D09;
+      --marrom-terra:  #3A1907;
+
+      --marrom:        var(--marrom-terra);
+      --marrom-medio:  #2A1205; /* Tom mais escuro de terra para profundidade */
+      --laranja:       #CF7834; 
+      --amarelo:       var(--marrom-cangaco);
+      --creme:         var(--bege-palha);
+      --text:          var(--preto-sertao);
+      --muted:         var(--marrom-cangaco);
+      --radius:        18px;
+      --shadow:        0 8px 32px rgba(22,13,9,.45);
     }
-    html, body { height: 100%; font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif; background: var(--marrom); color: var(--text); overflow-x: hidden; }
-    #app { min-height: 100dvh; display: flex; flex-direction: column; background: linear-gradient(160deg, #7a3b12 0%, #3d1606 100%); position: relative; overflow: hidden; }
-    #app::before { content:''; position:fixed; top:-120px; left:50%; transform:translateX(-50%); width:520px; height:520px; background:radial-gradient(circle, rgba(232,168,62,.13) 0%, transparent 70%); pointer-events:none; z-index:0; }
+    html, body { height: 100%; font-family: 'Brother1816', 'Segoe UI', system-ui, sans-serif; background: var(--marrom-terra); color: var(--text); overflow-x: hidden; }
+    #app { min-height: 100dvh; display: flex; flex-direction: column; background: linear-gradient(160deg, #3A1907 0%, #160D09 100%); position: relative; overflow: hidden; }
     .screen { position: relative; z-index: 1; }
 
     /* Lang bar */
@@ -36,37 +91,83 @@
     @keyframes slideLeft { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
     @keyframes slideRight{ from { opacity:0; transform:translateX(-40px); } to { opacity:1; transform:translateX(0); } }
     @keyframes popIn     { from { opacity:0; transform:scale(.7); } to { opacity:1; transform:scale(1); } }
-    @keyframes floatUp   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
     @keyframes shimmer   { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
     @keyframes ripple    { 0%{transform:scale(0);opacity:.6} 100%{transform:scale(2.5);opacity:0} }
 
+    /* Global Emoji Removal */
+    .opt-icon, .pax-icon, .big-icon, .suggest-item-icon, .logo-icon, 
+    .ctx-icon, .big-emoji, .tab-icon, .msec-icon, .menu-item-icon, 
+    .menu-choice-icon, .wine-cta-icon, .wt-icon, .cc-flag-emoji,
+    .chat-header-avatar, .chat-avatar, .badge-champion::before, .badge-new::before, .badge-wine::before { 
+      display: none !important; 
+    }
+
     /* Logo */
-    .logo-wrap { text-align: center; margin-bottom: 20px; margin-top: 16px; animation: fadeUp .5s .1s cubic-bezier(.22,.68,0,1.2) both; }
-    .logo-icon { font-size: 64px; line-height: 1; display: block; filter: drop-shadow(0 4px 16px rgba(232,168,62,.5)); animation: floatUp 4s ease-in-out infinite; }
-    .logo-name { font-size: 30px; font-weight: 700; letter-spacing: -.5px; color: var(--amarelo); text-shadow: 0 2px 12px rgba(232,168,62,.45), 0 1px 3px rgba(0,0,0,.5); }
+    .logo-wrap { text-align: center; margin-bottom: 15px; margin-top: 28px; }
+    .logo-icon { display: none !important; }
+    .logo-name { font-size: 30px; font-weight: 400; font-family:'Rumplakat','Brother1816',sans-serif; color: var(--amarelo); }
     .logo-name span { color: #fff; font-weight: 300; }
     .logo-sub { font-size: 13px; color: rgba(255,255,255,.6); margin-top: 5px; font-style: italic; letter-spacing: .3px; }
-    .logo-sm { margin-bottom: 12px; }
-    .logo-sm .logo-icon { font-size: 38px; filter: drop-shadow(0 2px 8px rgba(232,168,62,.4)); animation: none; }
-    .bodinho-img { width: 160px; height: auto; display: block; margin: 0 auto; mix-blend-mode: screen; }
-    .logo-sm .logo-name { font-size: 21px; font-weight: 700; }
+    .logo-sm { margin-bottom: 7px; }
+    .logo-sm .logo-icon { font-size: 38px; animation: none; }
+    .bodinho-img { width: 450px; max-width: 80vw; height: auto; display: block; margin: 0 auto; }
+    .logo-sm .logo-name { font-size: 21px; font-weight: 400; }
 
     /* Logo halo (welcome only) */
-    .logo-halo { position: relative; display: inline-block; margin-bottom: 6px; }
-    .logo-halo::before { content:''; position:absolute; inset:-14px; border-radius:50%; background:radial-gradient(circle, rgba(232,168,62,.22) 0%, transparent 70%); animation: haloPulse 3s ease-in-out infinite; pointer-events:none; }
-    @keyframes haloPulse { 0%,100%{opacity:.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.12)} }
+    .logo-halo { position: relative; display: inline-block; }
+    .logo-halo::before { display: none; }
 
     /* Card */
     .card { background: var(--creme); border-radius: var(--radius); padding: 24px 20px; width: 100%; max-width: 420px; box-shadow: var(--shadow); margin-bottom: 16px; border-top: 3px solid rgba(232,168,62,.25); animation: fadeUp .4s .15s cubic-bezier(.22,.68,0,1.2) both; transition: transform .2s, box-shadow .2s; }
     .card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(92,42,14,.28); }
 
-    /* Context pills */
-    .context-bar { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; width: 100%; max-width: 420px; animation: fadeIn .5s .3s both; }
-    .ctx-pill { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 999px; padding: 6px 14px; font-size: 13px; color: #fff; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(6px); transition: background .2s, transform .2s; }
-    .ctx-pill:hover { background: rgba(255,255,255,.18); transform: translateY(-1px); }
+    /* Unical Context Button */
+    .unical-context-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      padding: 8px 18px;
+      backdrop-filter: blur(10px);
+      color: #fff;
+      font-family: 'Brother1816', sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    .unical-context-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+    .unical-context-btn .ctx-divider {
+      width: 1px;
+      height: 14px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .unical-context-btn .ctx-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .unical-context-btn .ctx-icon {
+      font-size: 14px;
+      filter: drop-shadow(0 0 4px rgba(0,0,0,0.3));
+    }
+    #screen-welcome .unical-context-btn {
+      position: absolute;
+      bottom: 24px;
+      left: 20px;
+      animation: fadeIn 0.8s 0.4s both;
+      z-index: 20; /* Garante que fique acima das decorações se necessário */
+    }
 
     /* Section titles */
-    .section-title { font-size: 18px; font-weight: 900; color: var(--marrom); margin-bottom: 5px; line-height: 1.3; letter-spacing: -.2px; }
+    .section-title { font-size: 18px; font-weight: 400; font-family: 'Rumplakat', 'Brother1816', sans-serif; color: var(--marrom); margin-bottom: 5px; line-height: 1.3; }
     .section-hint  { font-size: 13px; color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
 
     /* Option grid */
@@ -76,7 +177,7 @@
     .opt-btn:active { transform: scale(.95); }
     .opt-btn.selected { border-color: var(--laranja); background: #fde8d3; box-shadow: 0 4px 16px rgba(201,92,30,.25); transform: scale(1.03); }
     .opt-btn .opt-icon  { font-size: 32px; display: block; margin-bottom: 6px; }
-    .opt-btn .opt-label { font-size: 14px; font-weight: 700; color: var(--text); }
+    .opt-btn .opt-label { font-size: 14px; font-weight: 700; font-family:'Brother1816',sans-serif; color: var(--text); }
     .opt-btn .opt-desc  { font-size: 11px; color: var(--muted); margin-top: 3px; }
 
     /* Pax 3-option grid */
@@ -85,7 +186,7 @@
     .pax-btn:active { transform: scale(.95); }
     .pax-btn.selected { border-color: var(--laranja); background: #fde8d3; box-shadow: 0 4px 16px rgba(201,92,30,.2); }
     .pax-btn .pax-icon  { font-size: 26px; display: block; margin-bottom: 6px; line-height: 1.2; }
-    .pax-btn .pax-label { font-size: 13px; font-weight: 800; color: var(--text); }
+    .pax-btn .pax-label { font-size: 13px; font-weight: 700; font-family:'Brother1816',sans-serif; color: var(--text); }
     .pax-btn .pax-desc  { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.3; }
 
     /* Big 2-option buttons (alcohol question) */
@@ -94,7 +195,7 @@
     .big-opt:active { transform: scale(.96); }
     .big-opt.selected { border-color: var(--laranja); background: #fde8d3; }
     .big-opt .big-icon  { font-size: 40px; display: block; margin-bottom: 8px; }
-    .big-opt .big-label { font-size: 15px; font-weight: 800; color: var(--text); }
+    .big-opt .big-label { font-size: 15px; font-weight: 700; font-family:'Brother1816',sans-serif; color: var(--text); }
     .big-opt .big-desc  { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
     /* Drink types (revealed after alcohol choice) */
@@ -102,22 +203,35 @@
     #drink-types .section-title { font-size: 14px; margin-bottom: 12px; }
 
     /* Buttons */
-    .btn-primary { background: linear-gradient(135deg, #d9621e, #a83a0e); color: #fff; border: none; border-radius: 999px; padding: 17px 32px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; max-width: 420px; box-shadow: 0 4px 20px rgba(201,92,30,.5), 0 1px 0 rgba(255,255,255,.15) inset; transition: transform .15s, box-shadow .15s; -webkit-tap-highlight-color: transparent; letter-spacing: .3px; font-family: 'Poppins', sans-serif; animation: fadeUp .4s .4s both; }
+    .btn-primary { background: linear-gradient(135deg, #CF7834, #BF341D); color: #fff; border: none; border-radius: 999px; padding: 17px 32px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; max-width: 420px; box-shadow: 0 4px 20px rgba(191,52,29,.5), 0 1px 0 rgba(255,255,255,.15) inset; transition: transform .15s, box-shadow .15s; -webkit-tap-highlight-color: transparent; letter-spacing: .3px; font-family: 'Brother1816', sans-serif; animation: fadeUp .4s .4s both; }
     .btn-primary:active   { transform: scale(.97); box-shadow: 0 2px 8px rgba(201,92,30,.3); }
     .btn-primary:disabled { opacity: .45; pointer-events: none; }
     .btn-primary.pulse { animation: btnPulse 2.2s ease-in-out infinite; }
-    @keyframes btnPulse { 0%,100%{box-shadow:0 4px 20px rgba(201,92,30,.5)} 50%{box-shadow:0 6px 32px rgba(201,92,30,.8), 0 0 0 6px rgba(201,92,30,.12)} }
-    .btn-secondary { background: transparent; color: rgba(255,255,255,.65); border: 1.5px solid rgba(255,255,255,.25); border-radius: 999px; padding: 11px 24px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; max-width: 420px; margin-top: 8px; transition: background .2s, border-color .2s; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', sans-serif; }
+    @keyframes btnPulse { 0%,100%{box-shadow:0 4px 20px rgba(191,52,29,.5)} 50%{box-shadow:0 6px 32px rgba(201,92,30,.8), 0 0 0 6px rgba(201,92,30,.12)} }
+    .btn-secondary { background: transparent; color: rgba(255,255,255,.65); border: 1.5px solid rgba(255,255,255,.25); border-radius: 999px; padding: 11px 24px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; max-width: 420px; margin-top: 8px; transition: background .2s, border-color .2s; -webkit-tap-highlight-color: transparent; font-family: 'Brother1816Printed', sans-serif; }
     .btn-secondary:active { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.45); }
+    .quick-row { display:flex; gap:10px; width:100%; max-width:420px; margin-top:10px; animation: fadeUp .4s .45s both; }
+    .btn-quick { flex:1; color:#fff; border-radius:999px; padding:12px 8px; font-size:13px; font-weight:700; cursor:pointer; border:none; transition:background .2s, border-color .2s, transform .15s; -webkit-tap-highlight-color:transparent; font-family:'Brother1816',sans-serif; }
+    .btn-quick:active { transform:scale(.97); }
+    .btn-quick-surprise { background:rgba(71,92,27,.35); border:1.5px solid rgba(124,140,83,.45); }
+    .btn-quick-surprise:hover { background:rgba(72,110,58,.55); border-color:rgba(130,190,100,.75); }
+    .btn-quick-petisco  { background:rgba(142,64,0,.35);  border:1.5px solid rgba(230,162,46,.45); }
+    .btn-quick-petisco:hover  { background:rgba(150,95,20,.55);  border-color:rgba(220,160,60,.75); }
 
     /* Welcome */
-    .welcome-msg { font-size: 22px; font-weight: 700; color: #fff; text-align: center; margin-bottom: 8px; line-height: 1.35; text-shadow: 0 1px 6px rgba(0,0,0,.3); animation: fadeUp .4s .2s both; }
-    .welcome-sub { font-size: 14px; font-weight: 400; color: rgba(255,255,255,.68); text-align: center; margin-bottom: 28px; max-width: 300px; line-height: 1.6; animation: fadeUp .4s .3s both; }
+    #screen-welcome { justify-content: flex-start; padding-top: 64px; padding-bottom: 32px; position: relative; }
+    .welcome-msg { font-size: 22px; font-weight: 400; font-family: 'Rumplakat', 'Brother1816', sans-serif; color: #fff; text-align: center; margin-bottom: 8px; line-height: 1.35; animation: fadeUp .4s .2s both; }
+    .welcome-slogan { font-family: 'Rumplakat', 'Brother1816', sans-serif; font-weight: 400; font-size: 15px; color: rgba(255,255,255,.65); text-align: center; margin-top: 0; margin-bottom: 14px; animation: fadeUp .4s .25s both; }
+    .screen-decor { position: absolute; pointer-events: none; z-index: 0; user-select: none; }
+    .decor-birds  { left: -8px;  bottom: 56px; width: 130px; opacity: .92; }
+    .decor-cacti  { right: -8px; bottom: 56px; width: 110px; opacity: .92; }
+    .decor-family { right: 0;    bottom: 70px; width: 110px; opacity: .88; }
+    .welcome-sub { font-size: 14px; font-weight: 400; font-family: 'Brother1816', sans-serif; color: rgba(255,255,255,.68); text-align: center; margin-bottom: 28px; max-width: 300px; line-height: 1.6; animation: fadeUp .4s .3s both; }
 
     /* Result */
     .suggest-header { text-align: center; margin-bottom: 16px; animation: fadeUp .4s cubic-bezier(.22,.68,0,1.2) both; }
-    .suggest-header .big-emoji { font-size: 56px; display:block; filter: drop-shadow(0 4px 16px rgba(232,168,62,.45)); animation: floatUp 3.5s ease-in-out infinite; }
-    .suggest-header h2 { font-size: 21px; font-weight: 700; color: var(--amarelo); margin-top: 8px; text-shadow: 0 2px 8px rgba(232,168,62,.3); letter-spacing: -.3px; }
+    .suggest-header .big-emoji { font-size: 56px; display:block; }
+    .suggest-header h2 { font-size: 21px; font-weight: 400; font-family: 'Rumplakat', 'Brother1816', sans-serif; color: var(--amarelo); margin-top: 8px; }
     .suggest-header p  { font-size: 13px; font-weight: 400; color: rgba(255,255,255,.65); margin-top: 4px; }
     .suggest-section-label { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: var(--laranja); margin: 0 0 12px; }
     .suggest-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(232,168,62,.15); animation: slideLeft .4s cubic-bezier(.22,.68,0,1.2) both; }
@@ -128,21 +242,21 @@
     .suggest-item:nth-child(4) { animation-delay:.26s; }
     .suggest-item-icon  { font-size: 32px; flex-shrink: 0; margin-top: 1px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.15)); }
     .suggest-item-body  { flex: 1; min-width: 0; }
-    .suggest-item-name  { font-size: 15px; font-weight: 800; color: var(--marrom); line-height: 1.25; }
+    .suggest-item-name  { font-size: 15px; font-weight: 400; font-family:'Rumplakat','Brother1816',sans-serif; color: var(--marrom); line-height: 1.25; }
     .suggest-item-desc  { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
     .suggest-item-price { font-size: 13px; font-weight: 900; color: var(--verde); background: rgba(46,107,58,.1); border: 1.5px solid rgba(46,107,58,.25); border-radius: 999px; padding: 3px 10px; flex-shrink: 0; margin-top: 2px; white-space: nowrap; }
-    .badge-champion { display: inline-block; background: linear-gradient(135deg, var(--amarelo), #d4911e); color: var(--marrom); font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .8px; padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
-    .badge-new      { display: inline-block; background: linear-gradient(135deg, #3B7A4A, #2a5c37); color: #fff; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .8px; padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
+    .badge-champion { display: inline-block; background: linear-gradient(135deg, var(--amarelo), #CF7834); color: var(--marrom); font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .8px; padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
+    .badge-new      { display: inline-block; background: linear-gradient(135deg, #7C8C53, #475C1B); color: #fff; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .8px; padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
 
     /* Wine badge */
     .badge-wine { display: inline-block; background: #7b2d8b; color: #fff; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .8px; padding: 2px 7px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
 
     /* Reasoning */
-    .reasoning-box { background: linear-gradient(135deg, #fff9ef, #fdf3e3); border-left: 4px solid var(--amarelo); border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; font-size: 13.5px; font-weight: 400; color: var(--muted); line-height: 1.65; font-style: italic; width: 100%; max-width: 420px; box-shadow: 0 2px 12px rgba(232,168,62,.12); animation: slideRight .45s .05s cubic-bezier(.22,.68,0,1.2) both; }
+    .reasoning-box { background: linear-gradient(135deg, #f5ede4, #e8ddd9); border-left: 4px solid var(--amarelo); border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; font-size: 13.5px; font-weight: 400; color: var(--muted); line-height: 1.65; width: 100%; max-width: 420px; box-shadow: 0 2px 12px rgba(232,168,62,.12); animation: slideRight .45s .05s cubic-bezier(.22,.68,0,1.2) both; }
     .reasoning-box strong { color: var(--laranja); font-style: normal; font-weight: 700; }
 
     /* Story card */
-    .story-card { background: linear-gradient(135deg, #fef6e4, #fdf0d5); border: 1px solid #dfc58a; border-radius: 10px; padding: 10px 12px 10px 36px; margin-top: 10px; font-size: 12px; color: #7a5020; line-height: 1.55; font-style: italic; position: relative; }
+    .story-card { background: linear-gradient(135deg, #f0e5dd, #e8ddd9); border: 1px solid #D6A572; border-radius: 10px; padding: 10px 12px 10px 36px; margin-top: 10px; font-size: 12px; color: #8E4000; line-height: 1.55; position: relative; }
     .story-card::before { content: '📖'; font-style: normal; font-size: 16px; position: absolute; left: 10px; top: 10px; }
     .story-card strong { font-style: normal; color: var(--marrom); }
 
@@ -153,6 +267,22 @@
     .step-dot.done   { background: rgba(255,255,255,.5); }
 
     .footer-note { font-size: 11px; color: rgba(255,255,255,.35); text-align: center; margin-top: 16px; }
+
+    /* ── Widget de avaliação ────────────────────── */
+    #rating-widget { width:100%; max-width:420px; margin-top:18px; animation: fadeUp .4s both; }
+    .rating-box { background:rgba(255,255,255,.07); border:1.5px solid rgba(255,255,255,.13); border-radius:16px; padding:16px 18px; text-align:center; }
+    .rating-question { font-size:13px; font-weight:600; color:rgba(255,255,255,.75); margin-bottom:12px; }
+    .rating-btns { display:flex; gap:10px; justify-content:center; }
+    .rating-btn { flex:1; max-width:120px; padding:10px 0; border-radius:999px; border:1.5px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:18px; cursor:pointer; transition:all .2s; -webkit-tap-highlight-color:transparent; }
+    .rating-btn:hover { transform:scale(1.07); }
+    .rating-btn.yes:hover { background:rgba(72,180,80,.3); border-color:rgba(72,180,80,.6); }
+    .rating-btn.no:hover  { background:rgba(220,80,60,.3);  border-color:rgba(220,80,60,.6); }
+    .rating-thanks { font-size:14px; color:rgba(255,255,255,.7); padding:8px 0; animation:fadeIn .3s both; }
+    .rating-negative { margin-top:12px; animation:fadeUp .3s both; }
+    .rating-negative textarea { width:100%; background:rgba(255,255,255,.1); border:1.5px solid rgba(255,255,255,.2); border-radius:12px; color:#fff; font-size:13px; font-family:'Brother1816',sans-serif; padding:10px 12px; resize:none; outline:none; box-sizing:border-box; }
+    .rating-negative textarea::placeholder { color:rgba(255,255,255,.35); }
+    .rating-send-btn { margin-top:8px; background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.25); border-radius:999px; color:#fff; font-size:13px; font-weight:700; padding:8px 24px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:background .2s; }
+    .rating-send-btn:hover { background:rgba(255,255,255,.25); }
 
     /* Social links */
     .social-row { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:18px; }
@@ -168,7 +298,7 @@
     .wine-cta-card:active { transform:scale(.97); border-color:rgba(180,100,210,.9); }
     .wine-cta-icon { font-size:30px; flex-shrink:0; }
     .wine-cta-body { flex:1; }
-    .wine-cta-title { font-size:14px; font-weight:800; color:#fff; }
+    .wine-cta-title { font-size:14px; font-weight:700; font-family:'Brother1816',sans-serif; color:#fff; }
     .wine-cta-desc  { font-size:11px; color:rgba(255,255,255,.55); margin-top:3px; }
     .wine-cta-arrow { font-size:20px; color:rgba(255,255,255,.4); flex-shrink:0; }
 
@@ -178,7 +308,7 @@
     .wine-type-btn:active { transform:scale(.95); }
     .wine-type-btn.selected { border-color:#7b2d8b; background:#f5e8f9; }
     .wine-type-btn .wt-icon  { font-size:30px; display:block; margin-bottom:6px; }
-    .wine-type-btn .wt-label { font-size:13px; font-weight:800; color:var(--marrom); display:block; }
+    .wine-type-btn .wt-label { font-size:13px; font-weight:700; font-family:'Brother1816',sans-serif; color:var(--marrom); display:block; }
     .wine-type-btn .wt-desc  { font-size:10px; color:var(--muted); margin-top:3px; display:block; line-height:1.3; }
 
     /* Country grid */
@@ -188,11 +318,11 @@
     .country-btn.selected { border-color:var(--laranja); background:#fde8d3; }
     .country-btn .cc-flag { width:30px; height:auto; border-radius:3px; display:block; margin:0 auto 5px; }
     .country-btn .cc-flag-emoji { font-size:24px; display:block; margin-bottom:5px; }
-    .country-btn .cc-label { font-size:10px; font-weight:700; color:var(--marrom); line-height:1.3; display:block; }
+    .country-btn .cc-label { font-size:10px; font-weight:500; font-family:'Brother1816',sans-serif; color:var(--marrom); line-height:1.3; display:block; }
 
     /* Petisco toggle in wine result */
-    .petisco-toggle { background:linear-gradient(135deg,#fef6e4,#fdf0d5); border:1.5px solid #dfc58a; border-radius:14px; padding:14px 16px; margin-top:4px; }
-    .petisco-question { font-size:13px; font-weight:800; color:var(--marrom); margin-bottom:10px; text-align:center; }
+    .petisco-toggle { background:linear-gradient(135deg,#fef6e4,#fdf0d5); border:1.5px solid #D6A572; border-radius:14px; padding:14px 16px; margin-top:4px; }
+    .petisco-question { font-size:13px; font-weight:500; font-family:'Brother1816',sans-serif; color:var(--marrom); margin-bottom:10px; text-align:center; }
     .petisco-btns { display:flex; gap:10px; }
     .petisco-btn { flex:1; padding:10px 6px; border-radius:12px; border:2px solid #e0ccaa; background:#fff; cursor:pointer; font-size:12px; font-weight:700; color:var(--marrom); transition:all .2s; -webkit-tap-highlight-color:transparent; line-height:1.3; }
     .petisco-btn:active { transform:scale(.95); }
@@ -202,20 +332,19 @@
     /* ── Chat screen ───────────────────────────── */
     #screen-chat { padding:0 0 32px; align-items:stretch; }
     .chat-header { display:flex; align-items:center; gap:12px; padding:14px 20px; background:rgba(0,0,0,.35); backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.1); position:sticky; top:0; z-index:10; width:100%; }
-    .chat-header-avatar { font-size:28px; filter:drop-shadow(0 2px 6px rgba(232,168,62,.4)); }
+    .chat-header-avatar { font-size:28px; }
     .chat-header-info { flex:1; }
-    .chat-header-name { font-size:15px; font-weight:900; color:var(--amarelo); letter-spacing:-.2px; }
+    .chat-header-name { font-size:15px; font-weight:400; font-family:'Rumplakat','Brother1816',sans-serif; color:var(--amarelo); }
     .chat-header-status { font-size:11px; color:rgba(255,255,255,.55); margin-top:1px; display:flex; align-items:center; gap:5px; }
-    .chat-header-status::before { content:''; width:6px; height:6px; background:#4caf50; border-radius:50%; display:inline-block; box-shadow:0 0 6px #4caf50; animation:statusBlink 2.5s ease-in-out infinite; }
-    @keyframes statusBlink { 0%,100%{opacity:1} 50%{opacity:.5} }
+    .chat-header-status::before { content:''; width:6px; height:6px; background:#4caf50; border-radius:50%; display:inline-block; box-shadow:0 0 6px #4caf50; }
     .chat-body { display:flex; flex-direction:column; align-items:center; padding:20px 16px 8px; width:100%; flex:1; }
     .chat-log { width:100%; max-width:480px; display:flex; flex-direction:column; gap:12px; margin-bottom:16px; }
     .chat-bubble { max-width:84%; padding:12px 16px; border-radius:20px; font-size:14px; line-height:1.65; word-break:break-word; animation:fadeUp .3s ease both; }
     .chat-bubble.bot { align-self:flex-start; background:var(--creme); color:var(--text); border-bottom-left-radius:4px; box-shadow:0 3px 12px rgba(92,42,14,.18); }
-    .chat-bubble.user { align-self:flex-end; background:linear-gradient(135deg, #d9621e, #b84010); color:#fff; border-bottom-right-radius:4px; font-weight:700; box-shadow:0 3px 12px rgba(201,92,30,.35); }
+    .chat-bubble.user { align-self:flex-end; background:linear-gradient(135deg, #CF7834, #8E4000); color:#fff; border-bottom-right-radius:4px; font-weight:700; box-shadow:0 3px 12px rgba(201,92,30,.35); }
     .chat-avatar { font-size:15px; margin-bottom:5px; display:block; }
     .chat-opts { display:flex; flex-wrap:wrap; gap:8px; width:100%; max-width:480px; margin-bottom:8px; }
-    .chat-opt-btn { background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.3); color:#fff; border-radius:999px; padding:10px 20px; font-size:13px; font-weight:600; cursor:pointer; transition:all .2s; -webkit-tap-highlight-color:transparent; line-height:1.3; font-family:'Poppins',sans-serif; backdrop-filter:blur(6px); animation: popIn .3s cubic-bezier(.22,.68,0,1.3) both; }
+    .chat-opt-btn { background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.3); color:#fff; border-radius:999px; padding:10px 20px; font-size:13px; font-weight:600; cursor:pointer; transition:all .2s; -webkit-tap-highlight-color:transparent; line-height:1.3; font-family:'Brother1816',sans-serif; backdrop-filter:blur(6px); animation: popIn .3s cubic-bezier(.22,.68,0,1.3) both; }
     .chat-opt-btn:active { transform:scale(.93); background:rgba(255,255,255,.2); }
     .chat-opt-btn:disabled { opacity:.35; pointer-events:none; }
     .chat-opt-btn.chosen { background:var(--laranja); border-color:var(--laranja); box-shadow:0 3px 14px rgba(201,92,30,.45); }
@@ -226,36 +355,49 @@
     .chat-typing span:nth-child(3) { animation-delay:.4s; }
     @keyframes typingDot { 0%,80%,100%{transform:scale(.55);opacity:.3} 40%{transform:scale(1);opacity:1} }
     .chat-error { align-self:flex-start; background:#fde8e8; color:#8b2020; border-radius:14px; padding:12px 16px; font-size:13px; display:flex; align-items:center; gap:10px; max-width:90%; }
-    .chat-error-retry { background:var(--laranja); color:#fff; border:none; border-radius:999px; padding:7px 16px; font-size:12px; font-weight:800; cursor:pointer; flex-shrink:0; -webkit-tap-highlight-color:transparent; font-family:'Poppins',sans-serif; }
+    .chat-error-retry { background:var(--laranja); color:#fff; border:none; border-radius:999px; padding:7px 16px; font-size:12px; font-weight:800; cursor:pointer; flex-shrink:0; -webkit-tap-highlight-color:transparent; font-family:'Brother1816',sans-serif; }
 
     /* ── Cardápio CTA (welcome) ─────────────────── */
-    .menu-cta-card { display:flex; align-items:center; gap:14px; background:rgba(255,255,255,.09); border:1.5px solid rgba(255,255,255,.22); border-radius:16px; padding:14px 18px; width:100%; max-width:380px; cursor:pointer; text-align:left; transition:all .25s; -webkit-tap-highlight-color:transparent; animation: fadeUp .4s .6s both; margin-top:0; }
+    .menu-cta-card { display:flex; align-items:center; gap:14px; background:rgba(255,255,255,.09); border:1.5px solid rgba(255,255,255,.22); border-radius:16px; padding:14px 18px; width:100%; max-width:380px; cursor:pointer; text-align:left; transition:all .25s; -webkit-tap-highlight-color:transparent; animation: fadeUp .4s .6s both; margin-top:18px; }
     .menu-cta-card:hover { background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.4); transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.2); }
     .menu-cta-card:active { transform:scale(.97); }
     .menu-cta-icon { font-size:28px; flex-shrink:0; }
     .menu-cta-body { flex:1; }
-    .menu-cta-title { font-size:14px; font-weight:700; color:#fff; }
+    .menu-cta-title { font-size:14px; font-weight:700; font-family:'Brother1816',sans-serif; color:#fff; }
     .menu-cta-desc  { font-size:11px; color:rgba(255,255,255,.5); margin-top:3px; }
     .menu-cta-arrow { font-size:20px; color:rgba(255,255,255,.4); flex-shrink:0; }
 
     /* ── Tela Cardápio ──────────────────────────── */
     #screen-menu { padding:0; align-items:stretch; }
+    #menu-landing { display:flex; flex-direction:column; gap:14px; padding:28px 20px; align-items:center; }
+    .menu-landing-title { font-size:16px; font-weight:400; font-family:'Rumplakat','Brother1816',sans-serif; color:rgba(255,255,255,.75); text-align:center; margin-bottom:4px; }
+    .menu-choice-card { display:flex; align-items:center; gap:14px; border-radius:18px; padding:16px 18px; width:100%; max-width:400px; cursor:pointer; text-align:left; transition:all .25s; -webkit-tap-highlight-color:transparent; animation: fadeUp .35s both; }
+    .menu-choice-card:active { transform:scale(.97); }
+    .menu-choice-cardapio { background:rgba(255,255,255,.09); border:1.5px solid rgba(255,255,255,.22); }
+    .menu-choice-cardapio:hover { background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.4); }
+    .menu-choice-wine { background:rgba(123,45,139,.2); border:1.5px solid rgba(180,100,210,.45); }
+    .menu-choice-wine:hover { background:rgba(123,45,139,.32); border-color:rgba(180,100,210,.7); }
+    .menu-choice-icon { font-size:30px; flex-shrink:0; }
+    .menu-choice-body { flex:1; }
+    .menu-choice-title { font-size:14px; font-weight:700; font-family:'Brother1816',sans-serif; color:#fff; }
+    .menu-choice-desc  { font-size:11px; color:rgba(255,255,255,.5); margin-top:3px; }
+    .menu-choice-arrow { font-size:20px; color:rgba(255,255,255,.4); flex-shrink:0; }
     .menu-topbar { display:flex; align-items:center; gap:12px; padding:14px 20px; background:rgba(0,0,0,.35); backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.1); position:sticky; top:0; z-index:10; }
-    .menu-topbar-back { background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.2); border-radius:999px; padding:7px 16px; font-size:13px; font-weight:600; color:#fff; cursor:pointer; -webkit-tap-highlight-color:transparent; font-family:'Poppins',sans-serif; transition:background .2s; flex-shrink:0; }
+    .menu-topbar-back { background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.2); border-radius:999px; padding:7px 16px; font-size:13px; font-weight:600; color:#fff; cursor:pointer; -webkit-tap-highlight-color:transparent; font-family:'Brother1816',sans-serif; transition:background .2s; flex-shrink:0; }
     .menu-topbar-back:active { background:rgba(255,255,255,.22); }
-    .menu-topbar-title { flex:1; text-align:center; font-size:16px; font-weight:700; color:var(--amarelo); letter-spacing:-.2px; }
+    .menu-topbar-title { flex:1; text-align:center; font-size:16px; font-weight:400; font-family:'Rumplakat','Brother1816',sans-serif; color:var(--amarelo); }
     .menu-topbar-spacer { width:72px; flex-shrink:0; }
 
     .menu-tabs { display:flex; gap:8px; padding:10px 16px; background:rgba(0,0,0,.18); border-bottom:1px solid rgba(255,255,255,.07); overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; scroll-snap-type:x mandatory; }
     .menu-tabs::-webkit-scrollbar { display:none; }
-    .menu-tab { flex-shrink:0; scroll-snap-align:start; padding:8px 14px; text-align:center; cursor:pointer; border:1.5px solid rgba(255,255,255,.15); border-radius:999px; background:rgba(255,255,255,.07); color:rgba(255,255,255,.65); font-size:12px; font-weight:600; font-family:'Poppins',sans-serif; transition:all .2s; -webkit-tap-highlight-color:transparent; white-space:nowrap; display:flex; align-items:center; gap:5px; }
+    .menu-tab { flex-shrink:0; scroll-snap-align:start; padding:8px 14px; text-align:center; cursor:pointer; border:1.5px solid rgba(255,255,255,.15); border-radius:999px; background:rgba(255,255,255,.07); color:rgba(255,255,255,.65); font-size:12px; font-weight:600; font-family:'Brother1816',sans-serif; transition:all .2s; -webkit-tap-highlight-color:transparent; white-space:nowrap; display:flex; align-items:center; gap:5px; }
     .menu-tab .tab-icon { font-size:15px; }
     .menu-tab.active { color:var(--marrom); background:#fff; border-color:#fff; font-weight:700; }
     .menu-tab:active { transform:scale(.95); }
 
     .menu-body { padding:16px 16px 36px; }
     .menu-section { margin-bottom:22px; animation: fadeUp .35s cubic-bezier(.22,.68,0,1.2) both; }
-    .menu-section-title { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--amarelo); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid rgba(232,168,62,.2); }
+    .menu-section-title { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:400; font-family:'Rumplakat','Brother1816',sans-serif; color:var(--amarelo); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid rgba(230,162,46,.2); }
     .menu-section-title .msec-icon { font-size:20px; }
 
     .menu-item { display:flex; align-items:flex-start; gap:12px; background:var(--creme); border-radius:14px; padding:14px; margin-bottom:10px; box-shadow:0 2px 10px rgba(92,42,14,.12); animation: slideLeft .3s cubic-bezier(.22,.68,0,1.2) both; transition: transform .2s, box-shadow .2s; }
@@ -276,44 +418,139 @@
     .menu-wine-pair  { font-size:10px; color:var(--muted); margin-top:2px; }
     .menu-badge-sec   { display:inline-block; background:linear-gradient(135deg,#7b2d8b,#5a1f66); color:#fff; font-size:9px; font-weight:700; letter-spacing:.5px; padding:2px 7px; border-radius:999px; margin-left:5px; vertical-align:middle; }
     .menu-badge-suave { display:inline-block; background:linear-gradient(135deg,#e8783e,#d4521e); color:#fff; font-size:9px; font-weight:700; letter-spacing:.5px; padding:2px 7px; border-radius:999px; margin-left:5px; vertical-align:middle; }
+
+    /* ── Auth Screen ─────────────────────────────────────── */
+    #screen-auth { justify-content: center; }
+    .auth-wrap { display:flex; flex-direction:column; align-items:center; width:100%; gap:0; }
+    .auth-box { background:rgba(255,255,255,.09); border:1.5px solid rgba(255,255,255,.2); border-radius:20px; padding:28px 24px; width:100%; max-width:360px; text-align:center; animation:fadeUp .4s .15s both; }
+    .auth-title { font-family:'Rumplakat','Brother1816',sans-serif; font-size:20px; font-weight:400; color:#fff; margin-bottom:10px; font-feature-settings:"calt" 0,"liga" 0,"dlig" 0,"salt" 0,"ss01" 0,"ss02" 0,"ss03" 0; font-variant:normal; }
+    .auth-sub { font-size:13px; color:rgba(255,255,255,.7); margin-bottom:22px; line-height:1.55; }
+    .auth-sep { display:flex; align-items:center; gap:10px; margin:16px 0; color:rgba(255,255,255,.4); font-size:12px; }
+    .auth-sep::before, .auth-sep::after { content:''; flex:1; height:1px; background:rgba(255,255,255,.2); }
+    .auth-guest-btn { width:100%; margin-bottom:10px; }
+    .auth-guest-warn { font-size:11px; color:rgba(255,255,255,.4); line-height:1.5; margin-top:8px; font-style:normal; }
+    .g_id_signin { display:flex; justify-content:center; margin-bottom:4px; }
+
+    /* ── User Indicator ───────────────────────────────────── */
+    #user-indicator { position:relative; display:none; }
+    .user-avatar-btn { background:transparent; border:none; cursor:pointer; padding:2px; display:flex; align-items:center; -webkit-tap-highlight-color:transparent; border-radius:50%; }
+    .user-avatar-btn img { width:26px; height:26px; border-radius:50%; border:2px solid rgba(255,255,255,.55); object-fit:cover; display:block; }
+    .user-anon-icon { width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.22); border:2px solid rgba(255,255,255,.35); display:flex; align-items:center; justify-content:center; font-size:13px; }
+    #user-menu { position:absolute; top:calc(100% + 10px); right:0; background:#fff; border-radius:14px; padding:14px 16px; min-width:190px; box-shadow:0 8px 28px rgba(0,0,0,.28); z-index:1000; display:none; animation:fadeUp .2s both; }
+    #user-menu .um-name { font-weight:700; font-size:13px; color:var(--text); font-family:'Brother1816',sans-serif; }
+    #user-menu .um-email { font-size:11px; color:var(--muted); margin-top:2px; margin-bottom:12px; }
+    #user-menu .um-signout { background:var(--creme); border:none; border-radius:8px; padding:8px 14px; font-size:12px; font-weight:700; cursor:pointer; width:100%; text-align:left; color:var(--text); font-family:'Brother1816',sans-serif; }
+    #user-menu .um-signout:hover { background:var(--off); }
+
+    /* ── Happy Hour Banner ────────────────────────────────── */
+    .happy-banner { background:var(--amarelo); color:var(--marrom); border-radius:12px; padding:10px 18px; font-family:'Rumplakat','Brother1816',sans-serif; font-size:14px; font-weight:400; text-align:center; width:100%; max-width:380px; margin-bottom:14px; animation:popIn .4s cubic-bezier(.22,.68,0,1.3) both; font-feature-settings:"calt" 0,"liga" 0,"dlig" 0,"salt" 0,"ss01" 0,"ss02" 0,"ss03" 0; font-variant:normal; display:none; }
+
+    /* ── Cart Bar ─────────────────────────────────────────── */
+    .cart-bar { position:fixed; bottom:0; left:0; right:0; background:var(--verde); color:#fff; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; z-index:200; cursor:pointer; font-family:'Brother1816',sans-serif; font-weight:700; font-size:13px; box-shadow:0 -4px 20px rgba(0,0,0,.2); -webkit-tap-highlight-color:transparent; }
+    .cart-bar-text { flex:1; line-height:1.35; }
+    .cart-bar-arrow { font-size:22px; font-weight:900; flex-shrink:0; }
+    @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+    .cart-bar.visible { animation:slideUp .3s cubic-bezier(.22,.68,0,1.2) both; }
+
+    /* ── Checkboxes: suggest-item ─────────────────────────── */
+    .suggest-item { cursor:pointer; border-radius:10px; transition:background .15s; }
+    .suggest-item:active { background:rgba(71,92,27,.07); }
+    .suggest-item.checked { background:rgba(71,92,27,.08); }
+    .suggest-item-check { width:22px; height:22px; border-radius:50%; border:2px solid rgba(0,0,0,.18); background:transparent; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .2s; }
+    .suggest-item.checked .suggest-item-check { background:var(--verde); border-color:var(--verde); }
+    .suggest-item-check span { color:#fff; font-size:11px; font-weight:900; opacity:0; transition:opacity .15s; line-height:1; }
+    .suggest-item.checked .suggest-item-check span { opacity:1; }
+
+    /* ── Checkboxes: menu-item ────────────────────────────── */
+    .menu-item { cursor:pointer; transition:background .15s; }
+    .menu-item:active { background:rgba(71,92,27,.08); }
+    .menu-item.checked { background:rgba(71,92,27,.1); }
+    .menu-item-price-check { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+    .menu-item-check { width:20px; height:20px; border-radius:50%; border:2px solid rgba(0,0,0,.18); background:transparent; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+    .menu-item.checked .menu-item-check { background:var(--verde); border-color:var(--verde); }
+    .menu-item-check span { color:#fff; font-size:10px; font-weight:900; opacity:0; transition:opacity .15s; line-height:1; }
+    .menu-item.checked .menu-item-check span { opacity:1; }
   </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 <div id="app">
 
   <div id="lang-bar">
+    <div id="user-indicator">
+      <button class="user-avatar-btn" onclick="toggleUserMenu()" id="user-avatar-btn" aria-label="Conta">
+        <div class="user-anon-icon" id="user-anon-icon">👤</div>
+        <img id="user-pic" src="" alt="User" style="display:none" />
+      </button>
+      <div id="user-menu">
+        <div class="um-name" id="um-name"></div>
+        <div class="um-email" id="um-email"></div>
+        <button class="um-signout" onclick="signOut()">Sair da conta</button>
+      </div>
+    </div>
     <button class="lang-btn active" onclick="setLang('pt')" id="btn-lang-pt" title="Português"><img src="https://flagcdn.com/w40/br.png" alt="PT" /></button>
     <button class="lang-btn" onclick="setLang('en')" id="btn-lang-en" title="English"><img src="https://flagcdn.com/w40/us.png" alt="EN" /></button>
     <button class="lang-btn" onclick="setLang('es')" id="btn-lang-es" title="Español"><img src="https://flagcdn.com/w40/es.png" alt="ES" /></button>
   </div>
 
+  <!-- SCREEN AUTH -->
+  <div class="screen active" id="screen-auth">
+    <div class="logo-wrap" style="margin-top:8px;margin-bottom:20px">
+      <img class="bodinho-img" src="/logo_bodin_indica.svg" alt="Bodin Indica" />
+    </div>
+    <div class="auth-box">
+      <p class="auth-title">PersonalIze suas sugestões</p>
+      <p class="auth-sub">Faça logIn para o BodInho lembrar das suas preferêncIas, hIstórIco e pratos favorItos.</p>
+      <div id="g_id_onload"
+           data-client_id="GOOGLE_CLIENT_ID_AQUI"
+           data-callback="handleGoogleCredential"
+           data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+           data-type="standard"
+           data-size="large"
+           data-theme="filled_black"
+           data-text="signin_with"
+           data-shape="pill"
+           data-width="280">
+      </div>
+      <div class="auth-sep"><span>ou</span></div>
+      <button class="btn-secondary auth-guest-btn" onclick="enterAsGuest()">Entrar sem conta</button>
+      <p class="auth-guest-warn">Sem logIn, o BodInho não lembra das suas preferêncIas. Cada visita começa do zero.</p>
+    </div>
+  </div>
+
   <!-- SCREEN 0 — WELCOME -->
-  <div class="screen active" id="screen-welcome">
+  <div class="screen" id="screen-welcome">
     <div class="logo-wrap">
       <div class="logo-halo">
-        <div class="logo-icon"><img src="data:image/jpeg;base64,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zzzzzzzzzzzzzzzzzzzzzzjCAjDzzzzzzzzzzzzzzzzzzzzzzzzzzzyjAekr/TzzzzzzzzzzzzzzzzzzzzzzzzzzwzzdPWT/AM888888888888888888888888888wBLQxAU8888888888888888888888888887pjTTBCz8888888888888w888888888888jCBLPIyY88888888888889bwkJFDEOACVKjBBW81Iv888888888888sOhkwPI/DxiCADuCDCUjc88888888888888QCABnrcIXaQwWDqiGcM888888888888888WQSCTAMBHAACHHH8C88888888888888888rEyzCAnPCHDAw/zmm888888888888888887DUgB3DBBCBB3TLh8888888888888888888zhBBCqqBBx4BGAs8888888888888888888ooDHg6TwSjHBJHU8888888888888888888oDj2Ds8888nC4S88888888888888888888tb1WD88888TKJm88888888888888888888KW8jI88888Gm8m88888888888888888888sm0IE88888bCs3088888888888888888888C4sV888888C8qf8APPPPPPPPPPPPPPPPPPPDA/McPPPPKIVMg/PPPPPPPPPPPPPPPPPPPDDHDDPPPPLDDDDPPPPPPPPPPPPP/8QAPBEAAgEDAQQGBwYFBQEAAAAAAQIDAAQRMRIhQVEFEBNAYXEUIjKBkbHBIEJSU2KhIyQwVHIVM1CA0ZL/2gAIAQIBAT8A/wCoz7eBs65HwzSSBySvsjjzPhUg9UON5XeNcb+OBUZyupPiRjv5ZVBJOBXpFptEmQnkDnAqbpAYxEN/M1H0i4P8Rcjw3Go5EkUMpyO+zTLEuSMk6DnTxXc5y5C8gTipI2jcowwRVpapKNp2wM4A4k61PZxAP2bnaVckHlUM7wvlfeOdRSpKgZT3yWCOXBYHI0IOKW0t4j2hz6u/eanl7WVn5/KgSDkHfQdwSQ7ZOu/XqgmeBg2G2Tr4ilIZQw0PeyQoJJwBV3d9p6iex8+p4WkVZIhkbIBA1BAxXYzflt8DRVlOCMVDcvENncU5GoZhI8qj2VxgjxH9aS6kjunOcqGxjhgVHIkihlOR1PcQJ7Ugo31uNCT7q/1CDk/wr0+D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" alt="Bodinho" class="bodinho-img"></div>
+        <img class="bodinho-img" src="/logo_bodin_indica.svg" alt="Bodin Indica" />
       </div>
-      <div class="logo-name">bodinho<span>sugere</span></div>
-      <div class="logo-sub" id="unit-label">Bode do Nô · Boa Viagem</div>
     </div>
-    <div class="context-bar">
-      <div class="ctx-pill"><span>⏰</span><span id="ctx-time">--:--</span></div>
-      <div class="ctx-pill" id="ctx-weather-pill" style="display:none"><span id="ctx-weather-icon">🌡️</span><span id="ctx-weather-text"></span></div>
+    <p class="welcome-slogan">feIto para quem ama o nordeste!</p>
+    <div class="happy-banner" id="happy-banner"></div>
+    <div class="unical-context-btn">
+      <div class="ctx-item">
+        <span id="ctx-time">--:--</span>
+      </div>
+      <div class="ctx-divider" id="ctx-divider-weather" style="display:none"></div>
+      <div class="ctx-item" id="ctx-weather-pill" style="display:none">
+        <span id="ctx-weather-text"></span>
+      </div>
+      <div class="ctx-divider"></div>
+      <div class="ctx-item">
+        <span id="unit-label">Boa Viagem</span>
+      </div>
     </div>
     <p class="welcome-msg" id="welcome-headline"></p>
     <p class="welcome-sub" id="welcome-sub"></p>
     <button class="btn-primary pulse" onclick="startChat()" id="btn-start"></button>
-    <div class="wine-divider" id="wine-divider">— ou —</div>
-    <button class="wine-cta-card" onclick="goTo('screen-wine-type')" id="wine-cta-btn">
-      <span class="wine-cta-icon">🍷</span>
-      <div class="wine-cta-body">
-        <div class="wine-cta-title" id="wine-cta-title"></div>
-        <div class="wine-cta-desc"  id="wine-cta-desc"></div>
-      </div>
-      <span class="wine-cta-arrow">›</span>
-    </button>
+    <div class="quick-row">
+      <button class="btn-quick btn-quick-surprise" onclick="surpriseMe()" id="btn-surprise"></button>
+      <button class="btn-quick btn-quick-petisco"  onclick="petiscoMode()" id="btn-petisco"></button>
+    </div>
     <button class="menu-cta-card" onclick="openMenuScreen()">
-      <span class="menu-cta-icon">📋</span>
+      <span class="menu-cta-icon"></span>
       <div class="menu-cta-body">
         <div class="menu-cta-title" id="menu-cta-title"></div>
         <div class="menu-cta-desc"  id="menu-cta-desc"></div>
@@ -343,11 +580,15 @@
       </a>
     </div>
     <p class="footer-note" id="footer-welcome" style="margin-top:12px"></p>
+    <img class="screen-decor decor-birds" src="/nuvens_no_bg.png" alt="" aria-hidden="true" style="top: 20px; left: 10px; width: 120px; opacity: 0.6;" />
+    <img class="screen-decor decor-lua" src="/lua_no_bg.png" alt="" aria-hidden="true" style="position: absolute; top: 30px; right: 20px; width: 60px; opacity: 0.8;" />
+    <img class="screen-decor decor-cacti" src="/cactos_no_bg.png" alt="" aria-hidden="true" style="bottom: 40px; right: -10px; width: 100px;" />
+    <img class="screen-decor decor-church" src="/igreja_no_bg.png" alt="" aria-hidden="true" style="position: absolute; bottom: 10px; right: 80px; width: 90px; opacity: 0.9;" />
   </div>
 
   <!-- SCREEN 1 — PROTEÍNA -->
   <div class="screen" id="screen-protein">
-    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div></div>
     <div class="steps"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
     <div class="card">
       <div class="section-title" id="title-protein"></div>
@@ -368,12 +609,13 @@
       </div>
     </div>
     <button class="btn-primary" id="btn-protein-next" disabled onclick="goTo('screen-pax')"></button>
+    <img class="screen-decor decor-family" src="/el_family.png" alt="" aria-hidden="true" />
     <button class="btn-secondary" id="btn-protein-back" onclick="goTo('screen-welcome')"></button>
   </div>
 
   <!-- SCREEN 1b — PAX (quantos vão comer) -->
   <div class="screen" id="screen-pax">
-    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div></div>
     <div class="steps"><div class="step-dot done"></div><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
     <div class="card">
       <div class="section-title" id="title-pax"></div>
@@ -402,7 +644,7 @@
 
   <!-- SCREEN 2 — ESTILO (Regional / Internacional) -->
   <div class="screen" id="screen-style">
-    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div></div>
     <div class="steps"><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div></div>
     <div class="card">
       <div class="section-title" id="title-style"></div>
@@ -426,7 +668,7 @@
 
   <!-- SCREEN 3 — BEBIDA -->
   <div class="screen" id="screen-drink">
-    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🐐</div></div>
     <div class="steps"><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot done"></div><div class="step-dot active"></div><div class="step-dot"></div></div>
     <div class="card">
       <!-- Alcohol question -->
@@ -499,12 +741,30 @@
       <div id="result-other-dishes"></div>
     </div>
     <button class="btn-primary" id="btn-restart" onclick="resetApp()"></button>
+    <button class="btn-secondary" id="btn-result-back" onclick="resetApp()" style="margin-top:8px"></button>
+
+    <!-- Widget de avaliação -->
+    <div id="rating-widget" style="display:none">
+      <div class="rating-box">
+        <div class="rating-question" id="rating-question"></div>
+        <div class="rating-btns" id="rating-btns">
+          <button class="rating-btn yes" onclick="submitRating(1)">👍</button>
+          <button class="rating-btn no"  onclick="submitRating(0)">👎</button>
+        </div>
+        <div class="rating-thanks" id="rating-thanks" style="display:none"></div>
+        <div class="rating-negative" id="rating-negative" style="display:none">
+          <textarea id="rating-text" rows="2" maxlength="140" id="rating-text"></textarea>
+          <button class="rating-send-btn" id="rating-send-btn" onclick="sendNegativeFeedback()"></button>
+        </div>
+      </div>
+    </div>
+
     <p class="footer-note" id="footer-result"></p>
   </div>
 
   <!-- WINE SCREEN A — TIPO DE VINHO -->
   <div class="screen" id="screen-wine-type">
-    <div class="logo-wrap logo-sm"><div class="logo-icon">🍷</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🍷</div></div>
     <div class="card">
       <div class="section-title" id="wt-title"></div>
       <div class="section-hint"  id="wt-hint"></div>
@@ -537,7 +797,7 @@
 
   <!-- WINE SCREEN A2 — SECURA -->
   <div class="screen" id="screen-wine-sweet">
-    <div class="logo-wrap logo-sm"><div class="logo-icon">🍷</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🍷</div></div>
     <div class="card">
       <div class="section-title" id="ws-title"></div>
       <div class="section-hint"  id="ws-hint"></div>
@@ -565,7 +825,7 @@
 
   <!-- WINE SCREEN B — PAÍS -->
   <div class="screen" id="screen-wine-country">
-    <div class="logo-wrap logo-sm"><div class="logo-icon">🍷</div><div class="logo-name">bodinho<span>sugere</span></div></div>
+    <div class="logo-wrap logo-sm"><div class="logo-icon">🍷</div></div>
     <div class="card">
       <div class="section-title" id="wc-title"></div>
       <div class="section-hint"  id="wc-hint"></div>
@@ -631,6 +891,28 @@
       <div class="menu-topbar-title" id="menu-topbar-title">📋 Cardápio</div>
       <div class="menu-topbar-spacer"></div>
     </div>
+    <!-- Landing: escolha entre Cardápio e Vinhos -->
+    <div id="menu-landing">
+      <p class="menu-landing-title" id="menu-landing-title"></p>
+      <button class="menu-choice-card menu-choice-cardapio" onclick="showMenuCardapio()">
+        <span class="menu-choice-icon">📋</span>
+        <div class="menu-choice-body">
+          <div class="menu-choice-title" id="menu-choice-cardapio-title"></div>
+          <div class="menu-choice-desc"  id="menu-choice-cardapio-desc"></div>
+        </div>
+        <span class="menu-choice-arrow">›</span>
+      </button>
+      <button class="menu-choice-card menu-choice-wine" onclick="openWineFromMenu()">
+        <span class="menu-choice-icon">🍷</span>
+        <div class="menu-choice-body">
+          <div class="menu-choice-title" id="menu-choice-vinhos-title"></div>
+          <div class="menu-choice-desc"  id="menu-choice-vinhos-desc"></div>
+        </div>
+        <span class="menu-choice-arrow">›</span>
+      </button>
+    </div>
+    <!-- Conteúdo do cardápio (oculto até escolher) -->
+    <div id="menu-content" style="display:none; flex:1; overflow:hidden; display:none; flex-direction:column;">
     <div class="menu-tabs" id="menu-tabs">
       <button class="menu-tab active" onclick="switchMenuTab('destaques',this)"><span class="tab-icon">⭐</span><span id="tab-destaques-label">Destaques</span></button>
       <button class="menu-tab" onclick="switchMenuTab('bode',this)"><span class="tab-icon">🐐</span><span id="tab-bode-label">Bode</span></button>
@@ -648,6 +930,7 @@
       <button class="menu-tab" id="menu-tab-pizza" style="display:none" onclick="switchMenuTab('pizza',this)"><span class="tab-icon">🍕</span><span id="tab-pizza-label">Pizza</span></button>
     </div>
     <div class="menu-body" id="menu-body"></div>
+    </div><!-- /menu-content -->
   </div>
 
   <!-- SCREEN CHAT — Conversa com Bodinho IA -->
@@ -655,7 +938,7 @@
     <div class="chat-header">
       <div class="chat-header-avatar">🐐</div>
       <div class="chat-header-info">
-        <div class="chat-header-name">Bodinho</div>
+        <div class="chat-header-name">BODINHO</div>
         <div class="chat-header-status" id="chat-status">Online</div>
       </div>
     </div>
@@ -671,17 +954,20 @@
 /* ── TRANSLATIONS ─────────────────────────────── */
 const T = {
   pt: {
-    greetMorning:'Bom dia', greetAfternoon:'Boa tarde', greetEvening:'Boa noite',
-    welcomeHeadline: g => `Opa! ${g} 👋`,
+    greetMorning:'BOM DIA', greetAfternoon:'BOA TARDE', greetEvening:'BOA NOITE',
+    welcomeHeadline: g => `Opa! ${g}`,
     welcomeSubDefault: 'Deixa o Bodinho te sugerir o melhor prato e bebida pra esse momento!',
-    welcomeSubCold:  t => `Tá fazendo ${t}°C em Recife! Noite fresquinha pede prato quente. Deixa o Bodinho sugerir! 🔥`,
-    welcomeSubHot:   t => `${t}°C em Recife! Que calor — nada melhor que um chopp gelado e fruto do mar. Bora! 🍺`,
-    welcomeSubNice:  t => `${t}°C, clima perfeito pra um jantar arretado. Bodinho te sugere o melhor combo! 🐐`,
+    welcomeSubCold:  t => `Tá fazendo ${t}°C em Recife! Noite fresquinha pede prato quente. Deixa o Bodinho sugerir!`,
+    welcomeSubHot:   t => `${t}°C em Recife! Que calor — nada melhor que um chopp gelado e fruto do mar. Bora!`,
+    welcomeSubNice:  t => `${t}°C, clima perfeito pra um jantar arretado. Bodinho te sugere o melhor combo!`,
     welcomeSubRain:  t => `Chovendo e ${t}°C em Recife — dia perfeito pra prato quentinho. Bodinho cuida! ☔`,
-    welcomeSubLate:  'Noite avançada — o Bodinho sabe o que você precisa. Vamos lá! 🌙',
-    btnStart: 'Quero uma sugestão! 🍽️',
+    welcomeSubLate:  'Noite avançada — o Bodinho sabe o que você precisa. Vamos lá!',
+    btnStart: 'Quero uma sugestão!',
+    btnSurprise: 'Surpreenda-me!',
+    btnPetisco: '🍺 Happy do Nô',
+    labelPetisco:'Happy do Nô',
     footerWelcome: 'Sugestões do cardápio atual · Preços em reais (R$).',
-    titleProtein: 'Qual proteína você tá afim hoje? 🤔',
+    titleProtein: 'Qual proteína você tá afim hoje?',
     hintProtein:  'Conta pro Bodinho o que você tá com vontade de comer',
     bodeLabel:'Bode', bodeDesc:'Especialidade da casa!',
     carneLabel:'Carne Vermelha', carneDesc:'Picanha, filé, maminha...',
@@ -708,14 +994,18 @@ const T = {
     vinhoLabel:'Vinho', vinhoDesc:'Tinto, branco, rosé, espumante...',
     ginLabel:'Gin / Aperitivo', ginDesc:'Aperol, Negroni, Moscow...',
     btnSuggest:'Ver sugestão do Bodinho 🐐',
-    resultTitle:'Sugestão do Bodinho!',
+    resultTitle:'Sugestão do BODINHO!',
     resultContextDefault:'Feita especialmente pra você',
     resultContextWeather: t => `Com base no clima de ${t}°C em Recife agora`,
     labelMainDish:'🍽️ Prato Principal', labelStarter:'🥟 Pra Começar', labelDrink:'🍺 Bebida Sugerida',
     labelOtherOptions: cat => `🔎 Outras opções de ${cat}`,
     btnRestart:'Recomeçar sugestão 🔄',
+    ratingQuestion:'Essa sugestão foi útil?', ratingThanksYes:'Obrigado! Fico feliz em ajudar 🐐', ratingThanksNo:'Entendido! Vou melhorar 🐐', ratingPlaceholder:'O que você preferia? (opcional)', ratingSendBtn:'Enviar',
     footerResult:'Sugestões do cardápio atual · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
-    menuCtaTitle:'Ver o Cardápio Completo', menuCtaDesc:'Pratos, bebidas, vinhos e valores',
+    menuCtaTitle:'Ver o Cardápio Completo', menuCtaDesc:'Pratos, petiscos, bebidas e vinhos',
+    menuLandingTitle:'O que você quer explorar?',
+    menuChoiceCardapioTitle:'Cardápio da Unidade', menuChoiceCardapioDesc:'Pratos, petiscos, bebidas e mais',
+    menuChoiceVinhosTitle:'Carta de Vinhos',       menuChoiceVinhosDesc:'Tintos, brancos, rosés e espumantes',
     menuTopbarTitle:'📋 Cardápio', menuBack:'← Voltar',
     tabDestaques:'Destaques', tabBode:'Bode', tabCarnes:'Carnes', tabMar:'Frutos do Mar', tabAves:'Aves',
     tabEntradas:'Entradas', tabCaldos:'Caldos', tabPetiscos:'Petiscos', tabSaladas:'Saladas', tabSobremesas:'Sobremesas', tabBodinhos:'Bodinhos',
@@ -767,16 +1057,19 @@ const T = {
   },
   en: {
     greetMorning:'Good morning', greetAfternoon:'Good afternoon', greetEvening:'Good evening',
-    welcomeHeadline: g => `Hey! ${g} 👋`,
+    welcomeHeadline: g => `Hey! ${g}`,
     welcomeSubDefault: 'Let Bodinho suggest the best dish and drink for this moment!',
-    welcomeSubCold:  t => `It's ${t}°C in Recife! A cool night calls for a warm dish. Let Bodinho help! 🔥`,
-    welcomeSubHot:   t => `${t}°C in Recife! Hot outside — nothing better than a cold beer and fresh seafood. Let's go! 🍺`,
-    welcomeSubNice:  t => `${t}°C, perfect weather for a great dinner. Bodinho suggests the best combo! 🐐`,
+    welcomeSubCold:  t => `It's ${t}°C in Recife! A cool night calls for a warm dish. Let Bodinho help!`,
+    welcomeSubHot:   t => `${t}°C in Recife! Hot outside — nothing better than a cold beer and fresh seafood. Let's go!`,
+    welcomeSubNice:  t => `${t}°C, perfect weather for a great dinner. Bodinho suggests the best combo!`,
     welcomeSubRain:  t => `Raining and ${t}°C — perfect day for a warm hearty dish. Bodinho's got you! ☔`,
-    welcomeSubLate:  "Late night — Bodinho knows what you need. Let's go! 🌙",
-    btnStart:'Get a suggestion! 🍽️',
+    welcomeSubLate:  "Late night — Bodinho knows what you need. Let's go!",
+    btnStart:'Get a suggestion!',
+    btnSurprise:'Surprise me!',
+    btnPetisco: '🍺 Happy do Nô',
+    labelPetisco:'Happy do Nô',
     footerWelcome:'Current menu suggestions · Prices in BRL (R$).',
-    titleProtein:'What protein are you in the mood for? 🤔',
+    titleProtein:'What protein are you in the mood for?',
     hintProtein:'Tell Bodinho what you feel like eating',
     bodeLabel:'Goat', bodeDesc:'House specialty!',
     carneLabel:'Red Meat', carneDesc:'Picanha, filet, sirloin...',
@@ -803,14 +1096,18 @@ const T = {
     vinhoLabel:'Wine', vinhoDesc:'Red, white, rosé, sparkling...',
     ginLabel:'Gin / Aperitif', ginDesc:'Aperol, Negroni, Moscow...',
     btnSuggest:"See Bodinho's suggestion 🐐",
-    resultTitle:"Bodinho's Suggestion!",
+    resultTitle:"BODINHO's Suggestion!",
     resultContextDefault:'Made especially for you',
     resultContextWeather: t => `Based on ${t}°C weather in Recife right now`,
     labelMainDish:'🍽️ Main Course', labelStarter:'🥟 Starters', labelDrink:'🍺 Suggested Drink',
     labelOtherOptions: cat => `🔎 Other ${cat} options`,
     btnRestart:'Start over 🔄',
+    ratingQuestion:'Was this suggestion helpful?', ratingThanksYes:'Thanks! Happy to help 🐐', ratingThanksNo:'Got it! I\'ll improve 🐐', ratingPlaceholder:'What would you have preferred? (optional)', ratingSendBtn:'Send',
     footerResult:'Current menu suggestions · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
-    menuCtaTitle:'See the Full Menu', menuCtaDesc:'Dishes, drinks, wines and prices',
+    menuCtaTitle:'See the Full Menu', menuCtaDesc:'Dishes, snacks, drinks and wines',
+    menuLandingTitle:'What would you like to explore?',
+    menuChoiceCardapioTitle:'Unit Menu',     menuChoiceCardapioDesc:'Dishes, snacks, drinks and more',
+    menuChoiceVinhosTitle:'Wine List',       menuChoiceVinhosDesc:'Reds, whites, rosés and sparkling',
     menuTopbarTitle:'📋 Menu', menuBack:'← Back',
     tabDestaques:'Highlights', tabBode:'Goat', tabCarnes:'Meats', tabMar:'Seafood', tabAves:'Poultry',
     tabEntradas:'Starters', tabCaldos:'Broths', tabPetiscos:'Snacks', tabSaladas:'Salads', tabSobremesas:'Desserts', tabBodinhos:'Kids',
@@ -862,16 +1159,19 @@ const T = {
   },
   es: {
     greetMorning:'Buenos días', greetAfternoon:'Buenas tardes', greetEvening:'Buenas noches',
-    welcomeHeadline: g => `¡Hola! ${g} 👋`,
+    welcomeHeadline: g => `¡Hola! ${g}`,
     welcomeSubDefault: '¡Deja que Bodinho te sugiera el mejor plato y bebida para este momento!',
-    welcomeSubCold:  t => `¡Hace ${t}°C en Recife! Noche fresca pide plato caliente. ¡Bodinho te ayuda! 🔥`,
-    welcomeSubHot:   t => `¡${t}°C en Recife! Mucho calor — nada mejor que cerveza helada y mariscos. ¡Vamos! 🍺`,
-    welcomeSubNice:  t => `${t}°C, clima perfecto para una cena increíble. ¡Bodinho sugiere el mejor combo! 🐐`,
+    welcomeSubCold:  t => `¡Hace ${t}°C en Recife! Noche fresca pide plato caliente. ¡Bodinho te ayuda!`,
+    welcomeSubHot:   t => `¡${t}°C en Recife! Mucho calor — nada mejor que cerveza helada y mariscos. ¡Vamos!`,
+    welcomeSubNice:  t => `${t}°C, clima perfecto para una cena increíble. ¡Bodinho sugiere el mejor combo!`,
     welcomeSubRain:  t => `Lluvia y ${t}°C — día perfecto para un plato calentito. ¡Bodinho cuida de ti! ☔`,
-    welcomeSubLate:  '¡Noche avanzada — Bodinho sabe lo que necesitas. ¡Vamos! 🌙',
-    btnStart:'¡Quiero una sugerencia! 🍽️',
+    welcomeSubLate:  '¡Noche avanzada — Bodinho sabe lo que necesitas. ¡Vamos!',
+    btnStart:'¡Quiero una sugerencia!',
+    btnSurprise:'¡Sorpréndeme!',
+    btnPetisco: '🍺 Happy do Nô',
+    labelPetisco:'Happy do Nô',
     footerWelcome:'Sugerencias del menú actual · Precios en reales (R$).',
-    titleProtein:'¿Qué proteína te apetece hoy? 🤔',
+    titleProtein:'¿Qué proteína te apetece hoy?',
     hintProtein:'Cuéntale a Bodinho qué te provoca comer',
     bodeLabel:'Cabro / Bode', bodeDesc:'¡Especialidad de la casa!',
     carneLabel:'Carne Roja', carneDesc:'Picaña, filete, cuadril...',
@@ -898,14 +1198,18 @@ const T = {
     vinhoLabel:'Vino', vinhoDesc:'Tinto, blanco, rosé, espumante...',
     ginLabel:'Gin / Aperitivo', ginDesc:'Aperol, Negroni, Moscow...',
     btnSuggest:'Ver sugerencia de Bodinho 🐐',
-    resultTitle:'¡Sugerencia de Bodinho!',
+    resultTitle:'¡Sugerencia de BODINHO!',
     resultContextDefault:'Hecha especialmente para ti',
     resultContextWeather: t => `Basado en el clima de ${t}°C en Recife ahora`,
     labelMainDish:'🍽️ Plato Principal', labelStarter:'🥟 Para Empezar', labelDrink:'🍺 Bebida Sugerida',
     labelOtherOptions: cat => `🔎 Otras opciones de ${cat}`,
     btnRestart:'Reiniciar sugerencia 🔄',
+    ratingQuestion:'¿Esta sugerencia fue útil?', ratingThanksYes:'¡Gracias! Me alegra ayudarte 🐐', ratingThanksNo:'¡Entendido! Voy a mejorar 🐐', ratingPlaceholder:'¿Qué hubieras preferido? (opcional)', ratingSendBtn:'Enviar',
     footerResult:'Sugerencias del menú actual · Bode do Nô Boa Viagem\nRua Dr. João Guilherme Pontes Sobrinho, 245',
-    menuCtaTitle:'Ver el Menú Completo', menuCtaDesc:'Platos, bebidas, vinos y precios',
+    menuCtaTitle:'Ver el Menú Completo', menuCtaDesc:'Platos, tapas, bebidas y vinos',
+    menuLandingTitle:'¿Qué quieres explorar?',
+    menuChoiceCardapioTitle:'Menú de la Unidad', menuChoiceCardapioDesc:'Platos, tapas, bebidas y más',
+    menuChoiceVinhosTitle:'Carta de Vinos',       menuChoiceVinhosDesc:'Tintos, blancos, rosados y espumosos',
     menuTopbarTitle:'📋 Menú', menuBack:'← Volver',
     tabDestaques:'Destacados', tabBode:'Cabro', tabCarnes:'Carnes', tabMar:'Mariscos', tabAves:'Aves',
     tabEntradas:'Entradas', tabCaldos:'Caldos', tabPetiscos:'Picadas', tabSaladas:'Ensaladas', tabSobremesas:'Postres', tabBodinhos:'Niños',
@@ -1374,6 +1678,63 @@ const UNITS = {
   tacaruna:   { name:'Tacaruna',    address:'Shopping Tacaruna · Av. Gov. Agamenon Magalhães, 153 - Santo Amaro',    hours:'Dom 11h–21h · Seg–Qui 11h–22h · Sex–Sáb 11h–23h', phone:'558134288889', hasPizza:true, isShopping:true, wines:'outras' },
 };
 
+/* ── ADMIN DATA BRIDGE ───────────────────────────────────────────
+   Exporta os constants para localStorage na 1ª execução.
+   Em execuções posteriores, carrega dados do admin e aplica.     */
+(function initAdminData() {
+  const KEY = 'bodinho_menu_v1';
+  const raw = localStorage.getItem(KEY);
+
+  if (!raw) {
+    // Primeira execução: exportar constants para localStorage
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        version:     1,
+        menu:        JSON.parse(JSON.stringify(MENU)),
+        starters:    JSON.parse(JSON.stringify(STARTERS)),
+        caldos:      JSON.parse(JSON.stringify(CALDOS)),
+        petiscos:    JSON.parse(JSON.stringify(PETISCOS)),
+        saladas:     JSON.parse(JSON.stringify(SALADAS)),
+        sobremesas:  JSON.parse(JSON.stringify(SOBREMESAS)),
+        bodinhos:    JSON.parse(JSON.stringify(BODINHOS)),
+        drinks:      JSON.parse(JSON.stringify(DRINKS)),
+        wines:       JSON.parse(JSON.stringify(WINES)),
+        wines_outras:JSON.parse(JSON.stringify(WINES_OUTRAS)),
+        config:      {},
+      }));
+    } catch(e) {}
+    return;
+  }
+
+  // Carregar dados do admin e aplicar nos constants
+  try {
+    const d = JSON.parse(raw);
+    function applyArr(target, src) {
+      if (!Array.isArray(src)) return;
+      target.splice(0, target.length, ...src.filter(i => i.available !== false));
+    }
+    function applyObj(target, src) {
+      if (!src || typeof src !== 'object') return;
+      Object.keys(src).forEach(k => {
+        if (target[k] && Array.isArray(src[k]))
+          target[k].splice(0, target[k].length, ...src[k].filter(i => i.available !== false));
+      });
+    }
+    if (d.menu)         applyObj(MENU,         d.menu);
+    if (d.starters)     applyObj(STARTERS,     d.starters);
+    if (d.caldos)       applyArr(CALDOS,        d.caldos);
+    if (d.petiscos)     applyObj(PETISCOS,      d.petiscos);
+    if (d.saladas)      applyArr(SALADAS,       d.saladas);
+    if (d.sobremesas)   applyArr(SOBREMESAS,    d.sobremesas);
+    if (d.bodinhos)     applyArr(BODINHOS,      d.bodinhos);
+    if (d.drinks)       applyObj(DRINKS,        d.drinks);
+    if (d.wines)        applyArr(WINES,         d.wines);
+    if (d.wines_outras) applyArr(WINES_OUTRAS,  d.wines_outras);
+  } catch(e) {
+    console.warn('[BodinSugere] Erro ao carregar dados do admin:', e);
+  }
+})();
+
 function getActiveWines() {
   return (state.unit && state.unit.wines === 'outras') ? WINES_OUTRAS : WINES;
 }
@@ -1456,6 +1817,15 @@ async function loadContext() {
 }
 
 /* ── TRANSLATIONS APPLY ───────────────────────── */
+function fixRumplakat(text) {
+  if (!text) return text;
+  // Regex exaustivo para remover QUALQUER emoji ou símbolo pictográfico
+  let clean = text.replace(/[\u{1F000}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{1F191}-\u{1F251}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F171}\u{1F17E}-\u{1F17F}\u{1F18E}\u{3030}\u{2B50}\u{2B55}\u{2934}-\u{2935}\u{2B05}-\u{2B07}\u{2B1B}-\u{2B1C}\u{3297}\u{3299}\u{303D}\u{00A9}\u{00AE}\u{2122}\u{231A}\u{231B}\u{2328}\u{23CF}\u{23E9}-\u{23F3}\u{23F8}-\u{23FA}\u{24C2}\u{25AA}\u{25AB}\u{25B6}\u{25C0}\u{25FB}-\u{25FE}]/gu, '');
+  // Remove setas e outros símbolos que escaparam
+  clean = clean.replace(/[→←🗺️🌵🌍🍹🥤🍺🍹🥃🌿🍷🍋⭐🥟🫕🍖🥗🍰👶🍕🔥🌊🌅👑🍽️🫘🥓🌶️🥖🍇🍷🥂🌸🍾✨🍃🌙☀️]/gu, '');
+  // Força "i" -> "I" para Rumplakat
+  return clean.replace(/i/g, 'I').replace(/í/g, 'Í').replace(/ì/g, 'Ì').replace(/î/g, 'Î').trim();
+}
 function setLang(lang) {
   console.log('[setLang]', lang);
   state.lang = lang;
@@ -1465,38 +1835,45 @@ function setLang(lang) {
   applyTranslations();
 }
 
-function s(id, text) { const e = document.getElementById(id); if (e) e.textContent = text; }
+function s(id, text, isRumplakat = false) { 
+  const e = document.getElementById(id); 
+  if (e) {
+    e.textContent = isRumplakat ? fixRumplakat(text) : text;
+  }
+}
 
 function applyTranslations() {
   const L = T[state.lang];
   const h = state.hour;
   let gr = h < 12 ? L.greetMorning : h < 18 ? L.greetAfternoon : L.greetEvening;
-  s('welcome-headline', L.welcomeHeadline(gr));
+  s('welcome-headline', L.welcomeHeadline(gr), true);
   s('welcome-sub', buildWelcomeSub());
   s('btn-start', L.btnStart);
+  s('btn-surprise', L.btnSurprise);
+  s('btn-petisco',  L.btnPetisco);
   s('footer-welcome', L.footerWelcome);
   if (state.unit) s('unit-label', 'Bode do Nô · ' + state.unit.name);
-  s('title-protein', L.titleProtein); s('hint-protein', L.hintProtein);
+  s('title-protein', L.titleProtein, true); s('hint-protein', L.hintProtein);
   s('opt-bode-label', L.bodeLabel);   s('opt-bode-desc', L.bodeDesc);
   s('opt-carne-label', L.carneLabel); s('opt-carne-desc', L.carneDesc);
   s('opt-peixe-label', L.peixeLabel); s('opt-peixe-desc', L.peixeDesc);
   s('opt-frango-label', L.frangoLabel); s('opt-frango-desc', L.frangoDesc);
   s('btn-protein-next', L.btnNext); s('btn-protein-back', L.btnBack);
-  s('title-pax', L.titlePax); s('hint-pax', L.hintPax);
+  s('title-pax', L.titlePax, true); s('hint-pax', L.hintPax);
   s('pax1-label', L.pax1Label); s('pax1-desc', L.pax1Desc);
   s('pax2-label', L.pax2Label); s('pax2-desc', L.pax2Desc);
   s('pax3-label', L.pax3Label); s('pax3-desc', L.pax3Desc);
   s('btn-pax-next', L.btnNext); s('btn-pax-back', L.btnBack);
-  s('title-style', L.titleStyle); s('hint-style', L.hintStyle);
+  s('title-style', L.titleStyle, true); s('hint-style', L.hintStyle);
   s('opt-regional-label', L.regionalLabel); s('opt-regional-desc', L.regionalDesc);
   s('opt-intl-label', L.intlLabel); s('opt-intl-desc', L.intlDesc);
   s('btn-style-next', L.btnNext); s('btn-style-back', L.btnBack);
-  s('title-alcohol', L.titleAlcohol); s('hint-alcohol', L.hintAlcohol);
+  s('title-alcohol', L.titleAlcohol, true); s('hint-alcohol', L.hintAlcohol);
   s('opt-yes-alcohol-label', L.yesAlcoholLabel); s('opt-yes-alcohol-desc', L.yesAlcoholDesc);
   s('opt-no-alcohol-label', L.noAlcoholLabel);
   const nd = document.getElementById('opt-no-alcohol-desc');
   if (nd) nd.textContent = L.noAlcoolDesc || L.noAlcoholDesc || '';
-  s('title-drink-type', L.titleDrinkType);
+  s('title-drink-type', L.titleDrinkType, true);
   s('opt-chopp-label', L.choppLabel);   s('opt-chopp-desc', L.choppDesc);
   s('opt-drink-label', L.drinkLabel);   s('opt-drink-desc', L.drinkDesc);
   s('opt-whisky-label', L.whiskyLabel); s('opt-whisky-desc', L.whiskyDesc);
@@ -1504,20 +1881,28 @@ function applyTranslations() {
   s('opt-vinho-label', L.vinhoLabel);   s('opt-vinho-desc', L.vinhoDesc);
   s('opt-gin-label', L.ginLabel);       s('opt-gin-desc', L.ginDesc);
   s('btn-drink-next', L.btnSuggest); s('btn-drink-back', L.btnBack);
-  s('result-title', L.resultTitle);
+  s('result-title', L.resultTitle, true);
   s('label-main-dish', L.labelMainDish); s('label-starter', L.labelStarter); s('label-drink', L.labelDrink);
   s('btn-restart', L.btnRestart);
+  s('btn-result-back', L.btnBack);
   s('btn-chat-back', L.btnBack);
-  // Wine flow labels
-  s('wine-cta-title', L.wineCta); s('wine-cta-desc', L.wineCtaDesc);
+  s('rating-question', L.ratingQuestion);
+  s('rating-send-btn', L.ratingSendBtn);
+  const rta = document.getElementById('rating-text');
+  if (rta) rta.placeholder = L.ratingPlaceholder;
+  // Menu CTA + landing
   s('menu-cta-title', L.menuCtaTitle); s('menu-cta-desc', L.menuCtaDesc);
-  s('wt-title', L.wtTitle); s('wt-hint', L.wtHint);
+  s('menu-landing-title', L.menuLandingTitle, true);
+  s('menu-choice-cardapio-title', L.menuChoiceCardapioTitle); s('menu-choice-cardapio-desc', L.menuChoiceCardapioDesc);
+  s('menu-choice-vinhos-title', L.menuChoiceVinhosTitle);     s('menu-choice-vinhos-desc',   L.menuChoiceVinhosDesc);
+  // Wine flow labels
+  s('wt-title', L.wtTitle, true); s('wt-hint', L.wtHint);
   s('wt-tinto-label', L.wtTintoLabel); s('wt-tinto-desc', L.wtTintoDesc);
   s('wt-branco-label', L.wtBrancoLabel); s('wt-branco-desc', L.wtBrancoDesc);
   s('wt-rose-label', L.wtRoseLabel); s('wt-rose-desc', L.wtRoseDesc);
   s('wt-espumante-label', L.wtEspumanteLabel); s('wt-espumante-desc', L.wtEspumanteDesc);
   s('btn-wt-next', L.btnNext); s('btn-wt-back', L.btnBack);
-  s('wc-title', L.wcTitle); s('wc-hint', L.wcHint);
+  s('wc-title', L.wcTitle, true); s('wc-hint', L.wcHint);
   s('wc-any-label', L.wcAnyLabel); s('wc-italy-label', L.wcItalyLabel);
   s('btn-wc-next', L.btnNext); s('btn-wc-back', L.btnBack);
   const fr = document.getElementById('footer-result');
@@ -1679,11 +2064,14 @@ function renderItem(item, showStory) {
   const bw = item.isWine   ? `<span class="badge-wine">${item.wineType}</span>` : '';
   const story = (showStory && item.storyId && STORIES[item.storyId])
     ? `<div class="story-card">${STORIES[item.storyId][state.lang]}</div>` : '';
+  const sid = 'si_' + Math.random().toString(36).slice(2,9);
+  const safeName = item.name.replace(/'/g,"&#39;").replace(/"/g,"&quot;");
   return `
-    <div class="suggest-item">
+    <div class="suggest-item" id="${sid}" data-name="${safeName}" data-price="${item.price}" data-source="result" onclick="toggleCartItem(this)">
+      <div class="suggest-item-check"><span>&#10003;</span></div>
       <div class="suggest-item-icon">${item.icon}</div>
       <div class="suggest-item-body">
-        <div class="suggest-item-name">${item.name}${bc}${bn}${bw}</div>
+        <div class="suggest-item-name">${fixRumplakat(item.name)}${bc}${bn}${bw}</div>
         <div class="suggest-item-desc">${desc}</div>
         ${story}
       </div>
@@ -1702,6 +2090,7 @@ function resetApp() {
   document.getElementById('btn-drink-next').disabled   = true;
   document.getElementById('drink-types').style.display = 'none';
   clearChatState();
+  cart.length = 0; updateCartBar();
   goTo('screen-welcome');
 }
 
@@ -1962,21 +2351,21 @@ function buildSystemPrompt() {
     pt: {
       protein:  ['🐐 Bode', '🥩 Carne', '🐟 Peixe/Frutos do Mar', '🍗 Frango'],
       buchada:  ['Quero a Buchada da Dona Maria! 🤤', 'Prefiro outro corte 🐐'],
-      pax:      ['Só eu 🐐', 'Somos 2 🐐🐐', 'Somos 3 ou mais'],
+      pax:      ['Só eu 🐐', 'Somos 2 🐐🐐', 'Somos 3 ou mais', '🎉 Evento / Grupo grande'],
       kids:     ['Não, só adultos', 'Sim, tem criança!'],
       drink:    ['🍺 Chopp/Cerveja', '🍹 Drink/Caipirinha', '🍷 Vinho', '🌿 Cachaça', '🥤 Sem álcool'],
     },
     en: {
       protein:  ['🐐 Goat', '🥩 Red Meat', '🐟 Fish/Seafood', '🍗 Chicken'],
       buchada:  ["I want Dona Maria's Buchada! 🤤", 'I prefer another goat cut 🐐'],
-      pax:      ['Just me 🐐', 'We are 2 🐐🐐', 'We are 3 or more'],
+      pax:      ['Just me 🐐', 'We are 2 🐐🐐', 'We are 3 or more', '🎉 Event / Large group'],
       kids:     ['No, adults only', 'Yes, kids at the table!'],
       drink:    ['🍺 Draft Beer', '🍹 Cocktail', '🍷 Wine', '🌿 Cachaça', '🥤 Non-alcoholic'],
     },
     es: {
       protein:  ['🐐 Cabro', '🥩 Carne Roja', '🐟 Pescado/Mariscos', '🍗 Pollo'],
       buchada:  ['¡Quiero la Buchada de Doña Maria! 🤤', 'Prefiero otro corte 🐐'],
-      pax:      ['Solo yo 🐐', 'Somos 2 🐐🐐', 'Somos 3 o más'],
+      pax:      ['Solo yo 🐐', 'Somos 2 🐐🐐', 'Somos 3 o más', '🎉 Evento / Grupo grande'],
       kids:     ['No, solo adultos', '¡Sí, hay niños!'],
       drink:    ['🍺 Cerveza', '🍹 Cóctel/Caipirinha', '🍷 Vino', '🌿 Cachaça', '🥤 Sin alcohol'],
     },
@@ -2035,6 +2424,7 @@ STEP 1B — Only if the customer chose GOAT (skip to STEP 2 for other proteins):
 STEP 2 — How many people?:
 - Ask ONLY how many people are coming — short sentence
 - Options MUST be exactly: ${fmtOpts(O.pax)}
+- FESTA/EVENT MODE: If the customer selects the event/large group option → skip STEPS 3 and 4 entirely. Go directly to a final recommendation tailored for events: suggest 2-3 sharing dishes from different proteins (variety), 2 starters/petiscos for the table, and a mix of drinks (chopp + non-alcoholic). Be enthusiastic and celebratory in tone. Return type:recommendation with pax:10.
 
 STEP 3 — Any kids at the table?:
 - Ask ONLY about kids
@@ -2056,6 +2446,8 @@ FINAL RECOMMENDATION RULES:
 - VARIETY: Do NOT always suggest the same dish. Explore the full list — there are great dishes beyond the champions
 - DRINKS: always pick from the menu. If the customer wants water or something simple → use "Suco Natural". Non-alcoholic → "Bodrink" or "Suco Natural". NEVER put "Água" as it is not on the menu
 - During happy hour: prefer HH menu items when possible
+- SURPRISE MODE: If the user's first message starts with "SURPRESA:", "SURPRISE:", or "SORPRESA:", skip ALL conversation steps immediately. Return type:recommendation directly for 2 people, choosing the best dish for the current time/weather context. Be bold and enthusiastic in the message.
+- PETISCO MODE: If the user's first message starts with "PETISCO:", "SNACK MODE:", or "PICADAS:", the customer wants ONLY snacks and drinks — NO main dish. Ask just ONE question: "Com álcool ou sem álcool?" then, after the answer, return type:recommendation with: dishes = 2-3 items from PETISCOS list (mix of matuto and chapa sections); starter = one CALDINHO from CALDOS if temperature ≤ 24°C or raining, otherwise null; drinks = 1-2 items from DRINKS. Do NOT suggest items from the main MENU (pratos principais).
 - PAX (number of people): this is a HARD RULE — you MUST follow it strictly:
   • 1 person → YOU MUST ONLY suggest dishes tagged [executivo-individual] (R$49–R$79). If the customer wants Buchada, use "Buchada" (R$79 individual), NOT "Buchada de Bode" (R$129 which serves 2-3). NEVER suggest dishes above R$100 for 1 person.
   • 2 people → suggest executive or medium dishes (R$69–R$155). One dish per person or a sharing dish.
@@ -2099,11 +2491,36 @@ async function callClaude(userMessage) {
     throw new Error(`HTTP ${resp.status}: ${errText}`);
   }
   const data = await resp.json();
+  trackApiUsage(data.usage);
+  trackSession({ protein: state.protein, pax: state.pax, style: state.isRegional ? 'regional' : 'intl', drink: state.drink });
   const raw = data.content[0].text.trim();
   console.log('[Claude] resposta bruta:', raw);
   chatHistory.push({ role:'assistant', content: raw });
   const jsonStr = raw.replace(/^```json?\s*/,'').replace(/\s*```$/,'').trim();
   return JSON.parse(jsonStr);
+}
+
+function trackApiUsage(usage) {
+  if (!usage) return;
+  try {
+    const KEY   = 'bodinho_api_stats';
+    const today = new Date().toISOString().slice(0,10);
+    const month = today.slice(0,7);
+    const raw   = localStorage.getItem(KEY);
+    const s     = raw ? JSON.parse(raw) : { sessions:0, input_tokens:0, output_tokens:0, daily:{}, monthly:{} };
+    s.sessions       = (s.sessions      ||0)+1;
+    s.input_tokens   = (s.input_tokens  ||0)+(usage.input_tokens  ||0);
+    s.output_tokens  = (s.output_tokens ||0)+(usage.output_tokens ||0);
+    if (!s.daily[today])   s.daily[today]   = {sessions:0,input_tokens:0,output_tokens:0};
+    if (!s.monthly[month]) s.monthly[month] = {sessions:0,input_tokens:0,output_tokens:0};
+    s.daily[today].sessions++;
+    s.daily[today].input_tokens  += usage.input_tokens  ||0;
+    s.daily[today].output_tokens += usage.output_tokens ||0;
+    s.monthly[month].sessions++;
+    s.monthly[month].input_tokens  += usage.input_tokens  ||0;
+    s.monthly[month].output_tokens += usage.output_tokens ||0;
+    localStorage.setItem(KEY, JSON.stringify(s));
+  } catch(e) {}
 }
 
 function showTypingIndicator() {
@@ -2238,6 +2655,24 @@ function findItem(name) {
       if (dn.includes(n) || n.includes(dn)) { console.log('[findItem] STARTER parcial:', name, '->', d.name); return { ...d }; }
     }
 
+  // PETISCOS
+  for (const cat of Object.values(PETISCOS))
+    for (const d of cat)
+      if (d.name === name || normalize(d.name) === n) { console.log('[findItem] PETISCO exato:', name); return { ...d }; }
+  for (const cat of Object.values(PETISCOS))
+    for (const d of cat) {
+      const dn = normalize(d.name);
+      if (dn.includes(n) || n.includes(dn)) { console.log('[findItem] PETISCO parcial:', name, '->', d.name); return { ...d }; }
+    }
+
+  // CALDOS
+  for (const d of CALDOS)
+    if (d.name === name || normalize(d.name) === n) { console.log('[findItem] CALDO exato:', name); return { ...d }; }
+  for (const d of CALDOS) {
+    const dn = normalize(d.name);
+    if (dn.includes(n) || n.includes(dn)) { console.log('[findItem] CALDO parcial:', name, '->', d.name); return { ...d }; }
+  }
+
   // Fallback: mapeia itens comuns fora do cardápio para equivalentes reais
   const fallbacks = {
     'agua':           'Suco Natural',
@@ -2281,7 +2716,7 @@ function handleRecommendation(data) {
   const uniqueDishes = [...new Set(dishesAdjusted)];
   const dishItems = uniqueDishes.map(n => { const item = findItem(n); console.log('[handleRecommendation] dish', JSON.stringify(n), '->', item ? item.name : 'NAO ENCONTRADO'); return item; }).filter(Boolean);
   console.log('[handleRecommendation] pratos resolvidos:', dishItems.length, 'de', (data.dishes||[]).length);
-  s('label-main-dish', L.labelMainDish);
+  s('label-main-dish', state.petiscoMode ? L.labelPetisco : L.labelMainDish);
   document.getElementById('result-main-dishes').innerHTML = dishItems.map(d => renderItem(d, true)).join('');
 
   const starterItem = data.starter ? findItem(data.starter) : null;
@@ -2326,8 +2761,18 @@ function handleRecommendation(data) {
   }
 
   s('btn-restart', L.btnRestart);
+  s('btn-result-back', L.btnBack);
   const fr = document.getElementById('footer-result');
   if (fr) fr.innerHTML = L.footerResult.replace('\n','<br><strong style="color:rgba(255,255,255,.5)">') + '</strong>';
+
+  // Mostrar widget de avaliação após 2s
+  const ratingCtx = {
+    mode:    state.petiscoMode ? 'petisco' : state.surpriseMode ? 'surpresa' : 'chat',
+    protein: data.category || null,
+    pax:     data.pax      || null,
+  };
+  document.getElementById('rating-widget').style.display = 'none';
+  setTimeout(() => showRatingWidget(ratingCtx), 2000);
 
   goTo('screen-result');
 }
@@ -2382,8 +2827,143 @@ async function startChat() {
   }
 }
 
+async function surpriseMe() {
+  console.log('[surpriseMe] modo surpresa — lang:', state.lang, '| hora:', state.hour, '| temp:', state.temp);
+  chatHistory = [];
+  document.getElementById('chat-log').innerHTML = '';
+  goTo('screen-chat');
+  showTypingIndicator();
+
+  const msgs = {
+    pt: 'SURPRESA: Escolha o melhor prato e bebida para o momento atual. 2 pessoas. Vá direto à recomendação.',
+    en: 'SURPRISE: Choose the best dish and drink for this moment. 2 people. Go straight to the recommendation.',
+    es: 'SORPRESA: Elige el mejor plato y bebida para este momento. 2 personas. Ve directamente a la recomendación.'
+  };
+  chatHistory.push({ role: 'user', content: msgs[state.lang] || msgs.pt });
+
+  try {
+    const data = await callClaude(null);
+    hideTypingIndicator();
+    if (data.type === 'recommendation') {
+      addBotBubble(data.message);
+      setTimeout(() => handleRecommendation(data), 1400);
+    } else {
+      // fallback: Claude asked a question anyway — show it normally
+      addBotBubble(data.message);
+      renderChatOptions(data.options);
+    }
+  } catch(e) {
+    console.error('[surpriseMe] erro:', e);
+    showChatError(surpriseMe);
+  }
+}
+
+async function petiscoMode() {
+  console.log('[petiscoMode] modo petisco — lang:', state.lang, '| hora:', state.hour, '| temp:', state.temp);
+  state.petiscoMode = true;
+  chatHistory = [];
+  document.getElementById('chat-log').innerHTML = '';
+  goTo('screen-chat');
+  showTypingIndicator();
+
+  const msgs = {
+    pt: 'PETISCO: Vim petiscar e beber, sem prato principal.',
+    en: 'SNACK MODE: I want snacks and drinks, no main dish.',
+    es: 'PICADAS: Quiero picadas y bebidas, sin plato principal.'
+  };
+  chatHistory.push({ role: 'user', content: msgs[state.lang] || msgs.pt });
+
+  try {
+    const data = await callClaude(null);
+    hideTypingIndicator();
+    if (data.type === 'recommendation') {
+      addBotBubble(data.message);
+      setTimeout(() => handleRecommendation(data), 1400);
+    } else {
+      addBotBubble(data.message);
+      renderChatOptions(data.options);
+    }
+  } catch(e) {
+    console.error('[petiscoMode] erro:', e);
+    showChatError(petiscoMode);
+  }
+}
+
+/* ── AVALIAÇÃO ────────────────────────────────── */
+let _ratingContext = {};
+
+function showRatingWidget(context) {
+  _ratingContext = context;
+  const L = T[state.lang];
+  const w = document.getElementById('rating-widget');
+  if (!w) return;
+  // Reset estado
+  document.getElementById('rating-btns').style.display  = 'flex';
+  document.getElementById('rating-thanks').style.display = 'none';
+  document.getElementById('rating-negative').style.display = 'none';
+  document.getElementById('rating-text').value = '';
+  s('rating-question', L.ratingQuestion);
+  s('rating-send-btn', L.ratingSendBtn);
+  document.getElementById('rating-text').placeholder = L.ratingPlaceholder;
+  w.style.display = 'block';
+}
+
+function submitRating(vote) {
+  const L = T[state.lang];
+  document.getElementById('rating-btns').style.display = 'none';
+
+  if (vote === 1) {
+    const el = document.getElementById('rating-thanks');
+    el.textContent = L.ratingThanksYes;
+    el.style.display = 'block';
+    saveRating({ ..._ratingContext, rating: 1, text: '' });
+    setTimeout(() => { document.getElementById('rating-widget').style.display = 'none'; }, 2500);
+  } else {
+    const el = document.getElementById('rating-thanks');
+    el.textContent = L.ratingThanksNo;
+    el.style.display = 'block';
+    document.getElementById('rating-negative').style.display = 'block';
+    saveRating({ ..._ratingContext, rating: 0, text: '' });
+  }
+}
+
+function sendNegativeFeedback() {
+  const text = (document.getElementById('rating-text').value || '').trim();
+  saveRating({ ..._ratingContext, rating: 0, text });
+  document.getElementById('rating-negative').style.display = 'none';
+  setTimeout(() => { document.getElementById('rating-widget').style.display = 'none'; }, 1800);
+}
+
+function saveRating(data) {
+  try {
+    const h = state.hour;
+    const window_ = h < 11 ? 'manha' : h < 15 ? 'almoco' : h < 16 ? 'tarde' : h < 19 ? 'happyhour' : 'jantar';
+    const entry = {
+      ts:       Date.now(),
+      rating:   data.rating,
+      text:     data.text || '',
+      mode:     data.mode  || 'chat',
+      hour:     h,
+      window:   window_,
+      protein:  data.protein  || null,
+      pax:      data.pax      || null,
+      temp:     state.temp,
+      rain:     state.isRaining,
+      lang:     state.lang,
+    };
+    const key = 'bodinho_ratings';
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+    existing.push(entry);
+    localStorage.setItem(key, JSON.stringify(existing));
+    console.log('[rating] salvo:', entry);
+  } catch(e) {
+    console.warn('[rating] erro ao salvar:', e);
+  }
+}
+
 function clearChatState() {
   chatHistory = [];
+  state.petiscoMode = false;
   const log = document.getElementById('chat-log');
   if (log) log.innerHTML = '';
   clearOptions();
@@ -2402,6 +2982,19 @@ function openMenuScreen() {
   const L = T[state.lang];
   document.getElementById('menu-topbar-title').textContent = L.menuTopbarTitle;
   document.getElementById('menu-back-btn').textContent = L.menuBack;
+  // Mostrar landing, ocultar conteúdo
+  document.getElementById('menu-landing').style.display = 'flex';
+  document.getElementById('menu-content').style.display = 'none';
+}
+
+function showMenuCardapio() {
+  const L = T[state.lang];
+  document.getElementById('menu-landing').style.display = 'none';
+  const content = document.getElementById('menu-content');
+  content.style.display = 'flex';
+  content.style.flexDirection = 'column';
+  content.style.flex = '1';
+  content.style.overflow = 'hidden';
   const tabMap = {
     destaques: L.tabDestaques, bode: L.tabBode, carnes: L.tabCarnes, mar: L.tabMar, aves: L.tabAves,
     entradas: L.tabEntradas, caldos: L.tabCaldos, petiscos: L.tabPetiscos,
@@ -2417,6 +3010,10 @@ function openMenuScreen() {
   document.querySelectorAll('.menu-tab').forEach((t,i) => t.classList.toggle('active', i===0));
   currentMenuTab = 'destaques';
   renderMenuTab('destaques');
+}
+
+function openWineFromMenu() {
+  goTo('screen-wine-type');
 }
 
 function switchMenuTab(tab, el) {
@@ -2517,17 +3114,25 @@ function buildMenuItem(d, _big) {
   const desc = d.desc?.[state.lang] || d.desc?.pt || '';
   const el = document.createElement('div');
   el.className = 'menu-item';
+  el.id = 'mi_' + Math.random().toString(36).slice(2,9);
+  el.dataset.name = d.name;
+  el.dataset.price = d.price;
+  el.dataset.source = 'menu';
+  el.addEventListener('click', () => toggleCartItem(el));
   let badges = '';
-  if (d.champion) badges += `<span class="menu-badge-champ">⭐ ${L.badgeChampion||'Campeão'}</span>`;
-  if (d.isnew)    badges += `<span class="menu-badge-new">✨ Novo</span>`;
-  if (d.regional) badges += `<span class="menu-badge-reg">🌵 Regional</span>`;
+  if (d.champion) badges += `<span class="menu-badge-champ">&#9733; ${L.badgeChampion||'Campeão'}</span>`;
+  if (d.isnew)    badges += `<span class="menu-badge-new">&#10024; Novo</span>`;
+  if (d.regional) badges += `<span class="menu-badge-reg">&#127797; Regional</span>`;
   el.innerHTML = `
-    <div class="menu-item-icon">${d.icon || '🍽️'}</div>
+    <div class="menu-item-icon">${d.icon || ''}</div>
     <div class="menu-item-body">
       <div class="menu-item-name">${d.name}${badges}</div>
       <div class="menu-item-desc">${desc}</div>
     </div>
-    <div class="menu-item-price">R$${d.price}</div>`;
+    <div class="menu-item-price-check">
+      <div class="menu-item-price">R$${d.price}</div>
+      <div class="menu-item-check"><span>&#10003;</span></div>
+    </div>`;
   return el;
 }
 
@@ -2553,7 +3158,193 @@ function buildWineMenuItem(w) {
   return el;
 }
 
+
+/* ── GOOGLE AUTH ─────────────────────────────────────────── */
+const GOOGLE_CLIENT_ID = 'GOOGLE_CLIENT_ID_AQUI'; // Substitua pelo seu Client ID
+
+function parseJwt(token) {
+  try {
+    return JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+  } catch(e) { return null; }
+}
+
+function loadUser() {
+  try { return JSON.parse(localStorage.getItem('bodinho_user_v1') || 'null'); }
+  catch(e) { return null; }
+}
+function saveUser(u) {
+  localStorage.setItem('bodinho_user_v1', JSON.stringify(u));
+}
+
+function handleGoogleCredential(response) {
+  const payload = parseJwt(response.credential);
+  if (!payload) return;
+  const now = new Date().toISOString();
+  let user = loadUser() || {};
+  user.googleId   = payload.sub;
+  user.name       = payload.name;
+  user.email      = payload.email;
+  user.picture    = payload.picture;
+  user.firstSeen  = user.firstSeen || now;
+  user.lastSeen   = now;
+  user.sessions   = user.sessions || [];
+  user.favProteins= user.favProteins || {};
+  user.favDrinks  = user.favDrinks || {};
+  saveUser(user);
+  updateUserIndicator(user);
+  goTo('screen-welcome');
+  checkHappyHour();
+}
+
+function enterAsGuest() {
+  goTo('screen-welcome');
+  checkHappyHour();
+}
+
+function signOut() {
+  localStorage.removeItem('bodinho_user_v1');
+  updateUserIndicator(null);
+  document.getElementById('user-menu').style.display = 'none';
+  goTo('screen-auth');
+}
+
+function toggleUserMenu() {
+  const menu = document.getElementById('user-menu');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+
+// Close user menu when clicking outside
+document.addEventListener('click', e => {
+  const ind = document.getElementById('user-indicator');
+  if (ind && !ind.contains(e.target)) {
+    const menu = document.getElementById('user-menu');
+    if (menu) menu.style.display = 'none';
+  }
+});
+
+function updateUserIndicator(user) {
+  const ind = document.getElementById('user-indicator');
+  const pic = document.getElementById('user-pic');
+  const anon = document.getElementById('user-anon-icon');
+  if (!ind) return;
+  if (user && user.googleId) {
+    ind.style.display = 'block';
+    if (user.picture) {
+      pic.src = user.picture;
+      pic.style.display = 'block';
+      anon.style.display = 'none';
+    }
+    document.getElementById('um-name').textContent  = user.name  || '';
+    document.getElementById('um-email').textContent = user.email || '';
+  } else {
+    ind.style.display = 'none';
+  }
+}
+
+function trackSession(choices) {
+  const user = loadUser();
+  if (!user || !user.googleId) return;
+  const now = new Date().toISOString();
+  user.lastSeen = now;
+  const sess = { ts: now, lang: state.lang, ...choices };
+  user.sessions = (user.sessions || []).slice(-49);
+  user.sessions.push(sess);
+  if (choices.protein) {
+    user.favProteins = user.favProteins || {};
+    user.favProteins[choices.protein] = (user.favProteins[choices.protein] || 0) + 1;
+  }
+  if (choices.drink) {
+    user.favDrinks = user.favDrinks || {};
+    user.favDrinks[choices.drink] = (user.favDrinks[choices.drink] || 0) + 1;
+  }
+  saveUser(user);
+}
+
+/* ── HAPPY HOUR ──────────────────────────────────────────── */
+function getStoredConfig() {
+  try { return JSON.parse(localStorage.getItem('bodinho_menu_v1') || '{}').config || {}; }
+  catch(e) { return {}; }
+}
+
+function isHappyHour() {
+  const cfg = getStoredConfig();
+  if (!cfg.happyHourActive) return false;
+  const now = new Date();
+  const day = now.getDay();
+  if (cfg.happyHourDays && cfg.happyHourDays.length && !cfg.happyHourDays.includes(day)) return false;
+  const h = now.getHours();
+  return h >= (cfg.happyHourStart ?? 16) && h < (cfg.happyHourEnd ?? 19);
+}
+
+function checkHappyHour() {
+  const banner = document.getElementById('happy-banner');
+  if (!banner) return;
+  if (isHappyHour()) {
+    const cfg = getStoredConfig();
+    const name = cfg.happyHourName || 'Happy do Nô';
+    const end  = cfg.happyHourEnd ?? 19;
+    banner.textContent = `${name} — até as ${end}h! Aproveite!`;
+    banner.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+/* ── CART ─────────────────────────────────────────────────── */
+let cart = [];
+
+function toggleCartItem(el) {
+  const id    = el.id;
+  const name  = el.dataset.name;
+  const price = parseFloat(el.dataset.price) || 0;
+  const source= el.dataset.source;
+  const idx   = cart.findIndex(i => i.id === id);
+  if (idx >= 0) {
+    cart.splice(idx, 1);
+    el.classList.remove('checked');
+  } else {
+    cart.push({ id, name, price, source });
+    el.classList.add('checked');
+  }
+  updateCartBar();
+}
+
+function updateCartBar() {
+  const bar = document.getElementById('cart-bar');
+  if (!bar) return;
+  if (cart.length > 0) {
+    if (bar.style.display === 'none') {
+      bar.style.display = 'flex';
+      bar.classList.add('visible');
+    }
+  } else {
+    bar.style.display = 'none';
+    bar.classList.remove('visible');
+  }
+}
+
+function cartBarClick() {
+  // Fluxo a definir — placeholder
+  console.log('[cart]', cart);
+}
+
+/* ── INIT ─────────────────────────────────────────────────── */
+function initApp() {
+  const user = loadUser();
+  if (user && user.googleId) {
+    updateUserIndicator(user);
+    goTo('screen-welcome');
+  }
+  // If no user: screen-auth is already active from HTML default
+}
+
+initApp();
 loadContext();
 </script>
+  <!-- Cart Bar -->
+  <div class="cart-bar" id="cart-bar" style="display:none" onclick="cartBarClick()">
+    <span class="cart-bar-text">Pediu alguma das nossas sugestões? Clique aqui para ver suas vantagens:</span>
+    <span class="cart-bar-arrow">›</span>
+  </div>
 </body>
 </html>

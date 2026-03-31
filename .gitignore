@@ -1,5 +1,8 @@
-# Chave da API — NUNCA commitar
+# Chaves e segredos — NUNCA commitar
 api_key.txt
+.env
+.env.local
+.env.*.local
 
 # Python
 __pycache__/

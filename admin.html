@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bodin Sugere — Admin</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0d0f1a;--sidebar:#111322;--card:#181b2e;--border:#252840;
+      --accent:#7c6ff7;--accent2:#5c56c4;--success:#3dba6a;--danger:#e84c3d;
+      --warn:#f0a500;--text:#dde1f5;--muted:#6b7099;--inp:#1e2137;
+    }
+    html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+
+    /* ── LOGIN ── */
+    #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg)}
+    .login-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:40px;width:340px;text-align:center}
+    .login-logo{font-size:48px;margin-bottom:8px}
+    .login-card h1{font-size:18px;font-weight:700;margin-bottom:4px}
+    .login-card p{color:var(--muted);font-size:12px;margin-bottom:28px}
+    .login-card input{width:100%;background:var(--inp);border:1.5px solid var(--border);color:var(--text);border-radius:10px;padding:10px 14px;font-size:14px;outline:none;transition:border-color .2s}
+    .login-card input:focus{border-color:var(--accent)}
+    .login-card .btn-login{width:100%;margin-top:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+    .login-card .btn-login:hover{background:var(--accent2)}
+    .login-error{color:var(--danger);font-size:12px;margin-top:8px;min-height:18px}
+
+    /* ── ADMIN LAYOUT ── */
+    #admin-app{display:none;height:100vh;flex-direction:row}
+    #admin-app.visible{display:flex}
+
+    /* Sidebar */
+    #sidebar{width:220px;min-width:220px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+    .sidebar-logo{padding:20px 18px 14px;border-bottom:1px solid var(--border)}
+    .sidebar-logo .emoji{font-size:28px}
+    .sidebar-logo .name{font-size:13px;font-weight:700;color:var(--text);margin-top:2px}
+    .sidebar-logo .sub{font-size:11px;color:var(--muted)}
+    .sidebar-nav{flex:1;padding:10px 0}
+    .sidebar-nav a{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:500;text-decoration:none;border-radius:0;transition:color .15s,background .15s;border-left:3px solid transparent}
+    .sidebar-nav a:hover{color:var(--text);background:rgba(124,111,247,.07)}
+    .sidebar-nav a.active{color:var(--accent);background:rgba(124,111,247,.12);border-left-color:var(--accent)}
+    .sidebar-nav .section-group{padding:14px 18px 4px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .sidebar-footer{padding:14px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+    .sidebar-footer button{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer;text-align:left;transition:color .2s,border-color .2s}
+    .sidebar-footer button:hover{color:var(--text);border-color:var(--text)}
+    .sidebar-footer .btn-logout{color:var(--danger);border-color:rgba(232,76,61,.3)}
+    .sidebar-footer .btn-logout:hover{border-color:var(--danger)}
+
+    /* Main */
+    #main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .main-header{padding:18px 28px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--sidebar);flex-shrink:0}
+    .main-header h2{font-size:16px;font-weight:700}
+    .main-header .hdr-count{color:var(--muted);font-size:12px;margin-left:10px;font-weight:400}
+    .btn-add{background:var(--accent);color:#fff;border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s}
+    .btn-add:hover{background:var(--accent2)}
+
+    #section-content{flex:1;overflow-y:auto;padding:0}
+
+    /* Tabs */
+    .sub-tabs{display:flex;gap:0;padding:0 28px;background:var(--sidebar);border-bottom:1px solid var(--border);flex-wrap:wrap}
+    .sub-tab{padding:10px 14px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:600;border-bottom:2px solid transparent;transition:color .15s;white-space:nowrap}
+    .sub-tab:hover{color:var(--text)}
+    .sub-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+    /* Table */
+    .table-wrap{padding:0 28px 28px;padding-top:16px}
+    table{width:100%;border-collapse:collapse}
+    thead th{text-align:left;padding:8px 12px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+    tbody tr{border-bottom:1px solid rgba(37,40,64,.5);transition:background .15s}
+    tbody tr:hover{background:rgba(124,111,247,.05)}
+    tbody td{padding:10px 12px;font-size:13px;vertical-align:middle}
+    .td-icon{font-size:20px;width:48px;text-align:center}
+    .td-name{font-weight:500;max-width:260px}
+    .td-name .item-desc{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+    .td-price{font-weight:700;color:#8ce8ac;width:80px;white-space:nowrap}
+    .td-avail{width:80px;text-align:center}
+    .td-actions{width:90px;text-align:right}
+
+    /* Toggle */
+    .toggle{position:relative;display:inline-block;width:38px;height:22px}
+    .toggle input{opacity:0;width:0;height:0}
+    .toggle-slider{position:absolute;inset:0;background:#2d3149;border-radius:22px;cursor:pointer;transition:background .2s}
+    .toggle-slider::before{content:'';position:absolute;left:3px;bottom:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s}
+    .toggle input:checked + .toggle-slider{background:var(--success)}
+    .toggle input:checked + .toggle-slider::before{transform:translateX(16px)}
+
+    /* Action buttons */
+    .btn-edit,.btn-del{background:none;border:1px solid var(--border);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;transition:border-color .15s,background .15s}
+    .btn-edit:hover{border-color:var(--accent);color:var(--accent)}
+    .btn-del:hover{border-color:var(--danger);color:var(--danger)}
+
+    /* Config section */
+    .config-section{padding:28px}
+    .config-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;max-width:560px}
+    .config-card h3{font-size:14px;font-weight:700;margin-bottom:16px;color:var(--text)}
+    .config-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .config-row label{font-size:12px;color:var(--muted);width:160px;flex-shrink:0}
+    .config-inp{background:var(--inp);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:7px 11px;font-size:13px;outline:none;transition:border-color .2s;width:100%}
+    .config-inp:focus{border-color:var(--accent)}
+    .btn-save-config{background:var(--success);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px}
+    .btn-save-config:hover{opacity:.85}
+    .config-saved{color:var(--success);font-size:12px;margin-left:12px;display:none}
+
+    /* Custos section */
+    .custos-wrap{padding:24px 28px 40px}
+    .custos-model-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(124,111,247,.15);border:1px solid rgba(124,111,247,.3);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--accent);margin-bottom:20px}
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 16px}
+    .stat-card .sc-label{font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
+    .stat-card .sc-value{font-size:22px;font-weight:800;color:var(--text);line-height:1}
+    .stat-card .sc-sub{font-size:11px;color:var(--muted);margin-top:5px}
+    .stat-card.highlight .sc-value{color:#8ce8ac}
+    .meter-block{margin-bottom:22px}
+    .meter-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+    .meter-label{font-size:13px;font-weight:600;color:var(--text)}
+    .meter-detail{font-size:12px;color:var(--muted)}
+    .meter-pct{font-size:13px;font-weight:700}
+    .meter-track{height:10px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden}
+    .meter-fill{height:100%;border-radius:10px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+    .meter-fill.ok{background:linear-gradient(90deg,#3dba6a,#5de88a)}
+    .meter-fill.warn{background:linear-gradient(90deg,#f0a500,#ffc933)}
+    .meter-fill.danger{background:linear-gradient(90deg,#e84c3d,#ff7060)}
+    .history-table{width:100%;border-collapse:collapse;margin-top:6px}
+    .history-table th{text-align:left;padding:7px 10px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+    .history-table td{padding:9px 10px;font-size:12px;border-bottom:1px solid rgba(37,40,64,.4)}
+    .history-table tr:hover td{background:rgba(124,111,247,.04)}
+    .history-table .td-cost{color:#8ce8ac;font-weight:700}
+    .section-title-sm{font-size:13px;font-weight:700;color:var(--text);margin:28px 0 12px;display:flex;align-items:center;gap:8px}
+    .section-title-sm::after{content:'';flex:1;height:1px;background:var(--border)}
+    .limits-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:600px}
+    .limit-row{display:flex;flex-direction:column;gap:5px}
+    .limit-row label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+    .limit-row input{background:var(--inp);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:8px 11px;font-size:13px;outline:none;transition:border-color .2s}
+    .limit-row input:focus{border-color:var(--accent)}
+    .btn-reset-stats{background:none;border:1px solid rgba(232,76,61,.3);color:var(--danger);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer;margin-top:8px}
+    .btn-reset-stats:hover{background:rgba(232,76,61,.08);border-color:var(--danger)}
+
+    /* Modal */
+    #modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center}
+    #modal-overlay.open{display:flex}
+    #modal{background:var(--card);border:1px solid var(--border);border-radius:18px;width:540px;max-width:95vw;max-height:90vh;overflow-y:auto;padding:28px}
+    #modal h3{font-size:16px;font-weight:700;margin-bottom:20px}
+    .form-row{display:flex;gap:12px;margin-bottom:14px}
+    .form-group{display:flex;flex-direction:column;gap:5px;flex:1}
+    .form-group label{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+    .form-group input,.form-group select,.form-group textarea{background:var(--inp);border:1.5px solid var(--border);color:var(--text);border-radius:9px;padding:9px 12px;font-size:13px;outline:none;transition:border-color .2s;font-family:inherit}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
+    .form-group textarea{resize:vertical;min-height:62px}
+    .form-group select option{background:var(--card)}
+    .pair-checks{display:flex;gap:10px;flex-wrap:wrap}
+    .pair-checks label{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text);cursor:pointer;background:var(--inp);border:1px solid var(--border);border-radius:7px;padding:5px 10px}
+    .pair-checks input[type=checkbox]{accent-color:var(--accent)}
+    .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+    .btn-cancel{background:none;border:1px solid var(--border);color:var(--muted);border-radius:9px;padding:9px 18px;font-size:13px;cursor:pointer}
+    .btn-cancel:hover{color:var(--text);border-color:var(--text)}
+    .btn-save{background:var(--accent);color:#fff;border:none;border-radius:9px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer}
+    .btn-save:hover{background:var(--accent2)}
+    .empty-state{text-align:center;padding:48px;color:var(--muted)}
+    .empty-state .empty-icon{font-size:40px;margin-bottom:12px}
+    .badge-new{font-size:10px;background:rgba(61,186,106,.2);color:var(--success);border-radius:4px;padding:1px 5px;margin-left:6px}
+    .badge-champ{font-size:10px;background:rgba(240,165,0,.2);color:var(--warn);border-radius:4px;padding:1px 5px;margin-left:6px}
+
+    /* Toast */
+    #toast{position:fixed;bottom:28px;right:28px;background:#232740;border:1px solid var(--border);border-radius:10px;padding:11px 18px;font-size:13px;color:var(--text);opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s;pointer-events:none;z-index:200}
+    #toast.show{opacity:1;transform:translateY(0)}
+    #toast.toast-ok{border-color:var(--success);color:var(--success)}
+    #toast.toast-err{border-color:var(--danger);color:var(--danger)}
+
+    /* Scrollbar */
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:#2d3149;border-radius:3px}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🐐</div>
+    <h1>Bodin Sugere</h1>
+    <p>Painel de gestão do cardápio</p>
+    <input type="password" id="login-pwd" placeholder="Senha" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="admin-app">
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div class="sidebar-logo">
+      <div class="emoji">🐐</div>
+      <div class="name">Bodin Sugere</div>
+      <div class="sub">Gestão de Cardápio</div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="section-group">Cardápio</div>
+      <a onclick="goTo('menu')">🍽️ Pratos Principais</a>
+      <a onclick="goTo('starters')">🥗 Entradas</a>
+      <a onclick="goTo('caldos')">🍲 Caldos</a>
+      <a onclick="goTo('petiscos')">🍟 Petiscos</a>
+      <a onclick="goTo('saladas')">🥗 Saladas</a>
+      <a onclick="goTo('sobremesas')">🍮 Sobremesas</a>
+      <a onclick="goTo('bodinhos')">🍗 Bodinhos</a>
+      <div class="section-group">Bebidas & Vinhos</div>
+      <a onclick="goTo('drinks')">🍹 Bebidas</a>
+      <a onclick="goTo('wines')">🍷 Vinhos — Boa Viagem</a>
+      <a onclick="goTo('wines_outras')">🍷 Vinhos — Outras</a>
+      <div class="section-group">Sistema</div>
+      <a onclick="goTo('custos')">📊 Custos de API</a>
+      <a onclick="goTo('config')">⚙️ Configurações</a>
+    </div>
+    <div class="sidebar-footer">
+      <button onclick="exportData()">⬇️ Exportar JSON</button>
+      <label style="cursor:pointer">
+        <span style="display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:7px 12px;font-size:12px;transition:color .2s,border-color .2s" onmouseenter="this.style.color='var(--text)';this.style.borderColor='var(--text)'" onmouseleave="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">⬆️ Importar JSON</span>
+        <input type="file" accept=".json" style="display:none" onchange="importData(event)">
+      </label>
+      <button class="btn-logout" onclick="doLogout()">🚪 Sair</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div id="main">
+    <div class="main-header">
+      <div style="display:flex;align-items:baseline;gap:0">
+        <h2 id="section-title">Pratos Principais</h2>
+        <span class="hdr-count" id="section-count"></span>
+      </div>
+      <button class="btn-add" id="btn-add" onclick="openAddModal()">+ Adicionar</button>
+    </div>
+    <div id="section-content"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div id="modal">
+    <h3 id="modal-title">Editar Item</h3>
+    <form id="modal-form" onsubmit="return false">
+      <!-- Basic fields always shown -->
+      <div class="form-row">
+        <div class="form-group" style="max-width:80px">
+          <label>Ícone</label>
+          <input type="text" id="f-icon" maxlength="4" placeholder="🐐">
+        </div>
+        <div class="form-group">
+          <label>Nome *</label>
+          <input type="text" id="f-name" required placeholder="Nome do item">
+        </div>
+        <div class="form-group" style="max-width:100px">
+          <label>Preço (R$) *</label>
+          <input type="number" id="f-price" required min="0" step="1" placeholder="89">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Descrição PT</label>
+          <textarea id="f-desc-pt" placeholder="Descrição em português..."></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Descrição EN</label>
+          <textarea id="f-desc-en" placeholder="English description..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Descrição ES</label>
+          <textarea id="f-desc-es" placeholder="Descripción en español..."></textarea>
+        </div>
+      </div>
+      <!-- Wine-only fields -->
+      <div id="wine-fields" style="display:none">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tipo</label>
+            <select id="f-type">
+              <option value="tinto">Tinto</option>
+              <option value="branco">Branco</option>
+              <option value="rose">Rosé</option>
+              <option value="espumante">Espumante</option>
+              <option value="verde">Vinho Verde</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Doçura</label>
+            <select id="f-sweetness">
+              <option value="seco">Seco</option>
+              <option value="suave">Suave</option>
+              <option value="meio-seco">Meio-seco</option>
+              <option value="doce">Doce</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>País</label>
+            <input type="text" id="f-country" placeholder="Argentina">
+          </div>
+          <div class="form-group">
+            <label>Uva</label>
+            <input type="text" id="f-grape" placeholder="Malbec">
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Harmoniza com</label>
+          <div class="pair-checks">
+            <label><input type="checkbox" id="pair-bode" value="bode"> 🐐 Bode</label>
+            <label><input type="checkbox" id="pair-carne" value="carne"> 🥩 Carne</label>
+            <label><input type="checkbox" id="pair-peixe" value="peixe"> 🐟 Peixe</label>
+            <label><input type="checkbox" id="pair-frango" value="frango"> 🍗 Frango</label>
+          </div>
+        </div>
+      </div>
+      <!-- Bodinho pax -->
+      <div id="pax-field" style="display:none;margin-bottom:14px">
+        <div class="form-group">
+          <label>Para (pax)</label>
+          <select id="f-pax">
+            <option value="">— qualquer —</option>
+            <option value="1">1 pessoa</option>
+            <option value="2">2 pessoas</option>
+            <option value="3">3+ pessoas</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row" style="align-items:center">
+        <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;margin-bottom:0">
+          <label style="text-transform:none;font-size:13px;color:var(--text)">Disponível no cardápio</label>
+          <label class="toggle">
+            <input type="checkbox" id="f-available" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;margin-bottom:0">
+          <label style="text-transform:none;font-size:13px;color:var(--text)">Destaque (🏆)</label>
+          <label class="toggle">
+            <input type="checkbox" id="f-champion">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;margin-bottom:0">
+          <label style="text-transform:none;font-size:13px;color:var(--text)">Novidade (🆕)</label>
+          <label class="toggle">
+            <input type="checkbox" id="f-isnew">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </form>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveItem()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── CONFIG ─────────────────────────────────────────────────────
+const STORAGE_KEY = 'bodinho_menu_v1';
+const PASS_KEY    = 'bodinho_admin_pass';
+const DEFAULT_PASS = 'bode2025';
+
+const SEC_CONFIG = {
+  menu:        { label:'Pratos Principais', type:'nested', tabs:{bode:'🐐 Bode',carne:'🥩 Carne',peixe:'🐟 Peixe',frango:'🍗 Frango'} },
+  starters:    { label:'Entradas',          type:'nested', tabs:{bode:'🐐 Bode',carne:'🥩 Carne',peixe:'🐟 Peixe',frango:'🍗 Frango'} },
+  caldos:      { label:'Caldos',            type:'flat' },
+  petiscos:    { label:'Petiscos',          type:'nested', tabs:{matuto:'🌾 Matuto',chapa:'🔥 Chapa'} },
+  saladas:     { label:'Saladas',           type:'flat' },
+  sobremesas:  { label:'Sobremesas',        type:'flat' },
+  bodinhos:    { label:'Bodinhos',          type:'flat', hasPax:true },
+  drinks:      { label:'Bebidas',           type:'nested', tabs:{chopp:'🍺 Chopp',cerveja:'🍻 Cerveja',drink:'🍸 Drinks',whisky:'🥃 Whisky',cachaca:'🥃 Cachaça',semAlcool:'🥤 Sem Álcool',gin:'🍋 Gin'} },
+  wines:       { label:'Vinhos — Boa Viagem',type:'flat', isWine:true },
+  wines_outras:{ label:'Vinhos — Outras',   type:'flat', isWine:true },
+  config:      { label:'Configurações',     type:'config' },
+  custos:      { label:'Custos de API',     type:'custos' },
+};
+
+// ─── STATE ──────────────────────────────────────────────────────
+let data = null;
+let currentSection = 'menu';
+let currentTab = null;
+let editingIdx = null;   // { secKey, subKey|null, idx }
+
+// ─── STORAGE ────────────────────────────────────────────────────
+function loadData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch(e) { return null; }
+}
+
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch(e) {
+    toast('Erro ao salvar no localStorage', 'err');
+  }
+}
+
+function getItems(secKey, subKey) {
+  if (!data || !data[secKey]) return [];
+  const sec = data[secKey];
+  if (subKey) return sec[subKey] || [];
+  return Array.isArray(sec) ? sec : [];
+}
+
+function setItems(secKey, subKey, arr) {
+  if (!data) return;
+  if (subKey) {
+    if (!data[secKey]) data[secKey] = {};
+    data[secKey][subKey] = arr;
+  } else {
+    data[secKey] = arr;
+  }
+}
+
+// ─── AUTH ────────────────────────────────────────────────────────
+function getStoredPass() {
+  return localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
+}
+
+function doLogin() {
+  const pwd = document.getElementById('login-pwd').value;
+  if (pwd === getStoredPass()) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-app').classList.add('visible');
+    data = loadData();
+    if (!data) {
+      document.getElementById('section-content').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Nenhum dado encontrado. Abra o Bodin Sugere primeiro para inicializar o cardápio, depois volte aqui.</p></div>';
+      toast('Nenhum dado encontrado', 'err');
+    } else {
+      goTo('menu');
+    }
+  } else {
+    document.getElementById('login-err').textContent = 'Senha incorreta.';
+  }
+}
+
+function doLogout() {
+  if (confirm('Sair do painel admin?')) {
+    document.getElementById('login-pwd').value = '';
+    document.getElementById('login-err').textContent = '';
+    document.getElementById('admin-app').classList.remove('visible');
+    document.getElementById('login-screen').style.display = 'flex';
+  }
+}
+
+// ─── NAVIGATION ─────────────────────────────────────────────────
+function goTo(secKey) {
+  currentSection = secKey;
+  const cfg = SEC_CONFIG[secKey];
+  if (!cfg) return;
+
+  // Update sidebar active state
+  document.querySelectorAll('#sidebar-nav a').forEach(a => a.classList.remove('active'));
+  const links = document.querySelectorAll('#sidebar-nav a');
+  links.forEach(a => {
+    if (a.getAttribute('onclick') === `goTo('${secKey}')`) a.classList.add('active');
+  });
+
+  document.getElementById('section-title').textContent = cfg.label;
+
+  const btnAdd = document.getElementById('btn-add');
+  btnAdd.style.display = (cfg.type === 'config' || cfg.type === 'custos') ? 'none' : 'block';
+
+  if (cfg.type === 'nested') {
+    const firstTab = Object.keys(cfg.tabs)[0];
+    currentTab = firstTab;
+    renderSection();
+  } else if (cfg.type === 'config') {
+    currentTab = null;
+    renderConfig();
+  } else if (cfg.type === 'custos') {
+    currentTab = null;
+    renderCustos();
+  } else {
+    currentTab = null;
+    renderSection();
+  }
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────
+function renderSection() {
+  const cfg = SEC_CONFIG[currentSection];
+  const content = document.getElementById('section-content');
+  let html = '';
+
+  if (cfg.type === 'nested') {
+    html += '<div class="sub-tabs">';
+    Object.entries(cfg.tabs).forEach(([k, label]) => {
+      html += `<div class="sub-tab${currentTab===k?' active':''}" onclick="switchTab('${k}')">${label}</div>`;
+    });
+    html += '</div>';
+  }
+
+  const items = getItems(currentSection, currentTab);
+  document.getElementById('section-count').textContent = items.length ? ` — ${items.length} itens` : '';
+
+  html += '<div class="table-wrap">';
+  if (!items.length) {
+    html += '<div class="empty-state"><div class="empty-icon">🗒️</div><p>Nenhum item nesta seção.</p></div>';
+  } else {
+    html += `<table>
+      <thead><tr>
+        <th style="width:48px"></th>
+        <th>Nome</th>
+        <th>Preço</th>
+        <th style="width:80px;text-align:center">Ativo</th>
+        <th style="width:90px;text-align:right">Ações</th>
+      </tr></thead><tbody>`;
+    items.forEach((item, idx) => {
+      const available = item.available !== false;
+      const opacity   = available ? '1' : '.45';
+      html += `<tr style="opacity:${opacity}">
+        <td class="td-icon">${item.icon || '•'}</td>
+        <td class="td-name">
+          ${escHtml(item.name)}
+          ${item.champion ? '<span class="badge-champ">🏆 destaque</span>':''}
+          ${item.isnew    ? '<span class="badge-new">🆕 novo</span>':''}
+          ${item.desc?.pt ? `<div class="item-desc">${escHtml(item.desc.pt)}</div>` : ''}
+        </td>
+        <td class="td-price">R$${item.price}</td>
+        <td class="td-avail">
+          <label class="toggle">
+            <input type="checkbox" ${available?'checked':''} onchange="toggleAvail(${idx})">
+            <span class="toggle-slider"></span>
+          </label>
+        </td>
+        <td class="td-actions">
+          <button class="btn-edit" onclick="openEditModal(${idx})">✏️</button>
+          <button class="btn-del"  onclick="deleteItem(${idx})">🗑️</button>
+        </td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+  }
+  html += '</div>';
+
+  content.innerHTML = html;
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  renderSection();
+}
+
+// ─── CUSTOS ──────────────────────────────────────────────────────
+const STATS_KEY = 'bodinho_api_stats';
+const MODEL_NAME = 'claude-haiku-4-5-20251001';
+
+function loadStats() {
+  try { return JSON.parse(localStorage.getItem(STATS_KEY) || 'null'); } catch(e) { return null; }
+}
+
+function getLimits(s) {
+  return Object.assign({
+    sessions_month:        500,
+    input_tokens_month:    1000000,
+    output_tokens_month:   150000,
+    budget_usd_month:      10,
+    price_input_mtok:      0.80,
+    price_output_mtok:     4.00,
+    usd_to_brl:            5.70,
+  }, s?.limits || {});
+}
+
+function calcCost(inTok, outTok, limits) {
+  return (inTok / 1e6) * limits.price_input_mtok + (outTok / 1e6) * limits.price_output_mtok;
+}
+
+function fmtNum(n) {
+  if (n == null) return '0';
+  return Number(n).toLocaleString('pt-BR');
+}
+
+function fmtUsd(v) { return '$' + v.toFixed(4); }
+function fmtBrl(v) { return 'R$' + (v).toFixed(2).replace('.',','); }
+
+function meterColor(pct) {
+  if (pct >= 85) return 'danger';
+  if (pct >= 60) return 'warn';
+  return 'ok';
+}
+
+function buildMeter(label, value, limit, formatVal, formatLimit) {
+  const pct  = limit > 0 ? Math.min(100, Math.round((value / limit) * 100)) : 0;
+  const cls  = meterColor(pct);
+  const fv   = formatVal   ? formatVal(value)  : fmtNum(value);
+  const fl   = formatLimit ? formatLimit(limit) : fmtNum(limit);
+  return `
+    <div class="meter-block">
+      <div class="meter-header">
+        <span class="meter-label">${label}</span>
+        <span class="meter-detail">${fv} / ${fl}</span>
+        <span class="meter-pct" style="color:var(--${cls === 'ok' ? 'success' : cls === 'warn' ? 'warn' : 'danger'})">${pct}%</span>
+      </div>
+      <div class="meter-track">
+        <div class="meter-fill ${cls}" style="width:${pct}%"></div>
+      </div>
+    </div>`;
+}
+
+function renderCustos() {
+  const content = document.getElementById('section-content');
+  document.getElementById('section-count').textContent = '';
+  const s = loadStats();
+  const lim = getLimits(s);
+
+  const today = new Date().toISOString().slice(0,10);
+  const month = today.slice(0,7);
+
+  const mData   = s?.monthly?.[month] || { sessions:0, input_tokens:0, output_tokens:0 };
+  const allIn   = s?.input_tokens  || 0;
+  const allOut  = s?.output_tokens || 0;
+  const allSess = s?.sessions      || 0;
+  const allCostUsd = calcCost(allIn, allOut, lim);
+  const mCostUsd   = calcCost(mData.input_tokens, mData.output_tokens, lim);
+
+  // Sort daily entries descending (last 30 days)
+  const dailyEntries = Object.entries(s?.daily || {})
+    .sort((a,b) => b[0].localeCompare(a[0]))
+    .slice(0, 30);
+
+  const dailyRows = dailyEntries.map(([date, d]) => {
+    const dc = calcCost(d.input_tokens, d.output_tokens, lim);
+    const [y,m2,dd] = date.split('-');
+    return `<tr>
+      <td>${dd}/${m2}/${y}</td>
+      <td>${fmtNum(d.sessions)}</td>
+      <td>${fmtNum(d.input_tokens)}</td>
+      <td>${fmtNum(d.output_tokens)}</td>
+      <td class="td-cost">${fmtBrl(dc * lim.usd_to_brl)}</td>
+      <td style="color:var(--muted)">${fmtUsd(dc)}</td>
+    </tr>`;
+  }).join('');
+
+  content.innerHTML = `
+    <div class="custos-wrap">
+      <div class="custos-model-tag">🤖 ${MODEL_NAME} &nbsp;·&nbsp; Preços: $${lim.price_input_mtok}/MTok entrada · $${lim.price_output_mtok}/MTok saída</div>
+
+      <div class="section-title-sm">📅 Mês atual — ${month}</div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="sc-label">Chamadas</div>
+          <div class="sc-value">${fmtNum(mData.sessions)}</div>
+          <div class="sc-sub">neste mês</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-label">Tokens entrada</div>
+          <div class="sc-value">${fmtNum(mData.input_tokens)}</div>
+          <div class="sc-sub">neste mês</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-label">Tokens saída</div>
+          <div class="sc-value">${fmtNum(mData.output_tokens)}</div>
+          <div class="sc-sub">neste mês</div>
+        </div>
+        <div class="stat-card highlight">
+          <div class="sc-label">Custo estimado</div>
+          <div class="sc-value">${fmtBrl(mCostUsd * lim.usd_to_brl)}</div>
+          <div class="sc-sub">${fmtUsd(mCostUsd)} USD</div>
+        </div>
+      </div>
+
+      ${buildMeter('Chamadas à API este mês',       mData.sessions,       lim.sessions_month,       fmtNum, fmtNum)}
+      ${buildMeter('Tokens de entrada este mês',    mData.input_tokens,   lim.input_tokens_month,   fmtNum, fmtNum)}
+      ${buildMeter('Tokens de saída este mês',      mData.output_tokens,  lim.output_tokens_month,  fmtNum, fmtNum)}
+      ${buildMeter('Orçamento mensal (USD)',         mCostUsd,             lim.budget_usd_month,     fmtUsd, fmtUsd)}
+
+      <div class="section-title-sm">📊 Acumulado total</div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="sc-label">Total de chamadas</div>
+          <div class="sc-value">${fmtNum(allSess)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-label">Tokens entrada total</div>
+          <div class="sc-value">${fmtNum(allIn)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-label">Tokens saída total</div>
+          <div class="sc-value">${fmtNum(allOut)}</div>
+        </div>
+        <div class="stat-card highlight">
+          <div class="sc-label">Custo total estimado</div>
+          <div class="sc-value">${fmtBrl(allCostUsd * lim.usd_to_brl)}</div>
+          <div class="sc-sub">${fmtUsd(allCostUsd)} USD</div>
+        </div>
+      </div>
+
+      <div class="section-title-sm">⚙️ Limites e Precificação</div>
+      <div class="limits-grid">
+        <div class="limit-row">
+          <label>Limite de chamadas/mês</label>
+          <input type="number" id="lim-sessions" value="${lim.sessions_month}" min="1">
+        </div>
+        <div class="limit-row">
+          <label>Limite tokens entrada/mês</label>
+          <input type="number" id="lim-in-tok" value="${lim.input_tokens_month}" min="1000">
+        </div>
+        <div class="limit-row">
+          <label>Limite tokens saída/mês</label>
+          <input type="number" id="lim-out-tok" value="${lim.output_tokens_month}" min="1000">
+        </div>
+        <div class="limit-row">
+          <label>Orçamento mensal (USD)</label>
+          <input type="number" id="lim-budget" value="${lim.budget_usd_month}" min="0" step="0.50">
+        </div>
+        <div class="limit-row">
+          <label>Preço entrada ($/MTok)</label>
+          <input type="number" id="lim-price-in" value="${lim.price_input_mtok}" min="0" step="0.01">
+        </div>
+        <div class="limit-row">
+          <label>Preço saída ($/MTok)</label>
+          <input type="number" id="lim-price-out" value="${lim.price_output_mtok}" min="0" step="0.01">
+        </div>
+        <div class="limit-row">
+          <label>Câmbio USD → BRL</label>
+          <input type="number" id="lim-cambio" value="${lim.usd_to_brl}" min="1" step="0.01">
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:14px">
+        <button class="btn-save-config" onclick="saveLimits()">Salvar limites</button>
+        <span id="lim-saved" style="color:var(--success);font-size:12px;display:none">✓ Salvo!</span>
+        <button class="btn-reset-stats" onclick="resetStats()">Zerar estatísticas</button>
+      </div>
+
+      <div class="section-title-sm">📅 Histórico diário (últimos 30 dias)</div>
+      ${dailyEntries.length === 0
+        ? '<p style="color:var(--muted);font-size:13px">Nenhum dado registrado ainda. As estatísticas são coletadas automaticamente a cada chamada ao Bodin Sugere.</p>'
+        : `<table class="history-table">
+            <thead><tr>
+              <th>Data</th><th>Chamadas</th><th>Tok. entrada</th><th>Tok. saída</th><th>Custo BRL</th><th>Custo USD</th>
+            </tr></thead>
+            <tbody>${dailyRows}</tbody>
+          </table>`
+      }
+    </div>`;
+}
+
+function saveLimits() {
+  const s = loadStats() || { sessions:0, input_tokens:0, output_tokens:0, daily:{}, monthly:{} };
+  s.limits = {
+    sessions_month:      parseInt(document.getElementById('lim-sessions').value)  || 500,
+    input_tokens_month:  parseInt(document.getElementById('lim-in-tok').value)    || 1000000,
+    output_tokens_month: parseInt(document.getElementById('lim-out-tok').value)   || 150000,
+    budget_usd_month:    parseFloat(document.getElementById('lim-budget').value)  || 10,
+    price_input_mtok:    parseFloat(document.getElementById('lim-price-in').value)|| 0.80,
+    price_output_mtok:   parseFloat(document.getElementById('lim-price-out').value)||4.00,
+    usd_to_brl:          parseFloat(document.getElementById('lim-cambio').value)  || 5.70,
+  };
+  try { localStorage.setItem(STATS_KEY, JSON.stringify(s)); } catch(e) {}
+  const el = document.getElementById('lim-saved');
+  el.style.display = 'inline';
+  setTimeout(() => { el.style.display = 'none'; renderCustos(); }, 1500);
+}
+
+function resetStats() {
+  if (!confirm('Zerar todas as estatísticas de uso da API? Esta ação não pode ser desfeita.')) return;
+  const s = loadStats() || {};
+  const limits = s.limits; // preserve limits
+  const fresh = { sessions:0, input_tokens:0, output_tokens:0, daily:{}, monthly:{} };
+  if (limits) fresh.limits = limits;
+  try { localStorage.setItem(STATS_KEY, JSON.stringify(fresh)); } catch(e) {}
+  toast('Estatísticas zeradas', 'ok');
+  renderCustos();
+}
+
+function renderConfig() {
+  const cfg = data.config || {};
+  const content = document.getElementById('section-content');
+  document.getElementById('section-count').textContent = '';
+
+  content.innerHTML = `
+    <div class="config-section">
+      <div class="config-card">
+        <h3>Happy Hour</h3>
+        <div class="config-row">
+          <label>Ativo</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="cfg-hh-active" ${cfg.happyHourActive ? 'checked' : ''}>
+            <span style="font-size:12px;color:var(--muted)">${cfg.happyHourActive ? 'Ligado' : 'Desligado'}</span>
+          </label>
+        </div>
+        <div class="config-row">
+          <label>Nome</label>
+          <input class="config-inp" type="text" id="cfg-hh-name" placeholder="Happy do Nô" value="${cfg.happyHourName || ''}">
+        </div>
+        <div class="config-row">
+          <label>Início (hora)</label>
+          <input class="config-inp" type="number" id="cfg-hh-start" min="0" max="23" value="${cfg.happyHourStart ?? 16}">
+        </div>
+        <div class="config-row">
+          <label>Fim (hora)</label>
+          <input class="config-inp" type="number" id="cfg-hh-end" min="0" max="23" value="${cfg.happyHourEnd ?? 19}">
+        </div>
+        <div class="config-row" style="flex-direction:column;align-items:flex-start;gap:8px">
+          <label>Dias da semana</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map((d,i)=>`
+              <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:12px">
+                <input type="checkbox" class="hh-day-cb" data-day="${i}" ${((cfg.happyHourDays||[1,2,3,4,5]).includes(i))?'checked':''}>
+                ${d}
+              </label>`).join('')}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;margin-top:8px">
+          <button class="btn-save-config" onclick="saveConfig()">Salvar</button>
+          <span class="config-saved" id="cfg-saved">✓ Salvo!</span>
+        </div>
+      </div>
+
+      <div class="config-card">
+        <h3>🔑 Alterar Senha</h3>
+        <div class="config-row">
+          <label>Senha atual</label>
+          <input class="config-inp" type="password" id="cfg-old-pwd">
+        </div>
+        <div class="config-row">
+          <label>Nova senha</label>
+          <input class="config-inp" type="password" id="cfg-new-pwd">
+        </div>
+        <div class="config-row">
+          <label>Confirmar nova senha</label>
+          <input class="config-inp" type="password" id="cfg-new-pwd2">
+        </div>
+        <button class="btn-save-config" onclick="changePass()">Alterar senha</button>
+      </div>
+
+      <div class="config-card">
+        <h3>🗄️ Dados</h3>
+        <p style="color:var(--muted);font-size:12px;margin-bottom:14px">Use os botões na barra lateral para exportar e importar o cardápio em JSON.</p>
+        <button class="btn-save-config" style="background:var(--danger)" onclick="resetData()">⚠️ Redefinir para o padrão</button>
+        <p style="color:var(--muted);font-size:11px;margin-top:8px">Remove os dados salvos e volta a usar os dados originais do sistema.</p>
+      </div>
+    </div>`;
+}
+
+// ─── MODAL ───────────────────────────────────────────────────────
+function openAddModal() {
+  editingIdx = null;
+  const cfg = SEC_CONFIG[currentSection];
+  document.getElementById('modal-title').textContent = '+ Novo Item';
+  clearForm();
+  document.getElementById('f-available').checked = true;
+  toggleWineFields(!!cfg.isWine);
+  togglePaxField(!!cfg.hasPax);
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('f-name').focus();
+}
+
+function openEditModal(idx) {
+  const items = getItems(currentSection, currentTab);
+  const item = items[idx];
+  if (!item) return;
+  editingIdx = { secKey: currentSection, subKey: currentTab, idx };
+
+  const cfg = SEC_CONFIG[currentSection];
+  document.getElementById('modal-title').textContent = `✏️ Editar: ${item.name}`;
+  clearForm();
+
+  document.getElementById('f-icon').value      = item.icon || '';
+  document.getElementById('f-name').value      = item.name || '';
+  document.getElementById('f-price').value     = item.price || '';
+  document.getElementById('f-desc-pt').value   = item.desc?.pt || '';
+  document.getElementById('f-desc-en').value   = item.desc?.en || '';
+  document.getElementById('f-desc-es').value   = item.desc?.es || '';
+  document.getElementById('f-available').checked = item.available !== false;
+  document.getElementById('f-champion').checked  = !!item.champion;
+  document.getElementById('f-isnew').checked     = !!item.isnew;
+
+  if (cfg.isWine) {
+    toggleWineFields(true);
+    document.getElementById('f-type').value      = item.type || 'tinto';
+    document.getElementById('f-sweetness').value = item.sweetness || 'seco';
+    document.getElementById('f-country').value   = item.country || '';
+    document.getElementById('f-grape').value     = item.grape || '';
+    ['bode','carne','peixe','frango'].forEach(p => {
+      document.getElementById('pair-'+p).checked = (item.pair||[]).includes(p);
+    });
+  } else {
+    toggleWineFields(false);
+  }
+
+  if (cfg.hasPax) {
+    togglePaxField(true);
+    document.getElementById('f-pax').value = item.pax || '';
+  } else {
+    togglePaxField(false);
+  }
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingIdx = null;
+}
+
+function clearForm() {
+  ['f-icon','f-name','f-price','f-desc-pt','f-desc-en','f-desc-es','f-country','f-grape'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('f-available').checked = true;
+  document.getElementById('f-champion').checked  = false;
+  document.getElementById('f-isnew').checked     = false;
+  ['bode','carne','peixe','frango'].forEach(p => { document.getElementById('pair-'+p).checked = false; });
+}
+
+function toggleWineFields(show) {
+  document.getElementById('wine-fields').style.display = show ? '' : 'none';
+}
+
+function togglePaxField(show) {
+  document.getElementById('pax-field').style.display = show ? 'flex' : 'none';
+}
+
+function saveItem() {
+  const name = document.getElementById('f-name').value.trim();
+  const price = parseInt(document.getElementById('f-price').value, 10);
+  if (!name) { toast('Nome é obrigatório', 'err'); return; }
+  if (isNaN(price)) { toast('Preço inválido', 'err'); return; }
+
+  const cfg = SEC_CONFIG[currentSection];
+  const item = {
+    name,
+    price,
+    icon:      document.getElementById('f-icon').value.trim() || '•',
+    desc: {
+      pt: document.getElementById('f-desc-pt').value.trim(),
+      en: document.getElementById('f-desc-en').value.trim(),
+      es: document.getElementById('f-desc-es').value.trim(),
+    },
+    available: document.getElementById('f-available').checked,
+    champion:  document.getElementById('f-champion').checked || undefined,
+    isnew:     document.getElementById('f-isnew').checked    || undefined,
+  };
+  if (!item.champion) delete item.champion;
+  if (!item.isnew)    delete item.isnew;
+
+  if (cfg.isWine) {
+    item.type      = document.getElementById('f-type').value;
+    item.sweetness = document.getElementById('f-sweetness').value;
+    item.country   = document.getElementById('f-country').value.trim();
+    item.grape     = document.getElementById('f-grape').value.trim();
+    item.pair      = ['bode','carne','peixe','frango'].filter(p => document.getElementById('pair-'+p).checked);
+  }
+  if (cfg.hasPax) {
+    const pax = document.getElementById('f-pax').value;
+    if (pax) item.pax = parseInt(pax, 10);
+  }
+
+  const items = getItems(currentSection, currentTab);
+  if (editingIdx !== null) {
+    items[editingIdx.idx] = item;
+    toast('Item atualizado ✓', 'ok');
+  } else {
+    items.push(item);
+    toast('Item adicionado ✓', 'ok');
+  }
+  setItems(currentSection, currentTab, items);
+  saveData();
+  closeModal();
+  renderSection();
+}
+
+// ─── ITEM OPERATIONS ─────────────────────────────────────────────
+function toggleAvail(idx) {
+  const items = getItems(currentSection, currentTab);
+  if (!items[idx]) return;
+  items[idx].available = items[idx].available === false ? true : false;
+  setItems(currentSection, currentTab, items);
+  saveData();
+  renderSection();
+}
+
+function deleteItem(idx) {
+  const items = getItems(currentSection, currentTab);
+  const name = items[idx]?.name || 'este item';
+  if (!confirm(`Excluir "${name}"? Esta ação não pode ser desfeita.`)) return;
+  items.splice(idx, 1);
+  setItems(currentSection, currentTab, items);
+  saveData();
+  toast('Item excluído', 'ok');
+  renderSection();
+}
+
+// ─── CONFIG ──────────────────────────────────────────────────────
+function saveConfig() {
+  if (!data) return;
+  if (!data.config) data.config = {};
+  data.config.happyHourActive = document.getElementById('cfg-hh-active').checked;
+  data.config.happyHourName   = document.getElementById('cfg-hh-name').value.trim() || 'Happy do Nô';
+  data.config.happyHourStart  = parseInt(document.getElementById('cfg-hh-start').value, 10);
+  data.config.happyHourEnd    = parseInt(document.getElementById('cfg-hh-end').value, 10);
+  const days = [];
+  document.querySelectorAll('.hh-day-cb:checked').forEach(cb => days.push(parseInt(cb.dataset.day)));
+  data.config.happyHourDays   = days;
+  saveData();
+  const saved = document.getElementById('cfg-saved');
+  saved.style.display = 'inline';
+  setTimeout(() => { saved.style.display = 'none'; }, 2000);
+}
+
+function changePass() {
+  const old  = document.getElementById('cfg-old-pwd').value;
+  const np1  = document.getElementById('cfg-new-pwd').value;
+  const np2  = document.getElementById('cfg-new-pwd2').value;
+  if (old !== getStoredPass()) { toast('Senha atual incorreta', 'err'); return; }
+  if (np1.length < 4)          { toast('Nova senha muito curta (mínimo 4 caracteres)', 'err'); return; }
+  if (np1 !== np2)             { toast('Senhas não conferem', 'err'); return; }
+  localStorage.setItem(PASS_KEY, np1);
+  toast('Senha alterada ✓', 'ok');
+  ['cfg-old-pwd','cfg-new-pwd','cfg-new-pwd2'].forEach(id => { document.getElementById(id).value = ''; });
+}
+
+function resetData() {
+  if (!confirm('Isso apagará todos os dados customizados e voltará ao cardápio padrão. Tem certeza?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  data = null;
+  toast('Dados redefinidos. Recarregue o Bodin Sugere para reinicializar.', 'ok');
+  renderConfig();
+}
+
+// ─── IMPORT / EXPORT ─────────────────────────────────────────────
+function exportData() {
+  if (!data) { toast('Sem dados para exportar', 'err'); return; }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `bodinho_menu_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Exportação concluída ✓', 'ok');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported.version) { toast('Arquivo inválido', 'err'); return; }
+      if (!confirm('Substituir os dados atuais pelo arquivo importado?')) return;
+      data = imported;
+      saveData();
+      goTo(currentSection);
+      toast('Importação concluída ✓', 'ok');
+    } catch(err) {
+      toast('Erro ao ler o arquivo JSON', 'err');
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ─── UTIL ────────────────────────────────────────────────────────
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let toastTimer;
+function toast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show toast-${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 2800);
+}
+
+// ─── INIT ────────────────────────────────────────────────────────
+document.getElementById('login-pwd').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+</script>
+</body>
+</html>
