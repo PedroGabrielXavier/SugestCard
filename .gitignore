@@ -8,3 +8,23 @@ api_key.txt
 __pycache__/
 *.pyc
 *.pyo
+
+# Claude Code / ferramentas locais
+.claude/
+.playwright-mcp/
+
+# Scripts temporarios de processamento de imagem
+remove_bg.py
+remove_bg_all.py
+remove_bg_logo.py
+
+# Screenshots e rascunhos
+welcome-screen.png
+welcome-after.png
+protein-screen.png
+
+# Arquivos de origem e rascunhos de imagem
+SRNO-removebg-preview.png
+logo_no_bg.png
+logo_sugere.png
+bodedonologo.svg
