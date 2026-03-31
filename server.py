@@ -44,6 +44,8 @@ class Handler(BaseHTTPRequestHandler):
         path = self.path.split('?')[0]
         if path in ('/', ''):
             path = '/index.html'
+        elif path == '/admin':
+            path = '/admin.html'
         filepath = os.path.join(BASE_DIR, path.lstrip('/').replace('/', os.sep))
         if os.path.isfile(filepath):
             mime = mimetypes.guess_type(filepath)[0] or 'text/plain'
