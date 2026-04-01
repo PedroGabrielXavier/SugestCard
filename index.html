@@ -558,6 +558,19 @@
   </div>
 
 
+
+  <!-- GARCOM CODE MODAL -->
+  <div id="garcom-overlay" onclick="if(event.target===this)closeGarcomModal()">
+    <div id="garcom-box">
+      <div class="garcom-title" id="garcom-title">Código do Garçom</div>
+      <div class="garcom-sub" id="garcom-sub">Digite o código fornecido pelo seu garçom para liberar seu benefício.</div>
+      <input id="garcom-input" type="text" maxlength="12" placeholder="_ _ _ _ _ _" oninput="garcomInputChange()" autocomplete="off" autocorrect="off" spellcheck="false" />
+      <button class="garcom-send-btn" id="garcom-send-btn" onclick="submitGarcomCode()" disabled>Verificar Código</button>
+      <div class="garcom-msg" id="garcom-msg"></div>
+      <button class="garcom-cancel-btn" onclick="closeGarcomModal()">Cancelar</button>
+    </div>
+  </div>
+
   <!-- SCREEN AUTH -->
   <div class="screen active" id="screen-auth">
     <div class="logo-wrap" style="margin-top:8px;margin-bottom:20px">
@@ -804,6 +817,7 @@
       <div class="suggest-section-label" id="label-other-options"></div>
       <div id="result-other-dishes"></div>
     </div>
+    <button class="btn-garcom" onclick="openGarcomModal()" id="btn-garcom">&#x1F3AB; Insira o código do Garçom</button>
     <button class="btn-primary" id="btn-restart" onclick="resetApp()"></button>
     <button class="btn-secondary" id="btn-result-back" onclick="resetApp()" style="margin-top:8px"></button>
 
@@ -1934,6 +1948,7 @@ function applyTranslations() {
   s('label-main-dish', L.labelMainDish); s('label-starter', L.labelStarter); s('label-drink', L.labelDrink);
   s('btn-restart', L.btnRestart);
   s('btn-result-back', L.btnBack);
+  if(document.getElementById('btn-garcom')) { var bg=document.getElementById('btn-garcom'); bg.innerHTML='&#x1F3AB; '+({pt:'Insira o código do Garçom',en:'Enter the Waiter Code',es:'Ingresa el código del Mesero'}[state.lang]||'Insira o código do Garçom'); }
   s('btn-chat-back', L.btnBack);
   s('rating-question', L.ratingQuestion);
   s('rating-send-btn', L.ratingSendBtn);
@@ -2188,6 +2203,7 @@ function buildSuggestion() {
 
   document.querySelectorAll("#screen-result .card").forEach(function(c){c.style.display="";});
   document.getElementById("btn-result-back").style.display = "";
+  document.getElementById("btn-garcom").style.display = "";
   goTo("screen-result");
   document.getElementById("reasoning-box").innerHTML=typeof mdToHtml==="function"?mdToHtml(reasoning):reasoning;
   document.getElementById("result-context-line").textContent=temp!==null?L.resultContextWeather(temp):L.resultContextDefault;
@@ -2624,6 +2640,57 @@ function showInfoOverlay(msg) {
   box.appendChild(btn);
   ov.appendChild(box);
   document.body.appendChild(ov);
+}
+
+
+
+// ── CÓDIGO DO GARÇOM ──────────────────────────────────────────────
+function openGarcomModal() {
+  const ov = document.getElementById('garcom-overlay');
+  const inp = document.getElementById('garcom-input');
+  const msg = document.getElementById('garcom-msg');
+  const btn = document.getElementById('garcom-send-btn');
+  inp.value = '';
+  msg.textContent = '';
+  msg.className = 'garcom-msg';
+  btn.disabled = true;
+  ov.classList.add('open');
+  setTimeout(function(){ inp.focus(); }, 100);
+}
+
+function closeGarcomModal() {
+  document.getElementById('garcom-overlay').classList.remove('open');
+}
+
+function garcomInputChange() {
+  const v = document.getElementById('garcom-input').value.trim();
+  document.getElementById('garcom-send-btn').disabled = v.length < 3;
+  document.getElementById('garcom-msg').textContent = '';
+}
+
+function submitGarcomCode() {
+  const code = document.getElementById('garcom-input').value.trim().toUpperCase();
+  if (!code || code.length < 3) return;
+  const btn = document.getElementById('garcom-send-btn');
+  const msg = document.getElementById('garcom-msg');
+  btn.disabled = true;
+  msg.className = 'garcom-msg analyzing';
+  msg.textContent = 'Analisando o código...';
+  // Save the attempt for later use
+  try {
+    const key = 'bodinho_garcom_v1';
+    const entries = JSON.parse(localStorage.getItem(key) || '[]');
+    entries.push({ code: code, ts: new Date().toISOString(), status: 'pending' });
+    localStorage.setItem(key, JSON.stringify(entries));
+  } catch(e) {}
+  // Simulate analysis then show confirmation
+  setTimeout(function() {
+    msg.className = 'garcom-msg';
+    msg.textContent = 'Código recebido! Em breve seu benefício será liberado. ';
+    btn.textContent = 'OK';
+    btn.disabled = false;
+    btn.onclick = function() { closeGarcomModal(); };
+  }, 1800);
 }
 
 
