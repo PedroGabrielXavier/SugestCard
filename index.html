@@ -2241,7 +2241,7 @@ function resetApp() {
   document.getElementById('btn-style-next').disabled   = true;
   document.getElementById('btn-drink-next').disabled   = true;
   document.getElementById('drink-types').style.display = 'none';
-  clearChatState();
+  state.happyMode = false; state.surpriseMode = false; state._mixPct = undefined;
   cart.length = 0; updateCartBar();
   goTo('screen-welcome');
 }
