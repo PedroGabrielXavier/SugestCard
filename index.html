@@ -2185,6 +2185,8 @@ function buildSuggestion() {
   var paxKey=state.pax>=3?3:(state.pax||2);
   var reasoning=buildMessage(protein||"bode",win,paxKey,firstDish,state.happyMode);
 
+  document.querySelectorAll("#screen-result .card").forEach(function(c){c.style.display="";});
+  document.getElementById("btn-result-back").style.display = "";
   goTo("screen-result");
   document.getElementById("reasoning-box").innerHTML=typeof mdToHtml==="function"?mdToHtml(reasoning):reasoning;
   document.getElementById("result-context-line").textContent=temp!==null?L.resultContextWeather(temp):L.resultContextDefault;
@@ -2588,8 +2590,16 @@ function happyDoNoMode() {
   const cfg = getStoredConfig();
 
   if (!cfg.happyHourActive) {
-    const unavail = { pt:'O Happy do Nô ainda não está disponível.', en:'Happy do Nô is not available.', es:'Happy do Nô no está disponible.' };
-    showInfoOverlay(unavail[state.lang] || unavail.pt);
+    const L = T[state.lang];
+    const msg = { pt:'O Happy do Nô ainda não está disponível. Fique de olho — em breve teremos promoções especiais!', en:'Happy do Nô is not available yet. Stay tuned for special promotions!', es:'Happy do Nô no está disponible aún. Pronto tendremos promociones especiales!' };
+    goTo('screen-result');
+    document.getElementById('reasoning-box').innerHTML = msg[state.lang] || msg.pt;
+    document.getElementById('result-title').textContent = '&#127866; Happy do Nô';
+    document.getElementById('result-context-line').textContent = '';
+    document.querySelectorAll('#screen-result .card').forEach(function(c){ c.style.display='none'; });
+    document.getElementById('rating-widget').style.display = 'none';
+    s('btn-restart', L.btnBack || '← Voltar');
+    document.getElementById('btn-result-back').style.display = 'none';
     return;
   }
 
