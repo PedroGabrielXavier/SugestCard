@@ -2930,14 +2930,6 @@ function happyDoNoMode() {
     document.getElementById('chat-log').innerHTML = '';
     goTo('screen-chat');
     addBotBubble(unavail[state.lang] || unavail.pt);
-    const backLabel = {pt:'← Voltar',en:'← Back',es:'← Volver'}[state.lang] || '← Voltar';
-    const opts = document.getElementById('chat-opts');
-    opts.innerHTML = '';
-    const btn = document.createElement('button');
-    btn.className = 'chat-opt-btn';
-    btn.textContent = backLabel;
-    btn.onclick = () => { opts.innerHTML = ''; resetApp(); };
-    opts.appendChild(btn);
     return;
   }
 
