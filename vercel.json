@@ -1,7 +1,19 @@
 {
-  "rewrites": [
-    { "source": "/api/claude", "destination": "/api/claude" },
-    { "source": "/admin",      "destination": "/admin.html" },
-    { "source": "/(.*)",       "destination": "/index.html" }
+  "routes": [
+    {
+      "src": "/api/claude",
+      "dest": "/api/claude"
+    },
+    {
+      "src": "/admin",
+      "dest": "/admin.html"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
   ]
 }
