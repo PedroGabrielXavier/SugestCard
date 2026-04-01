@@ -1123,7 +1123,7 @@ const T = {
     peixeLabel:'Fish / Seafood', peixeDesc:'Salmon, shrimp, octopus...',
     frangoLabel:'Chicken', frangoDesc:'Grilled, roasted, parmigiana...',
     btnNext:'Next →', btnBack:'← Back',
-    titlePax:'How many are eating today? 🐐', hintPax:'This helps us suggest the right portion for you',
+    titlePax:'How many "bodinhos" are here? 🐐', hintPax:'This helps us suggest the right portion for you',
     pax1Label:'Just me', pax1Desc:'Executive plate, single portion',
     pax2Label:"We're two", pax2Desc:'One dish each',
     pax3Label:'We\'re three', pax3Desc:'Dishes to share and graze',
@@ -2602,11 +2602,15 @@ function happyDoNoMode() {
 function showInfoOverlay(msg) {
   var ov = document.createElement('div');
   ov.className = 'info-overlay';
-  ov.innerHTML = '<div class="info-overlay-box">'
-    + '<div class="info-overlay-icon">&#x1F37A;</div>'
-    + '<div class="info-overlay-msg">' + msg + '</div>'
-    + '<button class="info-overlay-btn" onclick="this.closest('.info-overlay').remove()">OK</button>'
-    + '</div>';
+  var box = document.createElement('div');
+  box.className = 'info-overlay-box';
+  box.innerHTML = '<div class="info-overlay-icon">&#x1F37A;</div><div class="info-overlay-msg">' + msg + '</div>';
+  var btn = document.createElement('button');
+  btn.className = 'info-overlay-btn';
+  btn.textContent = 'OK';
+  btn.onclick = function() { ov.remove(); };
+  box.appendChild(btn);
+  ov.appendChild(box);
   document.body.appendChild(ov);
 }
 
