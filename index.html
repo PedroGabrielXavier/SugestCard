@@ -2687,28 +2687,65 @@ function garcomInputChange() {
 }
 
 function submitGarcomCode() {
-  const code = document.getElementById('garcom-input').value.trim().toUpperCase();
+  var code = document.getElementById('garcom-input').value.trim().toUpperCase();
   if (!code || code.length < 3) return;
-  const btn = document.getElementById('garcom-send-btn');
-  const msg = document.getElementById('garcom-msg');
+  var btn = document.getElementById('garcom-send-btn');
+  var msg = document.getElementById('garcom-msg');
   btn.disabled = true;
   msg.className = 'garcom-msg analyzing';
   msg.textContent = 'Analisando o código...';
-  // Save the attempt for later use
-  try {
-    const key = 'bodinho_garcom_v1';
-    const entries = JSON.parse(localStorage.getItem(key) || '[]');
-    entries.push({ code: code, ts: new Date().toISOString(), status: 'pending' });
-    localStorage.setItem(key, JSON.stringify(entries));
-  } catch(e) {}
-  // Simulate analysis then show confirmation
+
   setTimeout(function() {
+    var cfg = getStoredConfig();
+    var cupons = cfg.cupons || [];
+    var match = null;
+    for (var i = 0; i < cupons.length; i++) {
+      if (cupons[i].active && cupons[i].code === code) { match = cupons[i]; break; }
+    }
+
+    if (!match) {
+      msg.className = 'garcom-msg analyzing';
+      msg.textContent = 'Código inválido ou inativo. Confira com seu garçom.';
+      btn.disabled = false;
+      return;
+    }
+
+    // Increment uses
+    try {
+      var raw = localStorage.getItem('bodinho_menu_v1');
+      if (raw) {
+        var store = JSON.parse(raw);
+        if (store.config && store.config.cupons) {
+          for (var j = 0; j < store.config.cupons.length; j++) {
+            if (store.config.cupons[j].id === match.id) {
+              store.config.cupons[j].uses = (store.config.cupons[j].uses || 0) + 1;
+            }
+          }
+          localStorage.setItem('bodinho_menu_v1', JSON.stringify(store));
+        }
+      }
+    } catch(e) {}
+
+    // Save to user coupon wallet
+    try {
+      var wallet = JSON.parse(localStorage.getItem('bodinho_cupons_v1') || '[]');
+      wallet.push({
+        id: match.id, code: match.code, label: match.label,
+        discount: match.discount, discountType: match.discountType,
+        icon: match.icon || '🎫',
+        redeemedAt: new Date().toISOString(), used: false
+      });
+      localStorage.setItem('bodinho_cupons_v1', JSON.stringify(wallet));
+    } catch(e) {}
+
+    var discStr = (match.discountType === 'real' ? 'R$ ' : '') + match.discount + (match.discountType === 'percent' ? '%' : '');
     msg.className = 'garcom-msg';
-    msg.textContent = 'Código recebido! Em breve seu benefício será liberado. ';
-    btn.textContent = 'OK';
+    msg.textContent = 'Cupom válido! ' + discStr + ' de desconto liberado na sua conta.';
+    btn.textContent = 'OK!';
+    btn.style.background = 'var(--verde)';
     btn.disabled = false;
     btn.onclick = function() { closeGarcomModal(); };
-  }, 1800);
+  }, 1500);
 }
 
 
