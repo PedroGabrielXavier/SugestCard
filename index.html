@@ -2563,6 +2563,27 @@ async function callClaude(userMessage) {
   return JSON.parse(jsonStr);
 }
 
+// ─── SALVAR RECOMENDAÇÕES ─────────────────────────────────────────
+const SUGGESTIONS_KEY = 'bodinho_suggestions_v1';
+
+function saveRecommendation(mode, inputs, output) {
+  try {
+    const raw  = localStorage.getItem(SUGGESTIONS_KEY);
+    const store = raw ? JSON.parse(raw) : { version: 1, recommendations: [] };
+    store.recommendations.push({
+      ts:      new Date().toISOString(),
+      mode:    mode,
+      inputs:  inputs,
+      output:  output,
+    });
+    // Limita a 500 entradas para nao estourar localStorage
+    if (store.recommendations.length > 500) {
+      store.recommendations = store.recommendations.slice(-500);
+    }
+    localStorage.setItem(SUGGESTIONS_KEY, JSON.stringify(store));
+  } catch(e) { console.warn('[saveRecommendation] erro:', e); }
+}
+
 function trackApiUsage(usage) {
   if (!usage) return;
   try {
@@ -2836,6 +2857,25 @@ function handleRecommendation(data) {
   };
   document.getElementById('rating-widget').style.display = 'none';
   setTimeout(() => showRatingWidget(ratingCtx), 2000);
+
+  saveRecommendation(ratingCtx.mode, {
+    protein:   data.category  || null,
+    pax:       data.pax       || null,
+    style:     state.isRegional === true ? 'regional' : state.isRegional === false ? 'intl' : null,
+    drink:     state.drink    || null,
+    hour:      state.hour,
+    temp:      state.temp,
+    isRaining: state.isRaining,
+    lang:      state.lang,
+    unit:      state.unitKey  || 'boaviagem',
+  }, {
+    category: data.category || null,
+    pax:      data.pax      || null,
+    dishes:   data.dishes   || [],
+    starter:  data.starter  || null,
+    drinks:   data.drinks   || [],
+    message:  data.message  || '',
+  });
 
   goTo('screen-result');
 }
