@@ -534,6 +534,22 @@
     .menu-item.checked .menu-item-check span { opacity: 1; }
     
     .menu-item-body { flex: 1; min-width: 0; }
+
+    /* Garcom Code */
+    .btn-garcom { background: var(--verde); color: #fff; border: none; border-radius: 999px; padding: clamp(12px,3.1vw,14px) clamp(20px,5.1vw,28px); font-size: clamp(13px,3.3vw,14px); font-weight: 700; cursor: pointer; width: 100%; max-width: min(420px,calc(100vw - 32px)); margin-top: 12px; font-family: 'Brother1816',sans-serif; transition: opacity .2s,transform .15s; -webkit-tap-highlight-color: transparent; animation: fadeUp .4s .5s both; }
+    .btn-garcom:active { transform: scale(.97); opacity: .88; }
+    #garcom-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 500; align-items: center; justify-content: center; }
+    #garcom-overlay.open { display: flex; }
+    #garcom-box { background: var(--creme); border-radius: 20px; padding: 28px 24px; width: min(340px,90vw); text-align: center; animation: popIn .25s cubic-bezier(.22,.68,0,1.3) both; }
+    .garcom-title { font-family: 'Rumplakat','Brother1816',sans-serif; font-size: 16px; color: var(--marrom); font-feature-settings: 'calt' 0,'liga' 0; margin-bottom: 6px; }
+    .garcom-sub { font-size: 12px; color: var(--muted); margin-bottom: 18px; font-family: 'Brother1816',sans-serif; line-height: 1.5; }
+    #garcom-input { width: 100%; background: #fff; border: 2px solid var(--off); border-radius: 12px; padding: 12px 16px; font-size: 22px; font-weight: 700; text-align: center; letter-spacing: 6px; text-transform: uppercase; color: var(--marrom); font-family: 'Brother1816',sans-serif; outline: none; transition: border-color .2s; box-sizing: border-box; }
+    #garcom-input:focus { border-color: var(--verde); }
+    .garcom-send-btn { background: var(--verde); color: #fff; border: none; border-radius: 999px; padding: 13px 32px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 14px; font-family: 'Brother1816',sans-serif; transition: opacity .2s; }
+    .garcom-send-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .garcom-cancel-btn { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; margin-top: 10px; font-family: 'Brother1816',sans-serif; display: block; width: 100%; }
+    .garcom-msg { font-size: 13px; color: var(--verde); font-weight: 600; margin-top: 12px; min-height: 18px; font-family: 'Brother1816',sans-serif; }
+    .garcom-msg.analyzing { color: var(--laranja); }
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -959,6 +975,7 @@
         <div class="petisco-result" id="petisco-result-items" style="display:none"></div>
       </div>
     </div>
+    <button class="btn-garcom" onclick="openGarcomModal()" id="btn-garcom-wine">&#x1F3AB; Insira o código do Garçom</button>
     <button class="btn-primary" id="btn-wine-restart" onclick="resetWineFlow()"></button>
   </div>
 
@@ -2617,6 +2634,7 @@ function happyDoNoMode() {
     document.getElementById('rating-widget').style.display = 'none';
     s('btn-restart', L.btnBack || '← Voltar');
     document.getElementById('btn-result-back').style.display = 'none';
+    document.getElementById('btn-garcom').style.display = 'none';
     return;
   }
 
