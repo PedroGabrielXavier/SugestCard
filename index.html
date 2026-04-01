@@ -343,7 +343,6 @@
     .petisco-result { margin-top:12px; }
 
     /* ── Chat screen ───────────────────────────── */
-    #screen-chat { padding:0 0 32px; align-items:stretch; }
     .chat-header { display:flex; align-items:center; gap:12px; padding:14px 20px; background:rgba(0,0,0,.35); backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.1); position:sticky; top:0; z-index:10; width:100%; }
     .chat-header-avatar { font-size:28px; }
     .chat-header-info { flex:1; }
@@ -997,21 +996,6 @@
   </div>
 
   <!-- SCREEN CHAT — Conversa com Bodinho IA -->
-  <div class="screen" id="screen-chat">
-    <div class="chat-header">
-      <div class="chat-header-avatar">🐐</div>
-      <div class="chat-header-info">
-        <div class="chat-header-name">BODINHO</div>
-        <div class="chat-header-status" id="chat-status">Online</div>
-      </div>
-    </div>
-    <div class="chat-body">
-      <div class="chat-log" id="chat-log"></div>
-      <div class="chat-opts" id="chat-opts"></div>
-      <button class="btn-secondary chat-back-btn" style="margin-top:12px" onclick="resetChat()" id="btn-chat-back"></button>
-    </div>
-  </div>
-
 </div>
 <script>
 /* ── TRANSLATIONS ─────────────────────────────── */
@@ -1032,12 +1016,12 @@ const T = {
     footerWelcome: 'Sugestões do cardápio atual · Preços em reais (R$).',
     titleProtein: 'Qual proteína você tá afim hoje?',
     hintProtein:  'Conta pro Bodinho o que você tá com vontade de comer',
-    bodeLabel:'Bode', bodeDesc:'Especialidade da casa!',
-    carneLabel:'Carne Vermelha', carneDesc:'Picanha, filé, maminha...',
-    peixeLabel:'Peixe / Frutos do Mar', peixeDesc:'Salmão, camarão, polvo...',
-    frangoLabel:'Frango', frangoDesc:'Grelhado, galeto, parmegiana...',
+    bodeLabel:'Bode',
+    carneLabel:'Carne Vermelha',
+    peixeLabel:'Peixe / Frutos do Mar',
+    frangoLabel:'Frango',
     btnNext:'Próximo →', btnBack:'← Voltar',
-    titlePax:'Pra quantos bodes vai comer? 🐐', hintPax:'Assim a gente acerta na porção certa pra você',
+    titlePax:'Quantos bodinhos vieram? 🐐', hintPax:'Assim a gente acerta na porção certa pra você',
     pax1Label:'Só eu mesmo', pax1Desc:'Prato executivo, porção individual',
     pax2Label:'Somos dois', pax2Desc:'Um prato cada um',
     pax3Label:'Viemos em trio', pax3Desc:'Pratos pra dividir e peticar',
@@ -2214,8 +2198,7 @@ function buildSuggestion() {
   document.getElementById("result-drinks").innerHTML=pickedDrinks.map(function(d){return renderItem(d,false);}).join("");
   document.getElementById("card-other-options").style.display="none";
   var fr=document.getElementById("footer-result");
-  if(fr)fr.innerHTML=L.footerResult.replace("
-","<br><strong style=\"color:rgba(255,255,255,.5)\">")+"</strong>";
+  if(fr)fr.innerHTML=L.footerResult.replace("\n","<br><strong style=\"color:rgba(255,255,255,.5)\">")+"</strong>";
   var mode2=state.happyMode?"happyhour":state.surpriseMode?"surprise":"chat";
   saveRecommendation(mode2,{protein:protein,pax:state.pax,style:isRegional===true?"regional":"intl",drink:drink,hour:hour,temp:temp,isRaining:isRaining,lang:state.lang,unit:state.unitKey},{category:protein,pax:state.pax,dishes:picked.map(function(d){return d.name;}),starter:starter?starter.name:null,drinks:pickedDrinks.map(function(d){return d.name;}),message:reasoning});
   var ratingCtx2={mode:mode2,protein:protein,pax:state.pax};
@@ -2365,9 +2348,6 @@ function resetWineFlow() {
 }
 
 /* ── CLAUDE CHAT ──────────────────────────────── */
-const CLAUDE_API_ENDPOINT = '/api/claude';
-const CLAUDE_MODEL        = 'claude-haiku-4-5-20251001';
-let chatHistory = [];
 
 function shuffle(arr) {
   const a = [...arr];
@@ -2422,252 +2402,6 @@ const HAPPY_HOUR_MENU = `=== HAPPY HOUR — Todos os dias das 16h às 19h ===
   • Johnnie Walker Red (dose) | R$9
   • Old Parr 12 Anos (dose) | R$12`;
 
-function buildMenuContext() {
-  const lang = state.lang;
-  const lines = [];
-
-  lines.push('=== CARDÁPIO — PRATOS PRINCIPAIS ===');
-  for (const [cat, items] of Object.entries(MENU)) {
-    const catName = { bode:'Bode', carne:'Carne Vermelha', peixe:'Peixe/Frutos do Mar', frango:'Frango' }[cat];
-    lines.push(`\n[${catName}]`);
-    // Shuffle para variar sugestões a cada conversa
-    const shuffled = [...items].sort(() => Math.random() - 0.5);
-    for (const d of shuffled) {
-      const tags = [];
-      if (d.regional) tags.push('regional/nordestino');
-      if (/executivo/i.test(d.desc?.pt || '')) tags.push('executivo-individual');
-      if (d.price >= 150 || /mistão|pescaria|galeto/i.test(d.name)) tags.push('grande/pra-compartilhar');
-      if (d.champion) tags.push('campeão-de-vendas');
-      if (d.isnew) tags.push('novo');
-      const desc = d.desc[lang] || d.desc.pt;
-      lines.push(`  • ${d.name} | R$${d.price}${tags.length ? ' ['+tags.join(',')+']' : ''} | ${desc}`);
-    }
-  }
-
-  lines.push('\n=== ENTRADAS ===');
-  for (const [cat, items] of Object.entries(STARTERS)) {
-    const catName = { bode:'Bode', carne:'Carne', peixe:'Peixe/Frutos do Mar', frango:'Frango/Geral' }[cat];
-    lines.push(`[${catName}]`);
-    for (const d of items) {
-      const desc = d.desc[lang] || d.desc.pt;
-      lines.push(`  • ${d.name} | R$${d.price}${d.champion ? ' [campeão]' : ''}${d.isnew ? ' [novo]' : ''} | ${desc}`);
-    }
-  }
-
-  lines.push('\n=== CALDOS ===');
-  for (const d of CALDOS) {
-    lines.push(`  • ${d.name} | R$${d.price}`);
-  }
-
-  lines.push('\n=== PETISCOS ===');
-  lines.push('[Invenções do Matuto]');
-  for (const d of PETISCOS.matuto) {
-    lines.push(`  • ${d.name} | R$${d.price}${d.champion ? ' [campeão]' : ''}${d.isnew ? ' [novo]' : ''} | ${d.desc[lang] || d.desc.pt}`);
-  }
-  lines.push('[Petiscos na Chapa]');
-  for (const d of PETISCOS.chapa) {
-    lines.push(`  • ${d.name} | R$${d.price}${d.champion ? ' [campeão]' : ''} | ${d.desc[lang] || d.desc.pt}`);
-  }
-
-  lines.push('\n=== PARA OS BODINHOS (crianças) ===');
-  for (const d of BODINHOS) {
-    lines.push(`  • ${d.name} | R$${d.price} | ${d.desc[lang] || d.desc.pt}`);
-  }
-
-  lines.push('\n=== BEBIDAS ===');
-  const drinkCats = { chopp:'Chopp', cerveja:'Cervejas', drink:'Drinks Especiais', whisky:'Whisky', cachaca:'Cachaça', semAlcool:'Sem Álcool', gin:'Gin/Refrescantes' };
-  for (const [cat, items] of Object.entries(DRINKS)) {
-    lines.push(`[${drinkCats[cat] || cat}]`);
-    for (const d of items) {
-      const desc = d.desc[lang] || d.desc.pt;
-      lines.push(`  • ${d.name} | R$${d.price}${d.isnew ? ' [novo]' : ''} | ${desc}`);
-    }
-  }
-
-  lines.push('\n=== CARTA DE VINHOS ===');
-  const wineTypeNames = { tinto:'Tinto', branco:'Branco', rose:'Rosé', espumante:'Espumante', verde:'Vinho Verde' };
-  const wByType = {};
-  for (const w of getActiveWines()) { if (!wByType[w.type]) wByType[w.type] = []; wByType[w.type].push(w); }
-  for (const [type, wines] of Object.entries(wByType)) {
-    lines.push(`[${wineTypeNames[type] || type}]`);
-    for (const w of wines) {
-      lines.push(`  • ${w.name} | R$${w.price} | ${w.country} · ${w.grape} | harmoniza: ${w.pair.join('/')}`);
-    }
-  }
-
-  if (state.unit && state.unit.hasPizza) {
-    lines.push('\n=== PIZZA (@ITALIANOPIZZE) ===');
-    lines.push('[Tradicionais 37cm] Margherita R$67 | Mussarela R$69 | Calabresa R$69 | Frango Catupiry R$69 | Portuguesa R$69 | Nordestina R$69 | Pepperoni R$74 | Caprese R$79 | 4 Queijos R$79 | Variedade R$79 | Camarão Catupiry R$82');
-    lines.push('[Especiais 37cm] Bode do Nô R$64 | Carne de Sol R$69 | Calzone R$69 | Bode Especial R$69 | Marguerita Gourmet R$74 | Pepperoni Gourmet R$79 | Barbecue R$79 | Nordestina R$69');
-    lines.push('[Individuais 25cm] Mussarela R$46 | Frango Catupiry R$49 | 4 Queijos R$49 | Portuguesa R$49 | Pepperoni R$49 | Calabresa R$52 | Barbecue R$55 | Nordestina R$55 | Carne de Sol R$55 | Camarão Catupiry R$55');
-    lines.push('[Doces 25cm] Cartola R$45 | Delícia ao Doce de Leite R$45 | Calzone de Nutella R$50 | Brownie R$50');
-  }
-
-  // Inclui happy hour se estiver no horário
-  const h = state.hour;
-  if (h >= 16 && h < 19) lines.push('\n' + HAPPY_HOUR_MENU);
-
-  return lines.join('\n');
-}
-
-function buildSystemPrompt() {
-  const lang = state.lang || 'pt';
-  const langFull = { pt:'Portuguese (Brazilian, informal, warm nordestino style)', en:'English (friendly, casual)', es:'Spanish (friendly, informal)' }[lang] || 'Portuguese';
-
-  // Translated option labels for each step
-  const O = {
-    pt: {
-      protein:  ['🐐 Bode', '🥩 Carne', '🐟 Peixe/Frutos do Mar', '🍗 Frango'],
-      buchada:  ['Quero a Buchada da Dona Maria! 🤤', 'Prefiro outro corte 🐐'],
-      pax:      ['Só eu 🐐', 'Somos 2 🐐🐐', 'Somos 3 ou mais', '🎉 Evento / Grupo grande'],
-      kids:     ['Não, só adultos', 'Sim, tem criança!'],
-      drink:    ['🍺 Chopp/Cerveja', '🍹 Drink/Caipirinha', '🍷 Vinho', '🌿 Cachaça', '🥤 Sem álcool'],
-    },
-    en: {
-      protein:  ['🐐 Goat', '🥩 Red Meat', '🐟 Fish/Seafood', '🍗 Chicken'],
-      buchada:  ["I want Dona Maria's Buchada! 🤤", 'I prefer another goat cut 🐐'],
-      pax:      ['Just me 🐐', 'We are 2 🐐🐐', 'We are 3 or more', '🎉 Event / Large group'],
-      kids:     ['No, adults only', 'Yes, kids at the table!'],
-      drink:    ['🍺 Draft Beer', '🍹 Cocktail', '🍷 Wine', '🌿 Cachaça', '🥤 Non-alcoholic'],
-    },
-    es: {
-      protein:  ['🐐 Cabro', '🥩 Carne Roja', '🐟 Pescado/Mariscos', '🍗 Pollo'],
-      buchada:  ['¡Quiero la Buchada de Doña Maria! 🤤', 'Prefiero otro corte 🐐'],
-      pax:      ['Solo yo 🐐', 'Somos 2 🐐🐐', 'Somos 3 o más', '🎉 Evento / Grupo grande'],
-      kids:     ['No, solo adultos', '¡Sí, hay niños!'],
-      drink:    ['🍺 Cerveza', '🍹 Cóctel/Caipirinha', '🍷 Vino', '🌿 Cachaça', '🥤 Sin alcohol'],
-    },
-  }[lang] || {};
-
-  const fmtOpts = (arr) => arr.map(o => `"${o}"`).join(', ');
-
-  const h = state.hour;
-  const isHappyHour = h >= 16 && h < 19;
-  const isLunch     = h >= 11 && h < 15;
-  const isDinner    = h >= 19;
-  const isMorning   = h < 11;
-
-  let timeCtx = '';
-  if (isHappyHour) timeCtx = `⚡ HAPPY HOUR active now (16h–19h)! Prioritize recommending happy-hour snacks and drinks — most popular at this time. Mention it proactively.`;
-  else if (isLunch) timeCtx = `🌞 Lunch time (${h}h). Prioritize executive/individual dishes and combos. Customers are usually short on time.`;
-  else if (isDinner) timeCtx = `🌙 Dinner (${h}h). Suggest more elaborate dishes, wine pairings, and starters. Evening is time to enjoy.`;
-  else if (isMorning) timeCtx = `☀️ Morning (${h}h). Restaurant opening. Be welcoming.`;
-  else timeCtx = `🕑 Afternoon (${h}h). Quieter time, good for special dishes.`;
-
-  const weatherCtx = state.temp !== null
-    ? `Temperature in Recife: ${state.temp}°C.${state.isRaining ? ' It is raining — suggest warm, comforting dishes!' : state.temp <= 22 ? ' Cool weather — great for red wine and warm dishes.' : state.temp >= 29 ? ' Very hot — prioritize seafood and cold drinks.' : ''}`
-    : '';
-
-  return `CRITICAL LANGUAGE RULE: You MUST respond EXCLUSIVELY in ${langFull}. Every single word of your response — the "message" field AND the "options" array — must be in ${langFull}. NEVER use Portuguese unless the language is set to Portuguese. This rule overrides everything else.
-
-You are Bodinho, the friendly and welcoming mascot of the restaurant "Bode do Nô ${state.unit ? state.unit.name : 'Boa Viagem'}" in Recife, PE, Brazil.
-ALL your responses must be written in ${langFull} — no exceptions.
-${state.unit && state.unit.isShopping ? 'This unit is located inside a Shopping Mall.' : ''}
-${state.unit && state.unit.hasPizza ? 'This unit also serves pizza (in partnership with @ITALIANOPIZZE) — mention it if the customer seems interested in something different.' : ''}
-
-CURRENT CONTEXT:
-- ${timeCtx}
-${weatherCtx ? '- ' + weatherCtx : ''}
-
-RESTAURANT INFO:
-- Kids area: playground, arcade machines and ball pit — mention in the recommendation if there are children
-- Happy Hour every day from 16h to 19h
-
-${buildMenuContext()}
-
-HOW TO CONDUCT THE CONVERSATION — 4 CLEAN STEPS:
-
-STEP 1 — Welcome + protein:
-- Short warm welcome, then ask ONLY about protein
-- Options MUST be exactly: ${fmtOpts(O.protein)}
-- If happy hour, mention it enthusiastically here
-
-STEP 1B — Only if the customer chose GOAT (skip to STEP 2 for other proteins):
-- Talk enthusiastically about Dona Maria's Buchada de Bode: exclusive recipe, made with love, a true northeastern soul dish, a house classic that no one forgets
-- Ask if they want the Buchada or prefer another goat cut
-- Options MUST be exactly: ${fmtOpts(O.buchada)}
-- If they choose Buchada → proceed to STEP 2. Then in the final recommendation: if pax=1 use "Buchada" (individual R$79 executivo); if pax≥2 use "Buchada de Bode" (R$129 full portion)
-- If they prefer another cut → proceed to STEP 2 and suggest other cuts (Picanha de Bode, Bode na Nata, Chã, Costela, Mistão...)
-
-STEP 2 — How many people?:
-- Ask ONLY how many people are coming — short sentence
-- Options MUST be exactly: ${fmtOpts(O.pax)}
-- FESTA/EVENT MODE: If the customer selects the event/large group option → skip STEPS 3 and 4 entirely. Go directly to a final recommendation tailored for events: suggest 2-3 sharing dishes from different proteins (variety), 2 starters/petiscos for the table, and a mix of drinks (chopp + non-alcoholic). Be enthusiastic and celebratory in tone. Return type:recommendation with pax:10.
-
-STEP 3 — Any kids at the table?:
-- Ask ONLY about kids
-- Options MUST be exactly: ${fmtOpts(O.kids)}
-- If kids present: mention the kids area (playground, arcade, ball pit) AND include an executive dish (smaller portion, R$49–R$69) for the child in "dishes"
-
-STEP 4 — Drinks:
-- Ask about drinks in a relaxed way
-- Options MUST be exactly: ${fmtOpts(O.drink)}
-- After this answer go DIRECTLY to the recommendation — no more questions
-
-OPTIONS RULES:
-- Each option must be ONE thing only — never combine topics in one option
-- Short options — never use dish names from the menu
-- Warm, friendly tone — never mention JSON or that you are an AI
-
-FINAL RECOMMENDATION RULES:
-- Use EXACT dish/drink names as listed in the menu above — NEVER invent names
-- VARIETY: Do NOT always suggest the same dish. Explore the full list — there are great dishes beyond the champions
-- DRINKS: always pick from the menu. If the customer wants water or something simple → use "Suco Natural". Non-alcoholic → "Bodrink" or "Suco Natural". NEVER put "Água" as it is not on the menu
-- During happy hour: prefer HH menu items when possible
-- SURPRISE MODE: If the user's first message starts with "SURPRESA:", "SURPRISE:", or "SORPRESA:", skip ALL conversation steps immediately. Return type:recommendation directly for 2 people, choosing the best dish for the current time/weather context. Be bold and enthusiastic in the message.
-- PETISCO MODE: If the user's first message starts with "PETISCO:", "SNACK MODE:", or "PICADAS:", the customer wants ONLY snacks and drinks — NO main dish. Ask just ONE question: "Com álcool ou sem álcool?" then, after the answer, return type:recommendation with: dishes = 2-3 items from PETISCOS list (mix of matuto and chapa sections); starter = one CALDINHO from CALDOS if temperature ≤ 24°C or raining, otherwise null; drinks = 1-2 items from DRINKS. Do NOT suggest items from the main MENU (pratos principais).
-- PAX (number of people): this is a HARD RULE — you MUST follow it strictly:
-  • 1 person → YOU MUST ONLY suggest dishes tagged [executivo-individual] (R$49–R$79). If the customer wants Buchada, use "Buchada" (R$79 individual), NOT "Buchada de Bode" (R$129 which serves 2-3). NEVER suggest dishes above R$100 for 1 person.
-  • 2 people → suggest executive or medium dishes (R$69–R$155). One dish per person or a sharing dish.
-  • 3+ people → suggest large/sharing dishes [grande/pra-compartilhar] (R$150+) or multiple dishes.
-- "dishes" NEVER repeat the same dish — each item must be UNIQUE
-- "starter" is optional — omit if not suggesting one
-- "drinks" must have 1 or 2 items, ALWAYS from the menu
-- "category": report which main category you recommended: "bode", "carne", "peixe" or "frango"
-- "pax": report the number of people (integer, e.g. 2)
-- Final message: warm, personalized, contextualize the moment (weather, time, occasion)
-
-RESPONSE FORMAT — ALWAYS VALID JSON, no text outside the JSON. The "message" and "options" fields MUST be in ${langFull}:
-
-During conversation:
-{"type":"question","message":"Bodinho's text in ${langFull}","options":["option 1 in ${langFull}","option 2 in ${langFull}"]}
-
-Final recommendation:
-{"type":"recommendation","message":"warm personalized text in ${langFull}","category":"bode","pax":2,"dishes":["Exact Dish Name"],"starter":"Exact Starter Name","drinks":["Exact Drink Name"]}`;
-}
-
-async function callClaude(userMessage) {
-  if (userMessage !== null) {
-    chatHistory.push({ role:'user', content: userMessage });
-  }
-  const payload = {
-    model: CLAUDE_MODEL,
-    max_tokens: 600,
-    system: buildSystemPrompt(),
-    messages: chatHistory,
-  };
-  console.log('[callClaude] enviando', chatHistory.length, 'mensagem(ns) | system prompt:', payload.system.length, 'chars | model:', payload.model);
-  console.log('[callClaude] historico:', JSON.stringify(chatHistory.map(m => ({ role: m.role, len: m.content.length }))));
-  const resp = await fetch(CLAUDE_API_ENDPOINT, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  if (!resp.ok) {
-    const errText = await resp.text();
-    console.error('[Claude] erro', resp.status, errText);
-    throw new Error(`HTTP ${resp.status}: ${errText}`);
-  }
-  const data = await resp.json();
-  trackApiUsage(data.usage);
-  trackSession({ protein: state.protein, pax: state.pax, style: state.isRegional ? 'regional' : 'intl', drink: state.drink });
-  const raw = data.content[0].text.trim();
-  console.log('[Claude] resposta bruta:', raw);
-  chatHistory.push({ role:'assistant', content: raw });
-  const jsonStr = raw.replace(/^```json?\s*/,'').replace(/\s*```$/,'').trim();
-  return JSON.parse(jsonStr);
-}
-
 // ─── SALVAR RECOMENDAÇÕES ─────────────────────────────────────────
 const SUGGESTIONS_KEY = 'bodinho_suggestions_v1';
 
@@ -2712,78 +2446,11 @@ function trackApiUsage(usage) {
   } catch(e) {}
 }
 
-function showTypingIndicator() {
-  const log = document.getElementById('chat-log');
-  const el = document.createElement('div');
-  el.className = 'chat-typing'; el.id = 'chat-typing';
-  el.innerHTML = '<span></span><span></span><span></span>';
-  log.appendChild(el);
-  log.scrollTop = log.scrollHeight;
-}
-
-function hideTypingIndicator() {
-  const el = document.getElementById('chat-typing');
-  if (el) el.remove();
-}
-
 function mdToHtml(text) {
   return text
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/\n/g, '<br>');
-}
-
-function addBotBubble(text) {
-  const log = document.getElementById('chat-log');
-  const el = document.createElement('div');
-  el.className = 'chat-bubble bot';
-  el.innerHTML = '<span class="chat-avatar">🐐</span>' + mdToHtml(text);
-  log.appendChild(el);
-  log.scrollTop = log.scrollHeight;
-}
-
-function addUserBubble(text) {
-  const log = document.getElementById('chat-log');
-  const el = document.createElement('div');
-  el.className = 'chat-bubble user';
-  el.textContent = text;
-  log.appendChild(el);
-  log.scrollTop = log.scrollHeight;
-}
-
-function renderChatOptions(options) {
-  const container = document.getElementById('chat-opts');
-  container.innerHTML = '';
-  (options || []).forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'chat-opt-btn';
-    btn.textContent = opt;
-    btn.style.animationDelay = `${i * 80}ms`;
-    btn.onclick = () => userTapped(opt);
-    container.appendChild(btn);
-  });
-  setTimeout(() => { const log = document.getElementById('chat-log'); log.scrollTop = log.scrollHeight; }, 80);
-}
-
-function clearOptions() {
-  const c = document.getElementById('chat-opts');
-  if (c) c.innerHTML = '';
-}
-
-function showChatError(retryFn) {
-  hideTypingIndicator();
-  const L = T[state.lang];
-  const log = document.getElementById('chat-log');
-  const el = document.createElement('div');
-  el.className = 'chat-error';
-  el.innerHTML = `<span>${L.chatError}</span>`;
-  const btn = document.createElement('button');
-  btn.className = 'chat-error-retry';
-  btn.textContent = L.chatRetry;
-  btn.onclick = () => { el.remove(); retryFn(); };
-  el.appendChild(btn);
-  log.appendChild(el);
-  log.scrollTop = log.scrollHeight;
 }
 
 function normalize(s) {
@@ -2886,131 +2553,6 @@ function findItem(name) {
   return null;
 }
 
-function handleRecommendation(data) {
-  console.log('[handleRecommendation] JSON completo:', JSON.stringify(data));
-  console.log('[handleRecommendation] dishes:', data.dishes, '| starter:', data.starter, '| drinks:', data.drinks);
-  const L = T[state.lang];
-  document.getElementById('reasoning-box').innerHTML = mdToHtml(data.message);
-  s('result-title', L.resultTitle);
-  document.getElementById('result-context-line').textContent =
-    state.temp !== null ? L.resultContextWeather(state.temp) : L.resultContextDefault;
-
-  const pax = parseInt(data.pax) || 1;
-
-  // Hard rule: if alone + Claude picked large Buchada, swap to individual (R$79)
-  const dishesAdjusted = (data.dishes || []).map(name =>
-    (pax === 1 && name === 'Buchada de Bode') ? 'Buchada' : name
-  );
-
-  const uniqueDishes = [...new Set(dishesAdjusted)];
-  const dishItems = uniqueDishes.map(n => { const item = findItem(n); console.log('[handleRecommendation] dish', JSON.stringify(n), '->', item ? item.name : 'NAO ENCONTRADO'); return item; }).filter(Boolean);
-  console.log('[handleRecommendation] pratos resolvidos:', dishItems.length, 'de', (data.dishes||[]).length);
-  s('label-main-dish', state.happyMode ? L.labelPetisco : L.labelMainDish);
-  document.getElementById('result-main-dishes').innerHTML = dishItems.map(d => renderItem(d, true)).join('');
-
-  const starterItem = data.starter ? findItem(data.starter) : null;
-  console.log('[handleRecommendation] entrada:', data.starter, '->', starterItem ? starterItem.name : 'NAO ENCONTRADO');
-  if (starterItem) {
-    document.getElementById('card-entrada').style.display = 'block';
-    s('label-starter', L.labelStarter);
-    document.getElementById('result-starters').innerHTML = renderItem(starterItem, false);
-  } else {
-    document.getElementById('card-entrada').style.display = 'none';
-  }
-
-  const drinkItems = (data.drinks || []).map(n => { const item = findItem(n); console.log('[handleRecommendation] drink', JSON.stringify(n), '->', item ? item.name : 'NAO ENCONTRADO'); return item; }).filter(Boolean);
-  console.log('[handleRecommendation] bebidas resolvidas:', drinkItems.length, 'de', (data.drinks||[]).length);
-  s('label-drink', L.labelDrink);
-  document.getElementById('result-drinks').innerHTML = drinkItems.map(d => renderItem(d, false)).join('');
-
-  // Outras opções da mesma categoria, filtradas por pax
-  const category = data.category;
-  const cardOther = document.getElementById('card-other-options');
-  if (category && MENU[category]) {
-    const suggestedNorm = (data.dishes || []).map(normalize);
-    const pool = MENU[category].filter(d => !suggestedNorm.includes(normalize(d.name)));
-    let others = pool;
-    if (pax === 1) {
-      others = pool.filter(d => /executivo/i.test(d.desc?.pt || '') || d.price <= 79);
-    } else if (pax === 2) {
-      others = pool.filter(d => /executivo/i.test(d.desc?.pt || '') || d.price <= 155);
-    }
-    // pax >= 3: mostra tudo
-    console.log('[handleRecommendation] outras opcoes category:', category, '| pax:', pax, '| total:', others.length);
-    if (others.length > 0) {
-      const catLabel = (L.rProtein && L.rProtein[category]) || category;
-      s('label-other-options', L.labelOtherOptions(catLabel));
-      document.getElementById('result-other-dishes').innerHTML = others.map(d => renderItem(d, false)).join('');
-      cardOther.style.display = 'block';
-    } else {
-      cardOther.style.display = 'none';
-    }
-  } else {
-    cardOther.style.display = 'none';
-  }
-
-  s('btn-restart', L.btnRestart);
-  s('btn-result-back', L.btnBack);
-  const fr = document.getElementById('footer-result');
-  if (fr) fr.innerHTML = L.footerResult.replace('\n','<br><strong style="color:rgba(255,255,255,.5)">') + '</strong>';
-
-  // Mostrar widget de avaliação após 2s
-  const ratingCtx = {
-    mode:    state.happyMode ? 'happyhour' : state.surpriseMode ? 'surpresa' : 'chat',
-    protein: data.category || null,
-    pax:     data.pax      || null,
-  };
-  document.getElementById('rating-widget').style.display = 'none';
-  setTimeout(() => showRatingWidget(ratingCtx), 2000);
-
-  saveRecommendation(ratingCtx.mode, {
-    protein:   data.category  || null,
-    pax:       data.pax       || null,
-    style:     state.isRegional === true ? 'regional' : state.isRegional === false ? 'intl' : null,
-    drink:     state.drink    || null,
-    hour:      state.hour,
-    temp:      state.temp,
-    isRaining: state.isRaining,
-    lang:      state.lang,
-    unit:      state.unitKey  || 'boaviagem',
-  }, {
-    category: data.category || null,
-    pax:      data.pax      || null,
-    dishes:   data.dishes   || [],
-    starter:  data.starter  || null,
-    drinks:   data.drinks   || [],
-    message:  data.message  || '',
-  });
-
-  goTo('screen-result');
-}
-
-async function userTapped(option) {
-  console.log('[userTapped] opção escolhida:', option, '| turno:', chatHistory.length);
-  document.querySelectorAll('.chat-opt-btn').forEach(b => {
-    b.disabled = true;
-    if (b.textContent === option) b.classList.add('chosen');
-  });
-  clearOptions();
-  addUserBubble(option);
-  showTypingIndicator();
-  try {
-    const data = await callClaude(option);
-    hideTypingIndicator();
-    console.log('[userTapped] resposta type:', data.type, data.type === 'question' ? '| options:' + JSON.stringify(data.options) : '| dishes:' + JSON.stringify(data.dishes));
-    if (data.type === 'recommendation') {
-      addBotBubble(data.message);
-      setTimeout(() => handleRecommendation(data), 1400);
-    } else {
-      addBotBubble(data.message);
-      renderChatOptions(data.options);
-    }
-  } catch(e) {
-    console.error('[userTapped] erro ao chamar Claude:', e);
-    showChatError(() => userTapped(option));
-  }
-}
-
 function startChat() {
   // Resetar selecoes antes de comecar o fluxo de telas
   state.protein = null; state.pax = null; state.isRegional = null;
@@ -3045,11 +2587,8 @@ function happyDoNoMode() {
   const cfg = getStoredConfig();
 
   if (!cfg.happyHourActive) {
-    const unavail = { pt:'O Happy do Nô ainda não está disponível no momento.', en:'Happy do Nô is not available at the moment.', es:'Happy do Nô no está disponible en este momento.' };
-    chatHistory = [];
-    document.getElementById('chat-log').innerHTML = '';
-    goTo('screen-chat');
-    addBotBubble(unavail[state.lang] || unavail.pt);
+    const unavail = { pt:'O Happy do Nô ainda não está disponível.', en:'Happy do Nô is not available.', es:'Happy do Nô no está disponible.' };
+    showInfoOverlay(unavail[state.lang] || unavail.pt);
     return;
   }
 
@@ -3057,6 +2596,18 @@ function happyDoNoMode() {
   state.surpriseMode = false;
   state.pax          = 2;
   buildSuggestion();
+}
+
+
+function showInfoOverlay(msg) {
+  var ov = document.createElement('div');
+  ov.className = 'info-overlay';
+  ov.innerHTML = '<div class="info-overlay-box">'
+    + '<div class="info-overlay-icon">&#x1F37A;</div>'
+    + '<div class="info-overlay-msg">' + msg + '</div>'
+    + '<button class="info-overlay-btn" onclick="this.closest('.info-overlay').remove()">OK</button>'
+    + '</div>';
+  document.body.appendChild(ov);
 }
 
 /* ── AVALIAÇÃO ────────────────────────────────── */
@@ -3129,19 +2680,6 @@ function saveRating(data) {
   } catch(e) {
     console.warn('[rating] erro ao salvar:', e);
   }
-}
-
-function clearChatState() {
-  chatHistory = [];
-  state.happyMode = false;
-  const log = document.getElementById('chat-log');
-  if (log) log.innerHTML = '';
-  clearOptions();
-}
-
-function resetChat() {
-  clearChatState();
-  goTo('screen-welcome');
 }
 
 /* ── CARDÁPIO COMPLETO ────────────────────────── */
