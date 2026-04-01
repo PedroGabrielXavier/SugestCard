@@ -558,22 +558,6 @@
   </div>
 
 
-  <!-- INBOX BUTTON -->
-  <button id="inbox-btn" onclick="toggleInbox()" aria-label="Mensagens">
-    &#x1F4AC;
-    <span id="inbox-badge"></span>
-  </button>
-
-  <!-- INBOX OVERLAY + SIDEBAR -->
-  <div id="inbox-overlay" onclick="closeInbox()"></div>
-  <div id="inbox-sidebar">
-    <div class="inbox-header">
-      <span class="inbox-header-title">&#x1F4EC; Mensagens do Bodinho</span>
-      <button class="inbox-close-btn" onclick="closeInbox()">&#x2715;</button>
-    </div>
-    <div class="inbox-body" id="inbox-body"></div>
-  </div>
-
   <!-- SCREEN AUTH -->
   <div class="screen active" id="screen-auth">
     <div class="logo-wrap" style="margin-top:8px;margin-bottom:20px">
@@ -2263,7 +2247,6 @@ function resetApp() {
   state.happyMode = false; state.surpriseMode = false; state._mixPct = undefined;
   cart.length = 0; updateCartBar();
   goTo('screen-welcome');
-  updateInboxBadge();
 }
 
 /* ── WINE FLOW ────────────────────────────────── */
@@ -2644,97 +2627,6 @@ function showInfoOverlay(msg) {
 }
 
 
-// ============ INBOX / MENSAGENS ============
-const INBOX_READ_KEY = 'bodinho_inbox_v1';
-
-function getReadIds() {
-  try { return JSON.parse(localStorage.getItem(INBOX_READ_KEY) || '[]'); }
-  catch(e) { return []; }
-}
-
-function markRead(id) {
-  var ids = getReadIds();
-  if (ids.indexOf(id) < 0) { ids.push(id); localStorage.setItem(INBOX_READ_KEY, JSON.stringify(ids)); }
-}
-
-function getActivePromos() {
-  var cfg = getStoredConfig();
-  return (cfg.promotions || []).filter(function(p){ return p.active; });
-}
-
-function getUnreadCount() {
-  var read = getReadIds();
-  return getActivePromos().filter(function(p){ return read.indexOf(p.id) < 0; }).length;
-}
-
-function updateInboxBadge() {
-  var n = getUnreadCount();
-  var badge = document.getElementById('inbox-badge');
-  var btn = document.getElementById('inbox-btn');
-  if (!badge || !btn) return;
-  if (n > 0) { badge.textContent = n; badge.style.display = 'inline-block'; }
-  else { badge.style.display = 'none'; }
-}
-
-function toggleInbox() {
-  var sb = document.getElementById('inbox-sidebar');
-  var ov = document.getElementById('inbox-overlay');
-  if (sb.classList.contains('open')) { closeInbox(); }
-  else { renderInboxList(); sb.classList.add('open'); ov.classList.add('open'); }
-}
-
-function closeInbox() {
-  document.getElementById('inbox-sidebar').classList.remove('open');
-  document.getElementById('inbox-overlay').classList.remove('open');
-  updateInboxBadge();
-}
-
-function renderInboxList() {
-  var body = document.getElementById('inbox-body');
-  var promos = getActivePromos();
-  var read = getReadIds();
-  if (!promos.length) {
-    body.innerHTML = '<div class="inbox-empty">&#x1F4EC;<br>Sem mensagens por enquanto.</div>';
-    return;
-  }
-  body.innerHTML = promos.slice().reverse().map(function(p) {
-    var isRead = read.indexOf(p.id) >= 0;
-    var dt = p.createdAt ? new Date(p.createdAt).toLocaleDateString('pt-BR') : '';
-    var prev = (p.body || '').slice(0, 60) + ((p.body && p.body.length > 60) ? '...' : '');
-    return '<div class="inbox-item' + (isRead ? '' : ' unread') + '" onclick="openInboxItem(' + JSON.stringify(p.id) + ')">'
-      + '<div class="inbox-item-head">'
-      + '<div class="inbox-avatar">&#x1F410;</div>'
-      + '<span class="inbox-sender">Bodinho</span>'
-      + (isRead ? '' : '<div class="inbox-unread-dot"></div>')
-      + '<span class="inbox-date">' + dt + '</span>'
-      + '</div>'
-      + '<div class="inbox-item-title">' + esc(p.icon || '') + ' ' + esc(p.title || '') + '</div>'
-      + '<div class="inbox-item-preview">' + esc(prev) + '</div>'
-      + '</div>';
-  }).join('');
-}
-
-function openInboxItem(id) {
-  markRead(id);
-  var promos = getActivePromos();
-  var p = promos.find(function(x){ return x.id === id; });
-  if (!p) return;
-  var body = document.getElementById('inbox-body');
-  body.innerHTML = '<div class="inbox-detail active">'
-    + '<div class="inbox-detail-body">'
-    + '<button class="inbox-back-btn" onclick="renderInboxList()">&larr; Voltar</button>'
-    + '<div class="inbox-detail-sender">'
-    + '<div class="inbox-avatar" style="width:36px;height:36px;font-size:18px">&#x1F410;</div>'
-    + '<div><div class="inbox-detail-sender-name">Bodinho</div><div class="inbox-detail-sender-sub">Bode do Nô</div></div>'
-    + '</div>'
-    + '<div class="inbox-detail-icon">' + esc(p.icon || '&#x1F4E3;') + '</div>'
-    + '<div class="inbox-detail-title">' + esc(p.title || '') + '</div>'
-    + '<div class="inbox-detail-text">' + esc(p.body || '') + '</div>'
-    + '</div></div>';
-  updateInboxBadge();
-}
-
-
 /* ── AVALIAÇÃO ────────────────────────────────── */
 let _ratingContext = {};
 
@@ -3027,13 +2919,11 @@ function handleGoogleCredential(response) {
   updateUserIndicator(user);
   goTo('screen-welcome');
   checkHappyHour();
-  updateInboxBadge();
 }
 
 function enterAsGuest() {
   goTo('screen-welcome');
   checkHappyHour();
-  updateInboxBadge();
 }
 
 function signOut() {
