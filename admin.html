@@ -425,7 +425,6 @@ const SEC_CONFIG = {
   usuarios:    { label:'Usuários',            type:'usuarios' },
   promocoes:   { label:'Promoções',           type:'promocoes' },
   happyhour:   { label:'Happy Hour',         type:'happyhour' },
-  algoritmo:        { label:'Algoritmo de Sugestão', type:'algoritmo' },
   sugestoes:        { label:'Sugestões Salvas',   type:'sugestoes' },
   importarplanilha: { label:'Importar Planilha', type:'planilha' },
   config:      { label:'Configurações',     type:'config' },
@@ -526,15 +525,6 @@ function goTo(secKey) {
   } else if (cfg.type === 'pdf') {
     currentTab = null;
     renderPDF();
-  } else if (cfg.type === 'usuarios') {
-    currentTab = null;
-    renderUsuarios();
-  } else if (cfg.type === 'promocoes') {
-    currentTab = null;
-    renderPromocoes();
-  } else if (cfg.type === 'algoritmo') {
-    currentTab = null;
-    renderAlgoritmo();
   } else if (cfg.type === 'sugestoes') {
     currentTab = null;
     renderSugestoes();
@@ -577,14 +567,12 @@ function renderSection() {
   if (!items.length) {
     html += '<div class="empty-state"><div class="empty-icon">🗒️</div><p>Nenhum item nesta seção.</p></div>';
   } else {
-    var isDrinks = currentSection === "drinks";
     html += `<table>
       <thead><tr>
         <th style="width:48px"></th>
         <th>Nome</th>
         <th>Preço</th>
         <th style="width:80px;text-align:center">Ativo</th>
-        ${isDrinks ? '<th style="width:90px;text-align:center" title="Recomendar em: Normal / Surpreenda-me / Happy">Rec. em</th>' : ""}
         <th style="width:90px;text-align:right">Ações</th>
       </tr></thead><tbody>`;
     items.forEach((item, idx) => {
@@ -605,11 +593,6 @@ function renderSection() {
             <span class="toggle-slider"></span>
           </label>
         </td>
-        ${isDrinks ? `<td style="text-align:center">
-          <span class="ri-badge ${(item.recommendIn||["normal","surprise","happyhour"]).includes("normal")?"on":""}" onclick="toggleRecommendIn(currentSection,currentTab,${idx},'normal')" title="Sugestão normal">N</span>
-          <span class="ri-badge ${(item.recommendIn||["normal","surprise","happyhour"]).includes("surprise")?"on":""}" onclick="toggleRecommendIn(currentSection,currentTab,${idx},'surprise')" title="Surpreenda-me">S</span>
-          <span class="ri-badge ${(item.recommendIn||["normal","surprise","happyhour"]).includes("happyhour")?"on":""}" onclick="toggleRecommendIn(currentSection,currentTab,${idx},'happyhour')" title="Happy do Nô">H</span>
-        </td>` : ""}
         <td class="td-actions">
           <button class="btn-edit" onclick="openEditModal(${idx})">✏️</button>
           <button class="btn-del"  onclick="deleteItem(${idx})">🗑️</button>
@@ -1029,177 +1012,81 @@ function clearSugestoes() {
   toast("Registros apagados", "ok");
 }
 
-
-function renderUsuarios(){
-  var cont=document.getElementById("section-content");
-  document.getElementById("section-count").textContent="";
-  var u=(function(){try{return JSON.parse(localStorage.getItem("bodinho_user_v1")||"null");}catch(e){return null;}})();
-  if(!u){cont.innerHTML="<div class="empty-state"><div class="empty-icon">&#x1F465;</div><p>Nenhum usu&aacute;rio logado neste dispositivo.</p><p style="font-size:11px;color:var(--muted);margin-top:8px">Os dados aparecem quando um usu&aacute;rio faz login com Google no app.</p></div>";return;}
-  document.getElementById("section-count").textContent=" \u2014 1 usu\u00e1rio";
-  var since=u.firstSeen?new Date(u.firstSeen).toLocaleDateString("pt-BR"):"\u2014";
-  var last=u.lastSeen?new Date(u.lastSeen).toLocaleDateString("pt-BR"):"\u2014";
+function renderUsuarios() {
+  var cont=document.getElementById('section-content');
+  document.getElementById('section-count').textContent='';
+  var u=(function(){try{return JSON.parse(localStorage.getItem('bodinho_user_v1')||'null');}catch(e){return null;}})();
+  if(!u){cont.innerHTML='<div class="empty-state"><div class="empty-icon">&#x1F465;</div><p>Nenhum usu&aacute;rio logado.</p></div>';return;}
   var ns=(u.sessions||[]).length;
-  var fp=Object.entries(u.favProteins||{}).sort(function(a,b){return b[1]-a[1];}).slice(0,3).map(function(e){return e[0]+"("+e[1]+")";}).join(", ")||"\u2014";
-  var fd=Object.entries(u.favDrinks||{}).sort(function(a,b){return b[1]-a[1];}).slice(0,3).map(function(e){return e[0]+"("+e[1]+")";}).join(", ")||"\u2014";
-  var pic=u.picture?"<img src=""+u.picture+"" style="width:56px;height:56px;border-radius:50%;object-fit:cover">":"<div style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:24px">&#x1F464;</div>";
-  cont.innerHTML="<div class="config-section"><div class="config-card" style="max-width:600px"><div style="display:flex;align-items:center;gap:16px;margin-bottom:18px">"+pic+"<div><div style="font-size:16px;font-weight:700">"+esc(u.name||"\u2014")+"</div><div style="font-size:12px;color:var(--muted)">"+esc(u.email||"sem e-mail")+"</div></div></div><table style="width:100%;border-collapse:collapse"><tr><td style="padding:6px 0;font-size:12px;color:var(--muted);width:180px">Primeiro acesso</td><td style="font-size:13px">"+since+"</td></tr><tr><td style="padding:6px 0;font-size:12px;color:var(--muted)">\u00daltimo acesso</td><td style="font-size:13px">"+last+"</td></tr><tr><td style="padding:6px 0;font-size:12px;color:var(--muted)">Sess\u00f5es</td><td style="font-size:13px">"+ns+"</td></tr><tr><td style="padding:6px 0;font-size:12px;color:var(--muted)">Prote\u00ednas favoritas</td><td style="font-size:13px">"+fp+"</td></tr><tr><td style="padding:6px 0;font-size:12px;color:var(--muted)">Bebidas favoritas</td><td style="font-size:13px">"+fd+"</td></tr></table></div><p style="font-size:11px;color:var(--muted);margin-top:10px;padding:0 4px">&#x2139;&#xFE0F; Dados do dispositivo atual via login Google.</p></div>";
+  var fp=Object.entries(u.favProteins||{}).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]+'('+e[1]+')').join(', ')||'—';
+  var wrap=document.createElement('div');wrap.className='config-section';
+  var card=document.createElement('div');card.className='config-card';card.style.maxWidth='600px';
+  var hd=document.createElement('div');hd.style.cssText='display:flex;align-items:center;gap:16px;margin-bottom:18px';
+  if(u.picture){var im=document.createElement('img');im.src=u.picture;im.style.cssText='width:56px;height:56px;border-radius:50%;object-fit:cover';hd.appendChild(im);}
+  else{var av=document.createElement('div');av.style.cssText='width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:24px';av.innerHTML='&#x1F464;';hd.appendChild(av);}
+  var inf=document.createElement('div');
+  inf.innerHTML='<div style="font-size:16px;font-weight:700">'+esc(u.name||'—')+'</div><div style="font-size:12px;color:var(--muted)">'+esc(u.email||'sem e-mail')+'</div>';
+  hd.appendChild(inf);card.appendChild(hd);
+  var tb=document.createElement('table');tb.style.cssText='width:100%;border-collapse:collapse';
+  [['Primeiro acesso',u.firstSeen?new Date(u.firstSeen).toLocaleDateString('pt-BR'):'—'],['Último acesso',u.lastSeen?new Date(u.lastSeen).toLocaleDateString('pt-BR'):'—'],['Sessões',ns]].forEach(function(row){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td style="width:180px;font-size:12px;color:var(--muted)">'+row[0]+'</td><td style="font-size:13px">'+esc(String(row[1]))+'</td>';
+    tb.appendChild(tr);
+  });
+  card.appendChild(tb);wrap.appendChild(card);
+  var nt=document.createElement('p');nt.style.cssText='font-size:11px;color:var(--muted);margin-top:10px';
+  nt.textContent='Login Google — dados deste dispositivo.';wrap.appendChild(nt);
+  cont.innerHTML='';cont.appendChild(wrap);
 }
-function renderPromocoes(){
-  var cont=document.getElementById("section-content");
+
+function renderPromocoes() {
+  var cont=document.getElementById('section-content');
   var promos=data.config&&data.config.promotions?data.config.promotions:[];
-  document.getElementById("section-count").textContent=promos.length?" \u2014 "+promos.length+" promo\u00e7\u00e3o(s)":"";
-  if(!promos.length){cont.innerHTML="<div class="empty-state"><div class="empty-icon">&#x1F4E3;</div><p>Nenhuma promo\u00e7\u00e3o criada.</p><p style="font-size:11px;color:var(--muted);margin-top:6px">Clique em + Adicionar para criar.</p></div>";return;}
-  var rows=promos.map(function(p,i){
-    var dt=p.createdAt?new Date(p.createdAt).toLocaleDateString("pt-BR"):"\u2014";
-    var prev=(p.body||"").slice(0,55)+((p.body&&p.body.length>55)?"...":"");
-    return "<tr><td style="font-size:22px;width:48px;text-align:center">"+(p.icon||"&#x1F4E3;")+"</td><td><div style="font-weight:600;font-size:13px">"+esc(p.title||"")+"</div><div style="font-size:11px;color:var(--muted);margin-top:2px">"+esc(prev)+"</div></td><td style="white-space:nowrap;font-size:11px;color:var(--muted)">"+dt+"</td><td style="width:80px;text-align:center"><label class="toggle"><input type="checkbox" "+(p.active?"checked":"")+" onchange="togglePromo("+i+",this.checked)"><span class="toggle-slider"></span></label></td><td style="width:90px;text-align:right"><button class="btn-edit" onclick="openPromoModal("+i+")">&#x270F;&#xFE0F;</button> <button class="btn-del" onclick="deletePromo("+i+")">&#x1F5D1;&#xFE0F;</button></td></tr>";
-  }).join("");
-  cont.innerHTML="<div class="table-wrap"><table><thead><tr><th></th><th>Promo\u00e7\u00e3o</th><th>Data</th><th style="text-align:center">Ativa</th><th style="text-align:right">A\u00e7\u00f5es</th></tr></thead><tbody>"+rows+"</tbody></table></div>";
+  document.getElementById('section-count').textContent=promos.length?' — '+promos.length+' promoção(s)':'';
+  if(!promos.length){cont.innerHTML='<div class="empty-state"><div class="empty-icon">&#x1F4E3;</div><p>Nenhuma promoção.</p></div>';return;}
+  var html='<div class="table-wrap"><table><thead><tr><th></th><th>Promoção</th><th>Data</th><th>Ativa</th><th>Ações</th></tr></thead><tbody>';
+  promos.forEach(function(p,i){
+    var dt=p.createdAt?new Date(p.createdAt).toLocaleDateString('pt-BR'):'—';
+    var prev=(p.body||'').slice(0,50)+((p.body&&p.body.length>50)?'...':'');
+    var ic=p.icon||'&#x1F4E3;';
+    html+='<tr><td style="font-size:22px;width:48px;text-align:center">'+esc(ic)+'</td>'
+      +'<td><div style="font-weight:600;font-size:13px">'+esc(p.title||'')+'</div><div style="font-size:11px;color:var(--muted)">'+esc(prev)+'</div></td>'
+      +'<td style="font-size:11px;color:var(--muted)">'+dt+'</td>'
+      +'<td style="text-align:center"><label class="toggle"><input type="checkbox" '+(p.active?'checked':'')+' onchange="togglePromo('+i+',this.checked)"><span class="toggle-slider"></span></label></td>'
+      +'<td style="text-align:right"><button class="btn-edit" onclick="openPromoModal('+i+')">&#x270F;&#xFE0F;</button> <button class="btn-del" onclick="deletePromo('+i+')">&#x1F5D1;&#xFE0F;</button></td></tr>';
+  });
+  html+='</tbody></table></div>';cont.innerHTML=html;
 }
+
 function openPromoModal(idx){
   var promos=data.config&&data.config.promotions?data.config.promotions:[];
   var p=(idx!==null&&idx!==undefined)?promos[idx]:null;
-  document.getElementById("modal-title").textContent=p?"Editar Promo\u00e7\u00e3o":"Nova Promo\u00e7\u00e3o";
-  document.getElementById("modal-form").innerHTML=
-    "<div class="form-row"><div class="form-group" style="max-width:80px"><label>\u00cdcone</label><input id="pf-icon" class="config-inp" maxlength="4" value=""+esc(p&&p.icon?p.icon:"\uD83D\uDCE3")+"" placeholder="\uD83D\uDCE3"></div><div class="form-group"><label>T\u00edtulo *</label><input id="pf-title" class="config-inp" required value=""+esc(p&&p.title?p.title:"")+"" placeholder="Ex: Happy Hour especial!"></div></div>"
-    +"<div class="form-group"><label>Conte\u00fado</label><textarea id="pf-body" class="config-inp" rows="5" style="resize:vertical;min-height:90px" placeholder="Mensagem da promo\u00e7\u00e3o...">"+esc(p&&p.body?p.body:"")+"</textarea></div>"
-    +"<div class="form-group"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="pf-active" "+(!p||p.active?"checked":"")+" style="accent-color:var(--accent)"> Ativa (vis\u00edvel no app)</label></div>";
-  document.getElementById("modal-overlay").classList.add("open");
-  document.querySelector("#modal .btn-save").onclick=function(){savePromo(idx);};
+  document.getElementById('modal-title').textContent=p?'Editar Promoção':'Nova Promoção';
+  document.getElementById('modal-form').innerHTML=
+    '<div class="form-row"><div class="form-group" style="max-width:80px"><label>Ícone</label>'
+    +'<input id="pf-icon" class="config-inp" maxlength="4" value="'+esc(p&&p.icon?p.icon:'📣')+'" placeholder="📣"></div>'
+    +'<div class="form-group"><label>Título</label><input id="pf-title" class="config-inp" required value="'+esc(p&&p.title?p.title:'')+'" placeholder="Ex: Happy Hour!"></div></div>'
+    +'<div class="form-group"><label>Conteúdo</label><textarea id="pf-body" class="config-inp" rows="5" style="resize:vertical" placeholder="Mensagem...">'+esc(p&&p.body?p.body:'')+'</textarea></div>'
+    +'<div class="form-group"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="pf-active" '+((!p||p.active)?'checked':'')+' style="accent-color:var(--accent)"> Ativa</label></div>';
+  document.getElementById('modal-overlay').classList.add('open');
+  document.querySelector('#modal .btn-save').onclick=function(){savePromo(idx);};
 }
+
 function savePromo(idx){
-  var title=(document.getElementById("pf-title").value||"").trim();
-  if(!title){toast("T\u00edtulo obrigat\u00f3rio","err");return;}
+  var title=(document.getElementById('pf-title').value||'').trim();
+  if(!title){toast('Título obrigatório','err');return;}
   if(!data.config)data.config={};
   if(!data.config.promotions)data.config.promotions=[];
   var ex=(idx!==null&&idx!==undefined)?data.config.promotions[idx]:null;
-  var promo={id:ex?ex.id:("promo_"+Date.now()),title:title,body:(document.getElementById("pf-body").value||"").trim(),icon:(document.getElementById("pf-icon").value||"").trim()||"\uD83D\uDCE3",active:document.getElementById("pf-active").checked,createdAt:ex?ex.createdAt:new Date().toISOString()};
+  var icon=(document.getElementById('pf-icon').value||'').trim()||'📣';
+  var promo={id:ex?ex.id:('promo_'+Date.now()),title:title,body:(document.getElementById('pf-body').value||'').trim(),icon:icon,active:document.getElementById('pf-active').checked,createdAt:ex?ex.createdAt:new Date().toISOString()};
   if(ex)data.config.promotions[idx]=promo;else data.config.promotions.push(promo);
-  saveData();closeModal();toast("Promo\u00e7\u00e3o salva!","ok");
-  currentSection="promocoes";renderPromocoes();
-  document.getElementById("section-count").textContent=" \u2014 "+data.config.promotions.length+" promo\u00e7\u00e3o(s)";
+  saveData();closeModal();toast('Promoção salva!','ok');
+  currentSection='promocoes';renderPromocoes();
+  document.getElementById('section-count').textContent=' — '+data.config.promotions.length+' promoção(s)';
 }
-function togglePromo(idx,active){if(!data.config||!data.config.promotions)return;data.config.promotions[idx].active=active;saveData();toast(active?"Ativa":"Pausada","ok");}
-function deletePromo(idx){if(!confirm("Apagar?"))return;data.config.promotions.splice(idx,1);saveData();toast("Apagada","ok");renderPromocoes();}
-
-function renderAlgoritmo() {
-  const cont = document.getElementById("section-content");
-  document.getElementById("section-count").textContent = "";
-  const cfg  = data.config || {};
-  const algo = cfg.algo || {};
-  const surp = algo.surprise || {};
-  const wts  = algo.proteinWeights || {bode:40,carne:30,peixe:20,frango:10};
-  const proteins = ["bode","carne","peixe","frango"];
-  const drinks   = ["chopp","cerveja","drink","whisky","cachaca","semAlcool","gin"];
-  const wins = [
-    {key:"almoco",   label:"Almoco (11-15h)"},
-    {key:"tarde",    label:"Tarde (15-17h)"},
-    {key:"happyhour",label:"Happy Hour (17-19h)"},
-    {key:"jantar",   label:"Jantar (19h+)"}
-  ];
-  function pOpts(sel){return proteins.map(p=>"<option value=\""+p+"\""+( (surp[sel]||{}).protein===p?" selected":"")+">"+p+"</option>").join("");}
-  function dOpts(sel){return drinks.map(d=>"<option value=\""+d+"\""+(( (surp[sel]||{}).drink===d?" selected":""))+">"+d+"</option>").join("");}
-
-  cont.innerHTML =
-    "<div class=\"config-section\">"
-    +"<div class=\"config-card\">"
-    +"<h3>&#x1F3B2; Surpreenda-me por Hor\u00e1rio</h3>"
-    +"<p style=\"font-size:11px;color:var(--muted);margin-bottom:14px\">Define prote\u00edna, bebida e % de itens pouco vendidos por janela de hor\u00e1rio.</p>"
-    +"<table style=\"width:100%;border-collapse:collapse\">"
-    +"<thead><tr>"
-    +"<th style=\"text-align:left;padding:6px 8px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border)\">Hor\u00e1rio</th>"
-    +"<th style=\"text-align:left;padding:6px 8px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border)\">Prote\u00edna</th>"
-    +"<th style=\"text-align:left;padding:6px 8px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border)\">Bebida</th>"
-    +"<th style=\"text-align:left;padding:6px 8px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border)\">% Pouco Vendidos</th>"
-    +"</tr></thead><tbody>"
-    +wins.map(w=>
-      "<tr><td style=\"padding:8px;font-size:13px\">"+w.label+"</td>"
-      +"<td style=\"padding:8px\"><select class=\"config-inp\" id=\"algo-protein-"+w.key+"\">"+pOpts(w.key)+"</select></td>"
-      +"<td style=\"padding:8px\"><select class=\"config-inp\" id=\"algo-drink-"+w.key+"\">"+dOpts(w.key)+"</select></td>"
-      +"<td style=\"padding:8px\"><input class=\"config-inp\" type=\"number\" id=\"algo-mix-"+w.key+"\" min=\"0\" max=\"100\" value=\""+((surp[w.key]||{}).mixPct||30)+"\" style=\"width:70px\"> %</td>"
-      +"</tr>"
-    ).join("")
-    +"</tbody></table>"
-    +"</div>"
-    +"<div class=\"config-card\">"
-    +"<h3>&#x2696;&#xFE0F; Pesos de Prote\u00edna</h3>"
-    +"<p style=\"font-size:11px;color:var(--muted);margin-bottom:14px\">Probabilidade de cada prote\u00edna aparecer no Surpreenda-me quando n\u00e3o h\u00e1 configura\u00e7\u00e3o espec\u00edfica para o hor\u00e1rio. Deve somar 100%.</p>"
-    +"<div class=\"pl-row\">"
-    +proteins.map(p=>
-      "<div class=\"pl-group\"><label>"+p+"</label>"
-      +"<input class=\"config-inp\" type=\"number\" id=\"algo-wt-"+p+"\" min=\"0\" max=\"100\" value=\""+(wts[p]||0)+"\"> %"
-      +"</div>"
-    ).join("")
-    +"</div>"
-    +"</div>"
-    +"<div style=\"padding:0 28px 20px\">"
-    +"<button class=\"btn-save-config\" onclick=\"saveAlgoritmo()\">Salvar Configura\u00e7\u00f5es</button>"
-    +"<span class=\"config-saved\" id=\"algo-saved\">\u2713 Salvo!</span>"
-    +"</div>"
-    +"</div>";
-}
-
-function saveAlgoritmo() {
-  if (!data) return;
-  if (!data.config) data.config = {};
-  if (!data.config.algo) data.config.algo = {};
-  const wins = ["almoco","tarde","happyhour","jantar"];
-  data.config.algo.surprise = {};
-  wins.forEach(function(w) {
-    data.config.algo.surprise[w] = {
-      protein: document.getElementById("algo-protein-"+w).value,
-      drink:   document.getElementById("algo-drink-"+w).value,
-      mixPct:  parseInt(document.getElementById("algo-mix-"+w).value)||0
-    };
-  });
-  const ps = ["bode","carne","peixe","frango"];
-  data.config.algo.proteinWeights = {};
-  ps.forEach(function(p){ data.config.algo.proteinWeights[p] = parseInt(document.getElementById("algo-wt-"+p).value)||0; });
-  saveData();
-  const el = document.getElementById("algo-saved");
-  el.style.display="inline";
-  setTimeout(function(){el.style.display="none";},2000);
-}
-
-function toggleRecommendIn(secKey, tabKey, idx, mode) {
-  const target = tabKey ? data[secKey][tabKey] : data[secKey];
-  if (!Array.isArray(target)) return;
-  const item = target[idx];
-  if (!item) return;
-  if (!item.recommendIn) item.recommendIn = ["normal","surprise","happyhour"];
-  const i = item.recommendIn.indexOf(mode);
-  if (i >= 0) item.recommendIn.splice(i, 1);
-  else item.recommendIn.push(mode);
-  saveData();
-  renderSection();
-}
-
-
-function buildSpecialsList(selected) {
-  var items = [];
-  var sections = ['menu','starters','caldos','petiscos','saladas','sobremesas','bodinhos','drinks'];
-  var menuData = getMenuData();
-  sections.forEach(function(sec) {
-    var s = menuData[sec];
-    if (!s) return;
-    var flat = [];
-    if (Array.isArray(s)) flat = s;
-    else Object.values(s).forEach(function(arr){if(Array.isArray(arr))flat=flat.concat(arr);});
-    flat.forEach(function(item) {
-      var checked = selected.indexOf(item.name) >= 0 ? 'checked' : '';
-      items.push('<label style="display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 0;cursor:pointer">'
-        +'<input type="checkbox" class="hh-special-cb" data-name="'+esc(item.name)+'" '+checked+'>'
-        +'<span>'+esc(item.name)+'</span>'
-        +'<span style="color:var(--muted);font-size:10px;margin-left:auto">R$'+Number(item.price||0).toFixed(2).replace('.',',')+'</span>'
-        +'</label>');
-    });
-  });
-  return items.join('');
-}
-
-function getMenuData() {
-  try { return JSON.parse(localStorage.getItem('bodinho_menu_v1')) || data; } catch(e) { return data; }
-}
+function togglePromo(idx,active){if(!data.config||!data.config.promotions)return;data.config.promotions[idx].active=active;saveData();toast(active?'Ativa':'Pausada','ok');}
+function deletePromo(idx){if(!confirm('Apagar?'))return;data.config.promotions.splice(idx,1);saveData();toast('Apagada','ok');renderPromocoes();}
 
 function renderHappyHour() {
   const cfg = data.config || {};
@@ -1237,13 +1124,6 @@ function renderHappyHour() {
                 <input type="checkbox" class="hh-day-cb" data-day="${i}" ${((cfg.happyHourDays||[1,2,3,4,5]).includes(i))?'checked':''}>
                 ${d}
               </label>`).join('')}
-          </div>
-        </div>
-        <div class="config-row" style="flex-direction:column;align-items:flex-start;gap:8px">
-          <label>Especiais do Happy Hour</label>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Selecione os itens que aparecem quando o Happy do Nô está ativo:</div>
-          <div id="hh-specials-list" style="display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto;width:100%">
-            \${buildSpecialsList(cfg.happyHourSpecials||[])}
           </div>
         </div>
         <div style="display:flex;align-items:center;margin-top:8px">
@@ -1289,7 +1169,7 @@ function renderConfig() {
 
 // ─── MODAL ───────────────────────────────────────────────────────
 function openAddModal() {
-  if (currentSection === "promocoes") { openPromoModal(null); return; }
+  if (currentSection === 'promocoes') { openPromoModal(null); return; }
 
   editingIdx = null;
   const cfg = SEC_CONFIG[currentSection];
@@ -1449,11 +1329,7 @@ function saveConfig() {
   data.config.happyHourEnd    = parseInt(document.getElementById('cfg-hh-end').value, 10);
   const days = [];
   document.querySelectorAll('.hh-day-cb:checked').forEach(cb => days.push(parseInt(cb.dataset.day)));
-  data.config.happyHourDays    = days;
-  // Especiais
-  var specs = [];
-  document.querySelectorAll('.hh-special-cb:checked').forEach(function(cb){specs.push(cb.dataset.name);});
-  data.config.happyHourSpecials = specs;
+  data.config.happyHourDays   = days;
   saveData();
   const saved = document.getElementById('cfg-saved');
   saved.style.display = 'inline';
