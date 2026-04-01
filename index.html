@@ -2032,92 +2032,197 @@ function selectAlcohol(btn, hasAlcohol) {
 }
 
 /* ── SUGGESTION ENGINE ────────────────────────── */
-function buildSuggestion() {
-  const { protein, isRegional, hasAlcohol, drink, temp, hour, isRaining, lang } = state;
-  const isCold = temp !== null ? temp <= 22 : (hour >= 19 || hour < 6);
-  const isHot  = temp !== null && temp >= 29;
-  const L = T[lang];
 
-  // Filter by pax (serving size)
-  const isExec  = d => /executivo/i.test(d.desc?.pt || '');
-  const isLarge = d => d.price >= 150 || /mistão|pescaria|galeto/i.test(d.name);
-  let pool = [...MENU[protein]];
-  let paxPool;
-  if (state.pax === 1) {
-    paxPool = pool.filter(isExec);
-    if (!paxPool.length) paxPool = pool.filter(d => d.price <= 75);
-  } else if (state.pax === 3) {
-    paxPool = pool.filter(isLarge);
-    if (!paxPool.length) paxPool = pool.filter(d => !isExec(d));
-  } else {
-    paxPool = pool.filter(d => !isExec(d));
-    if (!paxPool.length) paxPool = pool;
-  }
-  if (!paxPool.length) paxPool = pool;
-  const pickCount = state.pax === 1 ? 1 : 2;
-
-  // Pick dishes respecting regional preference
-  let picked;
-  if (isRegional === true) {
-    const reg = paxPool.filter(d => d.regional);
-    picked = (reg.length >= pickCount ? reg : paxPool).slice(0, pickCount);
-  } else if (isRegional === false) {
-    const intl = paxPool.filter(d => !d.regional);
-    picked = (intl.length >= pickCount ? intl : paxPool).slice(0, pickCount);
-  } else {
-    if (isCold || isRaining) {
-      const warm = paxPool.filter(d => /guisado|molho|nata|moqueca/i.test(d.name));
-      picked = (warm.length >= pickCount ? warm : paxPool).slice(0, pickCount);
-    } else {
-      const top = paxPool.filter(d => d.champion || d.isnew);
-      picked = (top.length >= pickCount ? top : paxPool).slice(0, pickCount);
-    }
-  }
-  if (!picked || picked.length < 1) picked = pool.slice(0, pickCount);
-
-  // Starter
-  const starterPool = STARTERS[protein] || [];
-  const starter = starterPool.find(s => s.champion) || starterPool[0];
-
-  // Drinks
-  let pickedDrinks;
-  if (!hasAlcohol) {
-    pickedDrinks = DRINKS.semAlcool.slice(0, 2);
-  } else if (drink === 'vinho') {
-    pickedDrinks = pickWines(protein, isCold, isHot);
-  } else {
-    pickedDrinks = (DRINKS[drink] || []).slice(0, 2);
-  }
-
-  // Reasoning
-  const drinkKey = !hasAlcohol ? 'semAlcool' : drink;
-  let reasoning = L.rBase(L.rProtein[protein], L.rDrink[drinkKey] || drinkKey);
-  if (isRegional === true)       reasoning += L.rRegional;
-  else if (isRegional === false) reasoning += L.rIntl;
-  else if (temp !== null) {
-    if (isRaining)    reasoning += L.rRain(temp);
-    else if (isCold)  reasoning += L.rCold(temp);
-    else if (isHot)   reasoning += L.rHot(temp);
-    else              reasoning += L.rNice(temp);
-  } else {
-    if (hour >= 12 && hour < 15) reasoning += L.rLunch;
-    else if (hour >= 19)         reasoning += L.rNight;
-    else                         reasoning += L.rDefault;
-  }
-  if (state.pax && L.rPax[state.pax]) reasoning += ' ' + L.rPax[state.pax];
-  if (!hasAlcohol) reasoning += ' ' + L.rNoAlcool;
-
-  goTo('screen-result');
-  document.getElementById('reasoning-box').innerHTML = reasoning;
-  document.getElementById('result-context-line').textContent =
-    temp !== null ? L.resultContextWeather(temp) : L.resultContextDefault;
-  document.getElementById('result-main-dishes').innerHTML = picked.map(d => renderItem(d, true)).join('');
-  if (starter) {
-    document.getElementById('card-entrada').style.display = 'block';
-    document.getElementById('result-starters').innerHTML = renderItem(starter, false);
-  }
-  document.getElementById('result-drinks').innerHTML = pickedDrinks.map(d => renderItem(d, false)).join('');
+// ============ FASE 2 — MOTOR LOCAL ============
+function getTimeWindow(h){
+  if(h>=11&&h<15)return "almoco";
+  if(h>=15&&h<17)return "tarde";
+  if(h>=17&&h<19)return "happyhour";
+  return "jantar";
 }
+function pickRandom(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function pickByWeight(w){
+  var ps=["bode","carne","peixe","frango"];
+  var total=ps.reduce(function(s,p){return s+(w[p]||0);},0)||100;
+  var r=Math.random()*total;
+  for(var i=0;i<ps.length;i++){r-=(w[ps[i]]||0);if(r<=0)return ps[i];}
+  return "bode";
+}
+function getLeastRecommended(protein,count){
+  var raw=localStorage.getItem(SUGGESTIONS_KEY);
+  var recs=raw?(JSON.parse(raw).recommendations||[]):[];
+  var freq={};
+  recs.forEach(function(r){(r.output.dishes||[]).forEach(function(n){freq[n]=(freq[n]||0)+1;});});
+  var pool=(MENU[protein]||[]).slice();
+  pool.sort(function(a,b){return (freq[a.name]||0)-(freq[b.name]||0);});
+  return pool.slice(0,count||1);
+}
+function buildMessage(protein,win,pax,dishName,isHappy){
+  var lang=state.lang||"pt";
+  var T_=SUGGESTION_TEMPLATES[lang]||SUGGESTION_TEMPLATES.pt;
+  if(isHappy){var t=pickRandom(T_.happy||["Especial do Happy Hour!"]);return t.replace(/\{prato\}/g,dishName).replace(/\{dish\}/g,dishName).replace(/\{plato\}/g,dishName);}
+  var intro=pickRandom(T_.intros[win]||T_.intros.jantar);
+  var body=pickRandom(T_.bodies[protein]||T_.bodies.bode);
+  var outro=pickRandom(T_.outros[pax]||T_.outros[2]);
+  var full=intro+" "+body+" "+outro;
+  return full.replace(/\{prato\}/g,dishName).replace(/\{dish\}/g,dishName).replace(/\{plato\}/g,dishName);
+}
+
+const SUGGESTION_TEMPLATES={
+  pt:{
+    intros:{
+      almoco:["Almoco decidido!","Hora de comer bem!","Escolha perfeita pro almoco!"],
+      tarde:["A tarde pede isso!","Escolha certeira pra essa hora!","Boa tarde!"],
+      happyhour:["Happy Hour no melhor estilo!","Hora do happy!","O Happy Hour ta no ponto!"],
+      jantar:["Jantar escolhido!","Noite perfeita pra isso!","Pra uma boa janta, nada melhor!"]
+    },
+    bodies:{
+      bode:["O {prato} e a alma do sertao na sua mesa.","Nada representa o Nordeste como um bom {prato}.","O {prato} e a pedida certa pra quem ama o bode.","Receita de tradicao: {prato}."],
+      carne:["O {prato} e pra quem nao abre mao de uma boa carne.","Suculento e irresistivel: {prato}.","Quem escolhe {prato} sabe o que e qualidade.","O {prato} vai conquistar cada garfada."],
+      peixe:["O {prato} traz o frescor do mar pra sua mesa.","Leve e saboroso: {prato}.","Escolha de quem aprecia um bom peixe: {prato}.","O {prato} e pra quem quer sabor sem peso."],
+      frango:["O {prato} e leve, saboroso e agrada todo mundo.","Classico e sempre delicioso: {prato}.","Quem pede {prato} nunca se arrepende.","O {prato} e a escolha certeira pra hoje."]
+    },
+    outros:{
+      1:["Tudo isso pra voce!","Uma pedida so sua.","Do jeito certo pra voce."],
+      2:["Perfeito pra voces dois.","A dupla vai adorar.","Pra curtir em boa companhia!"],
+      3:["Pra galera toda aproveitar!","O grupo vai adorar.","Perfeito pra comemorar em grupo!"]
+    },
+    happy:["Especial do Happy Hour: {prato}!","{prato} em destaque no Happy do No!","Happy Hour ta no ponto e o {prato} ta esperando por voce."]
+  },
+  en:{
+    intros:{
+      almoco:["Lunch sorted!","Time to eat well!","Perfect lunch choice!"],
+      tarde:["The afternoon calls for this!","Right pick for now!","Good afternoon!"],
+      happyhour:["Happy Hour in style!","Happy hour is on!","Time for Happy Hour!"],
+      jantar:["Dinner chosen!","Perfect night for this!","For a great dinner, nothing better!"]
+    },
+    bodies:{
+      bode:["{dish} is the soul of the sertao on your table.","Nothing represents the Northeast like a great {dish}.","{dish} — tradition recipe, made with love.","{dish} is the right pick for true goat lovers."],
+      carne:["{dish} is for those who love quality beef.","Juicy and irresistible: {dish}.","Choosing {dish} means you know quality meat.","{dish} will impress with every bite."],
+      peixe:["{dish} brings the freshness of the sea to your table.","Light and flavorful: {dish}.","A choice for fish lovers: {dish}.","{dish} is for those who want flavor without heaviness."],
+      frango:["{dish} is light, tasty and will please everyone.","A classic choice: {dish}.","Ordering {dish} is never a mistake.","{dish} is the right pick for today."]
+    },
+    outros:{
+      1:["All for you!","A pick to call your own.","Just for you."],
+      2:["Perfect for the two of you.","A choice you will both love.","Enjoy in great company!"],
+      3:["The whole group will love it!","Everyone will enjoy this choice.","Perfect for a group celebration!"]
+    },
+    happy:["Happy Hour special: {dish}!","{dish} in the spotlight at Happy Hour!","Happy Hour is on and {dish} is waiting for you."]
+  },
+  es:{
+    intros:{
+      almoco:["Almuerzo decidido!","Hora de comer bien!","Eleccion perfecta para el almuerzo!"],
+      tarde:["La tarde pide esto!","Eleccion acertada para esta hora!","Buenas tardes!"],
+      happyhour:["Happy Hour al mejor estilo!","El Happy Hour esta en su punto!","Hora del happy!"],
+      jantar:["Cena elegida!","Noche perfecta para esto!","Para una buena cena, nada mejor!"]
+    },
+    bodies:{
+      bode:["El {plato} es el alma del sertao en tu mesa.","Nada representa el Nordeste como un buen {plato}.","{plato} — receta de tradicion hecha con amor.","El {plato} es la eleccion correcta para los amantes del cabro."],
+      carne:["El {plato} es para quien no se conforma con menos en carne.","Jugoso e irresistible: {plato}.","Elegir {plato} es sinonimo de calidad.","El {plato} conquistara cada bocado."],
+      peixe:["El {plato} trae la frescura del mar a tu mesa.","Ligero y sabroso: {plato}.","Una eleccion para amantes del pescado: {plato}.","El {plato} es para quien quiere sabor sin pesadez."],
+      frango:["El {plato} es ligero, sabroso y agradara a todos.","Una eleccion clasica: {plato}.","Pedir {plato} nunca es un error.","El {plato} es la eleccion acertada para hoy."]
+    },
+    outros:{
+      1:["Todo para ti!","Una eleccion para llamar tuya.","Solo para ti."],
+      2:["Perfecto para los dos.","Una eleccion que ambos amaran.","A disfrutar en buena compania!"],
+      3:["A todo el grupo le encantara!","Todos disfrutaran esta eleccion.","Perfecto para celebrar en grupo!"]
+    },
+    happy:["Especial del Happy Hour: {plato}!","{plato} en el Happy Hour!","El Happy Hour esta en marcha y {plato} te espera."]
+  }
+};
+
+function buildSuggestion() {
+  var protein=state.protein,isRegional=state.isRegional,hasAlcohol=state.hasAlcohol;
+  var drink=state.drink,temp=state.temp,hour=state.hour,isRaining=state.isRaining;
+  var L=T[state.lang];
+  var isCold=temp!==null?temp<=22:(hour>=19||hour<6);
+  var isHot=temp!==null&&temp>=29;
+  var win=getTimeWindow(hour);
+  var picked=[],pickedDrinks=[],starter=null;
+
+  if(state.happyMode){
+    var cfg2=getStoredConfig();
+    var specials=cfg2.happyHourSpecials||[];
+    var hhFood=[],hhDrinks=[];
+    specials.forEach(function(name2){
+      var found=false;
+      var cats=Object.keys(DRINKS);
+      for(var ci=0;ci<cats.length;ci++){
+        var cat=DRINKS[cats[ci]];
+        for(var di=0;di<cat.length;di++){
+          if(normalize(cat[di].name)===normalize(name2)){
+            var ri=(cfg2.drinkRecommendIn||{})[cat[di].name];
+            if(!ri||ri.indexOf("happyhour")>=0)hhDrinks.push(Object.assign({},cat[di]));
+            found=true;break;
+          }
+        }
+        if(found)break;
+      }
+      if(!found){var fi=findItem(name2);if(fi)hhFood.push(fi);}
+    });
+    if(!hhFood.length&&!hhDrinks.length){
+      state.protein="bode";state.pax=2;state.isRegional=true;
+      state.drink="chopp";state.hasAlcohol=true;state.happyMode=false;
+      buildSuggestion();state.happyMode=true;return;
+    }
+    picked=hhFood.slice(0,2);
+    pickedDrinks=hhDrinks.length?hhDrinks.slice(0,2):DRINKS.chopp.slice(0,2);
+    starter=hhFood.length>1?null:((STARTERS[protein||"bode"]||[])[0]||null);
+  }else{
+    var isExec=function(d){return/executivo/i.test(d.desc&&d.desc.pt||"");};
+    var isLarge=function(d){return d.price>=150||/mistão|pescaria|galeto/i.test(d.name);};
+    var pool=(MENU[protein]||[]).slice();
+    var paxPool;
+    if(state.pax===1){paxPool=pool.filter(isExec);if(!paxPool.length)paxPool=pool.filter(function(d){return d.price<=75;});}
+    else if(state.pax===3){paxPool=pool.filter(isLarge);if(!paxPool.length)paxPool=pool.filter(function(d){return!isExec(d);});}
+    else{paxPool=pool.filter(function(d){return!isExec(d);});if(!paxPool.length)paxPool=pool;}
+    if(!paxPool.length)paxPool=pool;
+    var pickCount=state.pax===1?1:2;
+    if(isRegional===true){var reg=paxPool.filter(function(d){return d.regional;});picked=(reg.length>=pickCount?reg:paxPool).slice(0,pickCount);}
+    else if(isRegional===false){var intl=paxPool.filter(function(d){return!d.regional;});picked=(intl.length>=pickCount?intl:paxPool).slice(0,pickCount);}
+    else{
+      if(isCold||isRaining){var warm=paxPool.filter(function(d){return/guisado|molho|nata|moqueca/i.test(d.name);});picked=(warm.length>=pickCount?warm:paxPool).slice(0,pickCount);}
+      else{var top=paxPool.filter(function(d){return d.champion||d.isnew;});picked=(top.length>=pickCount?top:paxPool).slice(0,pickCount);}
+    }
+    if(!picked.length)picked=pool.slice(0,pickCount);
+    if(state.surpriseMode&&pickCount>1){
+      var mixPct=state._mixPct!==undefined?state._mixPct:30;
+      if(Math.random()*100<mixPct){var underdogs=getLeastRecommended(protein,1);if(underdogs.length)picked=[picked[0],underdogs[0]];}
+    }
+    var starterPool=STARTERS[protein]||[];
+    starter=starterPool.find(function(s){return s.champion;})||starterPool[0]||null;
+    if(!hasAlcohol)pickedDrinks=DRINKS.semAlcool.slice(0,2);
+    else if(drink==="vinho")pickedDrinks=pickWines(protein,isCold,isHot);
+    else pickedDrinks=(DRINKS[drink]||[]).slice(0,2);
+  }
+
+  var firstDish=picked.length>0?picked[0].name:"";
+  var paxKey=state.pax>=3?3:(state.pax||2);
+  var reasoning=buildMessage(protein||"bode",win,paxKey,firstDish,state.happyMode);
+
+  goTo("screen-result");
+  document.getElementById("reasoning-box").innerHTML=typeof mdToHtml==="function"?mdToHtml(reasoning):reasoning;
+  document.getElementById("result-context-line").textContent=temp!==null?L.resultContextWeather(temp):L.resultContextDefault;
+  s("label-main-dish",state.happyMode?L.labelPetisco:L.labelMainDish);
+  s("label-starter",L.labelStarter);
+  s("label-drink",L.labelDrink);
+  s("btn-restart",L.btnRestart);
+  s("btn-result-back",L.btnBack);
+  document.getElementById("result-main-dishes").innerHTML=picked.map(function(d){return renderItem(d,true);}).join("");
+  if(starter){document.getElementById("card-entrada").style.display="block";document.getElementById("result-starters").innerHTML=renderItem(starter,false);}
+  else{document.getElementById("card-entrada").style.display="none";}
+  document.getElementById("result-drinks").innerHTML=pickedDrinks.map(function(d){return renderItem(d,false);}).join("");
+  document.getElementById("card-other-options").style.display="none";
+  var fr=document.getElementById("footer-result");
+  if(fr)fr.innerHTML=L.footerResult.replace("
+","<br><strong style=\"color:rgba(255,255,255,.5)\">")+"</strong>";
+  var mode2=state.happyMode?"happyhour":state.surpriseMode?"surprise":"chat";
+  saveRecommendation(mode2,{protein:protein,pax:state.pax,style:isRegional===true?"regional":"intl",drink:drink,hour:hour,temp:temp,isRaining:isRaining,lang:state.lang,unit:state.unitKey},{category:protein,pax:state.pax,dishes:picked.map(function(d){return d.name;}),starter:starter?starter.name:null,drinks:pickedDrinks.map(function(d){return d.name;}),message:reasoning});
+  var ratingCtx2={mode:mode2,protein:protein,pax:state.pax};
+  document.getElementById("rating-widget").style.display="none";
+  setTimeout(function(){showRatingWidget(ratingCtx2);},2000);
+}
+
 
 function renderItem(item, showStory) {
   const L = T[state.lang];
@@ -2906,61 +3011,36 @@ async function userTapped(option) {
   }
 }
 
-async function startChat() {
-  console.log('[startChat] iniciando chat — lang:', state.lang, '| hora:', state.hour, '| temp:', state.temp, '| chovendo:', state.isRaining);
-  goTo('screen-chat');
-  chatHistory = [];
-  document.getElementById('chat-log').innerHTML = '';
-  clearOptions();
-  showTypingIndicator();
-  // Anthropic API exige pelo menos 1 mensagem — usamos contexto invisível para iniciar
-  const starters = { pt:'Olá! Acabei de chegar no restaurante.', en:'Hi! I just arrived at the restaurant.', es:'Hola! Acabo de llegar al restaurante.' };
-  const starter = starters[state.lang] || starters.pt;
-  console.log('[startChat] mensagem inicial injetada:', starter);
-  chatHistory.push({ role:'user', content: starter });
-  try {
-    const data = await callClaude(null);
-    hideTypingIndicator();
-    console.log('[startChat] resposta inicial recebida. type:', data.type, '| options:', data.options);
-    addBotBubble(data.message);
-    renderChatOptions(data.options);
-  } catch(e) {
-    console.error('[startChat] erro:', e);
-    showChatError(startChat);
-  }
+function startChat() {
+  // Resetar selecoes antes de comecar o fluxo de telas
+  state.protein = null; state.pax = null; state.isRegional = null;
+  state.hasAlcohol = null; state.drink = null;
+  state.surpriseMode = false; state.happyMode = false;
+  document.getElementById('btn-protein-next').disabled = true;
+  document.getElementById('btn-pax-next').disabled = true;
+  document.getElementById('btn-style-next').disabled = true;
+  document.getElementById('btn-drink-next').disabled = true;
+  document.querySelectorAll('.opt-btn, .pax-btn, .big-opt').forEach(function(b){b.classList.remove('selected');});
+  goTo('screen-protein');
 }
 
-async function surpriseMe() {
-  console.log('[surpriseMe] modo surpresa — lang:', state.lang, '| hora:', state.hour, '| temp:', state.temp);
-  chatHistory = [];
-  document.getElementById('chat-log').innerHTML = '';
-  goTo('screen-chat');
-  showTypingIndicator();
-
-  const msgs = {
-    pt: 'SURPRESA: Escolha o melhor prato e bebida para o momento atual. 2 pessoas. Vá direto à recomendação.',
-    en: 'SURPRISE: Choose the best dish and drink for this moment. 2 people. Go straight to the recommendation.',
-    es: 'SORPRESA: Elige el mejor plato y bebida para este momento. 2 personas. Ve directamente a la recomendación.'
-  };
-  chatHistory.push({ role: 'user', content: msgs[state.lang] || msgs.pt });
-
-  try {
-    const data = await callClaude(null);
-    hideTypingIndicator();
-    if (data.type === 'recommendation') {
-      addBotBubble(data.message);
-      setTimeout(() => handleRecommendation(data), 1400);
-    } else {
-      // fallback: Claude asked a question anyway — show it normally
-      addBotBubble(data.message);
-      renderChatOptions(data.options);
-    }
-  } catch(e) {
-    console.error('[surpriseMe] erro:', e);
-    showChatError(surpriseMe);
-  }
+function surpriseMe() {
+  var cfg = getStoredConfig();
+  var algo = (cfg.algo||{});
+  var sAlgo = algo.surprise||{};
+  var weights = algo.proteinWeights||{bode:40,carne:30,peixe:20,frango:10};
+  var win = getTimeWindow(state.hour);
+  var wCfg = sAlgo[win]||{};
+  state.protein    = wCfg.protein || pickByWeight(weights);
+  state.pax        = 2;
+  state.isRegional = true;
+  state.drink      = wCfg.drink || (win==='jantar'?'whisky':'chopp');
+  state.hasAlcohol = true;
+  state.surpriseMode = true;
+  state.happyMode    = false;
+  state._mixPct    = wCfg.mixPct!==undefined ? wCfg.mixPct : 30;
+  buildSuggestion();
 }
-
 function happyDoNoMode() {
   const cfg = getStoredConfig();
 
@@ -2973,33 +3053,10 @@ function happyDoNoMode() {
     return;
   }
 
-  state.happyMode = true;
-  chatHistory = [];
-  document.getElementById('chat-log').innerHTML = '';
-  goTo('screen-chat');
-  showTypingIndicator();
-
-  const name = cfg.happyHourName || 'Happy do Nô';
-  const msgs = {
-    pt: 'HAPPY HOUR: Estou no ' + name + '! Quero saber as promoções e especiais do happy hour.',
-    en: 'HAPPY HOUR: I am at ' + name + '! Tell me about the happy hour specials and promotions.',
-    es: 'HAPPY HOUR: Estoy en ' + name + '! Quiero saber las promociones y especiales del happy hour.'
-  };
-  chatHistory.push({ role: 'user', content: msgs[state.lang] || msgs.pt });
-
-  callClaude(null).then(data => {
-    hideTypingIndicator();
-    if (data.type === 'recommendation') {
-      addBotBubble(data.message);
-      setTimeout(() => handleRecommendation(data), 1400);
-    } else {
-      addBotBubble(data.message);
-      renderChatOptions(data.options);
-    }
-  }).catch(e => {
-    console.error('[happyDoNoMode] erro:', e);
-    showChatError(happyDoNoMode);
-  });
+  state.happyMode    = true;
+  state.surpriseMode = false;
+  state.pax          = 2;
+  buildSuggestion();
 }
 
 /* ── AVALIAÇÃO ────────────────────────────────── */
