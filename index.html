@@ -175,7 +175,7 @@
     .options-grid.cols-1 { grid-template-columns: 1fr; }
     .opt-btn { background: var(--off); border: 2px solid transparent; border-radius: 14px; padding: 16px 12px; cursor: pointer; text-align: center; transition: all .2s ease; -webkit-tap-highlight-color: transparent; user-select: none; box-shadow: 0 2px 8px rgba(92,42,14,.08); animation: popIn .35s cubic-bezier(.22,.68,0,1.3) both; }
     .opt-btn:active { transform: scale(.95); }
-    .opt-btn.selected { border-color: var(--laranja); background: #fde8d3; box-shadow: 0 4px 16px rgba(201,92,30,.25); transform: scale(1.03); }
+    .opt-btn.selected { border-color: var(--marrom-cangaco); background: rgba(232, 221, 217, 0.12); box-shadow: 0 4px 16px rgba(0,0,0,.25); transform: scale(1.03); }
     .opt-btn .opt-icon  { font-size: 32px; display: block; margin-bottom: 6px; }
     .opt-btn .opt-label { font-size: 14px; font-weight: 700; font-family:'Brother1816',sans-serif; color: var(--text); }
     .opt-btn .opt-desc  { font-size: 11px; color: var(--muted); margin-top: 3px; }
@@ -184,7 +184,7 @@
     .triple-choice { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 4px; }
     .pax-btn { background: var(--off); border: 2px solid transparent; border-radius: 14px; padding: 18px 8px 14px; cursor: pointer; text-align: center; transition: all .2s; -webkit-tap-highlight-color: transparent; box-shadow: 0 2px 8px rgba(92,42,14,.08); }
     .pax-btn:active { transform: scale(.95); }
-    .pax-btn.selected { border-color: var(--laranja); background: #fde8d3; box-shadow: 0 4px 16px rgba(201,92,30,.2); }
+    .pax-btn.selected { border-color: var(--marrom-cangaco); background: rgba(232, 221, 217, 0.12); box-shadow: 0 4px 16px rgba(0,0,0,.2); }
     .pax-btn .pax-icon  { font-size: 26px; display: block; margin-bottom: 6px; line-height: 1.2; }
     .pax-btn .pax-label { font-size: 13px; font-weight: 700; font-family:'Brother1816',sans-serif; color: var(--text); }
     .pax-btn .pax-desc  { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.3; }
@@ -465,24 +465,74 @@
     @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
     .cart-bar.visible { animation:slideUp .3s cubic-bezier(.22,.68,0,1.2) both; }
 
-    /* ── Checkboxes: suggest-item ─────────────────────────── */
-    .suggest-item { cursor:pointer; border-radius:10px; transition:background .15s; }
-    .suggest-item:active { background:rgba(71,92,27,.07); }
-    .suggest-item.checked { background:rgba(71,92,27,.08); }
-    .suggest-item-check { width:22px; height:22px; border-radius:50%; border:2px solid rgba(0,0,0,.18); background:transparent; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .2s; }
-    .suggest-item.checked .suggest-item-check { background:var(--verde); border-color:var(--verde); }
-    .suggest-item-check span { color:#fff; font-size:11px; font-weight:900; opacity:0; transition:opacity .15s; line-height:1; }
-    .suggest-item.checked .suggest-item-check span { opacity:1; }
+    /* ── Checkboxes: suggest-item (Mobile Optimized) ──────── */
+    .suggest-item { 
+      display: flex; align-items: center; gap: 16px;
+      cursor:pointer; border-radius:14px; padding: 12px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(232,221,217, 0.05);
+      background: rgba(255,255,255, 0.02);
+      margin-bottom: 10px;
+    }
+    .suggest-item:active { transform: scale(0.98); background: rgba(232,221,217, 0.08); }
+    .suggest-item.checked { 
+      background: rgba(232,221,217, 0.12); 
+      border-color: rgba(232,221,217, 0.3);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    
+    .suggest-item-check { 
+      width: 32px; height: 32px; border-radius: 8px; 
+      border: 2px solid var(--bege-palha); 
+      background: rgba(232,221,217, 0.05); 
+      display: flex; align-items: center; justify-content: center; 
+      flex-shrink: 0; transition: all 0.2s ease;
+      order: 2; /* Move para a direita */
+      margin-left: auto;
+    }
+    .suggest-item.checked .suggest-item-check { 
+      background: var(--bege-palha); 
+      border-color: var(--bege-palha);
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(232,221,217, 0.4);
+    }
+    .suggest-item-check span { 
+      color: var(--marrom-terra); 
+      font-size: 18px; font-weight: 900; opacity: 0; 
+      transition: all 0.2s; transform: scale(0.5);
+    }
+    .suggest-item.checked .suggest-item-check span { opacity: 1; transform: scale(1); }
 
-    /* ── Checkboxes: menu-item ────────────────────────────── */
-    .menu-item { cursor:pointer; transition:background .15s; }
-    .menu-item:active { background:rgba(71,92,27,.08); }
-    .menu-item.checked { background:rgba(71,92,27,.1); }
-    .menu-item-price-check { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
-    .menu-item-check { width:20px; height:20px; border-radius:50%; border:2px solid rgba(0,0,0,.18); background:transparent; display:flex; align-items:center; justify-content:center; transition:all .2s; }
-    .menu-item.checked .menu-item-check { background:var(--verde); border-color:var(--verde); }
-    .menu-item-check span { color:#fff; font-size:10px; font-weight:900; opacity:0; transition:opacity .15s; line-height:1; }
-    .menu-item.checked .menu-item-check span { opacity:1; }
+    /* ── Checkboxes: menu-item (Mobile Optimized) ─────────── */
+    .menu-item { 
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; cursor: pointer; 
+      transition: all 0.2s; border-bottom: 1px solid rgba(232,221,217, 0.05);
+    }
+    .menu-item:active { background: rgba(232,221,217, 0.05); }
+    .menu-item.checked { background: rgba(232,221,217, 0.1); }
+    
+    .menu-item-check { 
+      width: 28px; height: 28px; border-radius: 7px; 
+      border: 2px solid var(--bege-palha); 
+      background: rgba(232,221,217, 0.03); 
+      display: flex; align-items: center; justify-content: center; 
+      flex-shrink: 0; transition: all 0.2s;
+      margin-left: 10px;
+    }
+    .menu-item.checked .menu-item-check { 
+      background: var(--bege-palha); 
+      border-color: var(--bege-palha);
+      transform: rotate(5deg) scale(1.05);
+    }
+    .menu-item-check span { 
+      color: var(--marrom-terra); 
+      font-size: 15px; font-weight: 900; opacity: 0; 
+      transition: all 0.2s; 
+    }
+    .menu-item.checked .menu-item-check span { opacity: 1; }
+    
+    .menu-item-body { flex: 1; min-width: 0; }
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -560,7 +610,7 @@
     <button class="btn-primary pulse" onclick="startChat()" id="btn-start"></button>
     <div class="quick-row">
       <button class="btn-quick btn-quick-surprise" onclick="surpriseMe()" id="btn-surprise"></button>
-      <button class="btn-quick btn-quick-petisco"  onclick="petiscoMode()" id="btn-petisco"></button>
+      <button class="btn-quick btn-quick-petisco"  onclick="happyDoNoMode()" id="btn-petisco"></button>
     </div>
     <button class="menu-cta-card" onclick="openMenuScreen()">
       <span class="menu-cta-icon"></span>
@@ -2729,7 +2779,7 @@ function handleRecommendation(data) {
   const uniqueDishes = [...new Set(dishesAdjusted)];
   const dishItems = uniqueDishes.map(n => { const item = findItem(n); console.log('[handleRecommendation] dish', JSON.stringify(n), '->', item ? item.name : 'NAO ENCONTRADO'); return item; }).filter(Boolean);
   console.log('[handleRecommendation] pratos resolvidos:', dishItems.length, 'de', (data.dishes||[]).length);
-  s('label-main-dish', state.petiscoMode ? L.labelPetisco : L.labelMainDish);
+  s('label-main-dish', state.happyMode ? L.labelPetisco : L.labelMainDish);
   document.getElementById('result-main-dishes').innerHTML = dishItems.map(d => renderItem(d, true)).join('');
 
   const starterItem = data.starter ? findItem(data.starter) : null;
@@ -2780,7 +2830,7 @@ function handleRecommendation(data) {
 
   // Mostrar widget de avaliação após 2s
   const ratingCtx = {
-    mode:    state.petiscoMode ? 'petisco' : state.surpriseMode ? 'surpresa' : 'chat',
+    mode:    state.happyMode ? 'happyhour' : state.surpriseMode ? 'surpresa' : 'chat',
     protein: data.category || null,
     pax:     data.pax      || null,
   };
@@ -2871,23 +2921,34 @@ async function surpriseMe() {
   }
 }
 
-async function petiscoMode() {
-  console.log('[petiscoMode] modo petisco — lang:', state.lang, '| hora:', state.hour, '| temp:', state.temp);
-  state.petiscoMode = true;
+function happyDoNoMode() {
+  const cfg = getStoredConfig();
+
+  if (!cfg.happyHourActive) {
+    const unavail = { pt:'O Happy do Nô ainda não está disponível no momento.', en:'Happy do Nô is not available at the moment.', es:'Happy do Nô no está disponible en este momento.' };
+    chatHistory = [];
+    document.getElementById('chat-log').innerHTML = '';
+    goTo('screen-chat');
+    addBotBubble(unavail[state.lang] || unavail.pt);
+    renderChatOptions([{ label: ({pt:'← Voltar',en:'← Back',es:'← Volver'})[state.lang] || '← Voltar', action:'back' }]);
+    return;
+  }
+
+  state.happyMode = true;
   chatHistory = [];
   document.getElementById('chat-log').innerHTML = '';
   goTo('screen-chat');
   showTypingIndicator();
 
+  const name = cfg.happyHourName || 'Happy do Nô';
   const msgs = {
-    pt: 'PETISCO: Vim petiscar e beber, sem prato principal.',
-    en: 'SNACK MODE: I want snacks and drinks, no main dish.',
-    es: 'PICADAS: Quiero picadas y bebidas, sin plato principal.'
+    pt: 'HAPPY HOUR: Estou no ' + name + '! Quero saber as promoções e especiais do happy hour.',
+    en: 'HAPPY HOUR: I am at ' + name + '! Tell me about the happy hour specials and promotions.',
+    es: 'HAPPY HOUR: Estoy en ' + name + '! Quiero saber las promociones y especiales del happy hour.'
   };
   chatHistory.push({ role: 'user', content: msgs[state.lang] || msgs.pt });
 
-  try {
-    const data = await callClaude(null);
+  callClaude(null).then(data => {
     hideTypingIndicator();
     if (data.type === 'recommendation') {
       addBotBubble(data.message);
@@ -2896,10 +2957,10 @@ async function petiscoMode() {
       addBotBubble(data.message);
       renderChatOptions(data.options);
     }
-  } catch(e) {
-    console.error('[petiscoMode] erro:', e);
-    showChatError(petiscoMode);
-  }
+  }).catch(e => {
+    console.error('[happyDoNoMode] erro:', e);
+    showChatError(happyDoNoMode);
+  });
 }
 
 /* ── AVALIAÇÃO ────────────────────────────────── */
@@ -2976,7 +3037,7 @@ function saveRating(data) {
 
 function clearChatState() {
   chatHistory = [];
-  state.petiscoMode = false;
+  state.happyMode = false;
   const log = document.getElementById('chat-log');
   if (log) log.innerHTML = '';
   clearOptions();

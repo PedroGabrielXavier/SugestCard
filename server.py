@@ -44,7 +44,7 @@ class Handler(BaseHTTPRequestHandler):
         path = self.path.split('?')[0]
         if path in ('/', ''):
             path = '/index.html'
-        elif path == '/admin':
+        elif path in ('/admin', '/admin/'):
             path = '/admin.html'
         filepath = os.path.join(BASE_DIR, path.lstrip('/').replace('/', os.sep))
         if os.path.isfile(filepath):
