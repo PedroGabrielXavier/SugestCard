@@ -125,16 +125,16 @@
     .unical-context-btn {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 6px;
       background: rgba(0, 0, 0, 0.25);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 999px;
-      padding: 8px 18px;
+      padding: 5px 10px;
       backdrop-filter: blur(10px);
       color: #fff;
       font-family: 'Brother1816', sans-serif;
       font-weight: 500;
-      font-size: 12px;
+      font-size: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       transition: all 0.3s ease;
       z-index: 10;
@@ -160,8 +160,8 @@
     }
     #screen-welcome .unical-context-btn {
       position: absolute;
-      bottom: 24px;
-      left: 20px;
+      bottom: 20px;
+      left: 12px;
       animation: fadeIn 0.8s 0.4s both;
       z-index: 20; /* Garante que fique acima das decorações se necessário */
     }
@@ -223,20 +223,18 @@
     .welcome-msg { font-size: 22px; font-weight: 400; font-family: 'Rumplakat', 'Brother1816', sans-serif; color: #fff; text-align: center; margin-bottom: 8px; line-height: 1.35; animation: fadeUp .4s .2s both; }
     .welcome-slogan { 
       position: absolute;
-      bottom: 24px;
-      right: 20px;
+      bottom: 8px;
+      left: 0;
+      right: 0;
       font-family: 'Rumplakat', 'Brother1816', sans-serif; 
       font-weight: 400; 
       font-size: 13px; 
       color: rgba(255,255,255,0.5); 
-      text-align: right; 
+      text-align: center; 
       margin: 0;
       animation: fadeIn 0.8s 0.5s both;
       z-index: 20;
       letter-spacing: 0.5px;
-    }
-    @media (max-width: 520px) {
-      #screen-welcome .unical-context-btn { bottom: 56px; }
     }
     .screen-decor { position: absolute; pointer-events: none; z-index: 0; user-select: none; }
     .decor-birds  { left: -8px;  bottom: 56px; width: 130px; opacity: .92; }
@@ -647,8 +645,7 @@
     <p class="footer-note" id="footer-welcome" style="margin-top:12px"></p>
     <img class="screen-decor decor-birds" src="/nuvens_no_bg.png" alt="" aria-hidden="true" style="top: 20px; left: 10px; width: 120px; opacity: 0.6;" />
     <img class="screen-decor decor-lua" src="/lua_no_bg.png" alt="" aria-hidden="true" style="position: absolute; bottom: 90px; left: 10px; width: 60px; opacity: 0.8;" />
-    <img class="screen-decor decor-cacti" src="/cactos_no_bg.png" alt="" aria-hidden="true" style="bottom: 70px; right: -10px; width: 100px;" />
-    <img class="screen-decor decor-church" src="/igreja_no_bg.png" alt="" aria-hidden="true" style="position: absolute; bottom: 60px; right: 80px; width: 90px; opacity: 0.9;" />
+    <img class="screen-decor decor-church" src="/igreja_no_bg.png" alt="" aria-hidden="true" style="position: absolute; bottom: 60px; right: -5px; width: 90px; opacity: 0.9;" />
   </div>
 
   <!-- SCREEN 1 — PROTEÍNA -->
@@ -1901,7 +1898,7 @@ function applyTranslations() {
   s('btn-start', L.btnStart);
   s('btn-surprise', L.btnSurprise);
   s('btn-petisco',  L.btnPetisco);
-  s('footer-welcome', L.footerWelcome);
+  document.getElementById('footer-welcome').style.display = 'none';
   if (state.unit) s('unit-label', 'Bode do Nô · ' + state.unit.name);
   s('title-protein', L.titleProtein, true); s('hint-protein', L.hintProtein);
   s('opt-bode-label', L.bodeLabel);   s('opt-bode-desc', L.bodeDesc);
