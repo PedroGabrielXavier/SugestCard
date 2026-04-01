@@ -222,6 +222,7 @@
     <div class="login-logo">🐐</div>
     <h1>Bodin Sugere</h1>
     <p>Painel de gestão do cardápio</p>
+    <input type="email" id="login-email" placeholder="E-mail" onkeydown="if(event.key==='Enter')doLogin()" style="margin-bottom:10px">
     <input type="password" id="login-pwd" placeholder="Senha" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="btn-login" onclick="doLogin()">Entrar</button>
     <div class="login-error" id="login-err"></div>
@@ -410,6 +411,8 @@
 const STORAGE_KEY = 'bodinho_menu_v1';
 const PASS_KEY    = 'bodinho_admin_pass';
 const DEFAULT_PASS = 'bode2025';
+const ADMIN_EMAIL  = 'admin@indicabodin.com.br';
+const ADMIN_PASS   = 'Dnpe3301@@';
 
 const SEC_CONFIG = {
   menu:        { label:'Pratos Principais', type:'nested', tabs:{bode:'🐐 Bode',carne:'🥩 Carne',peixe:'🐟 Peixe',frango:'🍗 Frango'} },
@@ -476,8 +479,11 @@ function getStoredPass() {
 }
 
 function doLogin() {
-  const pwd = document.getElementById('login-pwd').value;
-  if (pwd === getStoredPass()) {
+  var email = (document.getElementById('login-email').value || '').trim().toLowerCase();
+  var pwd = document.getElementById('login-pwd').value;
+  var emailOk = email === ADMIN_EMAIL.toLowerCase();
+  var passOk  = pwd === ADMIN_PASS || pwd === getStoredPass();
+  if (emailOk && passOk) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-app').classList.add('visible');
     data = loadData();
@@ -488,12 +494,13 @@ function doLogin() {
       goTo('menu');
     }
   } else {
-    document.getElementById('login-err').textContent = 'Senha incorreta.';
+    document.getElementById('login-err').textContent = 'E-mail ou senha incorretos.';
   }
 }
 
 function doLogout() {
   if (confirm('Sair do painel admin?')) {
+    document.getElementById('login-email').value = '';
     document.getElementById('login-pwd').value = '';
     document.getElementById('login-err').textContent = '';
     document.getElementById('admin-app').classList.remove('visible');
@@ -1471,9 +1478,7 @@ function toast(msg, type='ok') {
 }
 
 // ─── INIT ────────────────────────────────────────────────────────
-document.getElementById('login-pwd').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
+['login-email','login-pwd'].forEach(function(id){document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});});
 </script>
 </body>
 </html>
